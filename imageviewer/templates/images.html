@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subfolder_name }} Images</title>
+</head>
+<body>
+    <h1>{{ subfolder_name }} Images</h1>
+    <ul>
+        {% for image_file in image_files %}
+            <li>
+                <a href="{{ url_for('get_image', image_file=image_file|urlencode) }}">
+                    <img src="{{ url_for('static', filename=image_file) }}" alt="{{ image_file }}">
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

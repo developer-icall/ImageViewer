@@ -7,7 +7,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+flask = "^3.0.0"
 
+[tool.poetry.scripts]
+my-script = "imageviewer:app"
 
 [build-system]
 requires = ["poetry-core"]

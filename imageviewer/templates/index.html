@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        li {
+            margin: 10px;
+            flex: 1;
+            max-width: calc(25% - 20px);
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Gallery</h1>
+    <ul>
+        {% for subfolder_name, first_image in subfolder_images %}
+            <li>
+                <a href="/subfolders/{{ subfolder_name }}/?is_sample={{ is_sample }}">
+                    <img src="{{ first_image }}" alt="{{ subfolder_name }}" width="206" height="383">
+                </a>
+                <h2>{{ subfolder_name }}</h2>
+            </li>
+            {% if loop.index % 4 == 0 %}
+                </ul><ul>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+</html>

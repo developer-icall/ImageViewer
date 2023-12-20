@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subfolder_name }} Image Gallery</title>
+    <style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        li {
+            margin: 10px;
+            flex: 1;
+            max-width: calc(25% - 20px);
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .back-link {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ subfolder_name }} Image Gallery</h1>
+    <ul>
+        {% for image_file in image_files %}
+            <li>
+                {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
+                {% if is_sample %}
+                    <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}" target="_blank">
+                {% else %}
+                    <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}" target="_blank">
+                {% endif %}
+                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}" alt="{{ image_file }}" width="206" height="383">
+                    </a>
+            </li>
+            {% if loop.index % 4 == 0 %}
+                </ul><ul>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <!-- 元のページに戻るリンク -->
+    {% if is_sample %}
+    <a class="back-link" href="/">Back to Main Page</a>
+    {% else %}
+    <a class="back-link" href="/?is_sample=False">Back to Main Page</a>
+    {% endif %}
+</body>
+</html>
