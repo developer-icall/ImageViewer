@@ -4,7 +4,7 @@ from flask import Flask, render_template, send_from_directory, request
 app = Flask(__name__)
 
 # 画像フォルダのパス
-IMAGE_FOLDER = './static/images'
+IMAGE_FOLDER = './static/sync_images'
 
 # サムネイル用画像の保存先フォルダのパス
 THUMBNAIL_FOLDER = "/thumbnail"
