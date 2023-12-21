@@ -25,6 +25,7 @@ def get_first_image(subfolder_path):
 def get_subfolders(folder_path, is_sample=True):
     subfolders = []
     for root, dirs, files in os.walk(folder_path):
+        dirs.sort()  # フォルダの一覧をABC順にソート
         for dir in dirs:
             subfolder_path = os.path.join(root, dir).replace("\\", "/")
             if is_sample:
