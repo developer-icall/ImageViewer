@@ -31,6 +31,12 @@
 </head>
 <body>
     <h1>{{ subfolder_name }} Image Gallery</h1>
+    <!-- 元のページに戻るリンク -->
+    {% if is_sample %}
+    <a class="back-link" href="/?page={{ page }}">Back to Main Page</a>
+    {% else %}
+    <a class="back-link" href="/?is_sample=False&page={{ page }}">Back to Main Page</a>
+    {% endif %}
     <ul>
         {% for image_file in image_files %}
             <li>
@@ -51,9 +57,9 @@
 
     <!-- 元のページに戻るリンク -->
     {% if is_sample %}
-    <a class="back-link" href="/">Back to Main Page</a>
+    <a class="back-link" href="/?page={{ page }}">Back to Main Page</a>
     {% else %}
-    <a class="back-link" href="/?is_sample=False">Back to Main Page</a>
+    <a class="back-link" href="/?is_sample=False&page={{ page }}">Back to Main Page</a>
     {% endif %}
 </body>
 </html>
