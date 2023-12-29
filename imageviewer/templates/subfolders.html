@@ -38,11 +38,11 @@
             <li>
                 {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
                 {% if is_sample %}
-                    <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}" target="_blank">
+                    <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
                 {% else %}
-                    <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}" target="_blank">
+                    <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/" target="_blank">
                 {% endif %}
-                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}" alt="{{ image_file }}" width="206" height="383">
+                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/" alt="{{ image_file }}" width="206" height="383">
                     </a>
             </li>
             {% if loop.index % 4 == 0 %}

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, send_from_directory, request
+from flask import Flask, render_template, send_from_directory, request, abort
 
 app = Flask(__name__)
 
@@ -71,15 +71,16 @@ def get_subfolders(folder_path, page, is_sample=True):
 @app.route('/')
 def index():
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_param_is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
    
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
         is_sample = False
-        is_sample_param = "?hidden_param_is_sample=False"
+        is_sample_param = "?hidden_secret_param_is_sample=False"
     else:
         is_sample = True
-        is_sample_param = "?Q=xyz"
+        # ダミーパラメータをセット(以降に追加するパラメータを`&xxxx`の形式で追加できるようにするためと、パラメータ解析防止のハッタリのため)
+        is_sample_param = "?Q=866Tvdnm9f1iuWn6opQZ"
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -97,18 +98,19 @@ def subfolder_images(subfolder_name):
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_param_is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
     page = request.args.get('page', 1)
     
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
         is_sample = False
-        is_sample_param = "?hidden_param_is_sample=False"
+        is_sample_param = "?hidden_secret_param_is_sample=False"
         subfolder_path = subfolder_path + THUMBNAIL_FOLDER
         thumbnail_folder = THUMBNAIL_FOLDER
     else:
         is_sample = True
-        is_sample_param = "?Q=xyz"
+        # ダミーパラメータをセット(以降に追加するパラメータを`&xxxx`の形式で追加できるようにするためと、パラメータ解析防止のハッタリのため)
+        is_sample_param = "?Q=866Tvdnm9f1iuWn6opQZ"
         subfolder_path = subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER
         thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
 
@@ -118,8 +120,21 @@ def subfolder_images(subfolder_name):
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, is_sample_param=is_sample_param, page=page)
 
-@app.route('/images/<path:image_file>')
+@app.route('/images/<path:image_file>/')
 def get_image(image_file):
+
+    # URLのパラメータからis_sampleを取得
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
+    
+    # is_sampleパラメータが"false"の場合、Falseをセット
+    if is_sample_get_param.lower() == 'false':
+        is_sample = False
+    else:
+        is_sample = True
+        # image_file の文字列内に`sample`が含まれていなかった場合404エラーを返す
+        if 'sample' not in image_file:
+            abort(404)
+
     # 原寸大の画像を表示
     return send_from_directory(IMAGE_FOLDER, image_file)
 
