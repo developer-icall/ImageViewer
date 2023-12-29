@@ -71,13 +71,15 @@ def get_subfolders(folder_path, page, is_sample=True):
 @app.route('/')
 def index():
     # URLのパラメータからis_sampleを取得
-    is_sample_param = request.args.get('is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_param_is_sample', 'true')
    
     # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample_param.lower() == 'false':
+    if is_sample_get_param.lower() == 'false':
         is_sample = False
+        is_sample_param = "?hidden_param_is_sample=False"
     else:
         is_sample = True
+        is_sample_param = "?Q=xyz"
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -88,23 +90,25 @@ def index():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_sample=is_sample)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_sample_param=is_sample_param)
 
 @app.route('/subfolders/<subfolder_name>/')
 def subfolder_images(subfolder_name):
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
     # URLのパラメータからis_sampleを取得
-    is_sample_param = request.args.get('is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_param_is_sample', 'true')
     page = request.args.get('page', 1)
     
     # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample_param.lower() == 'false':
+    if is_sample_get_param.lower() == 'false':
         is_sample = False
+        is_sample_param = "?hidden_param_is_sample=False"
         subfolder_path = subfolder_path + THUMBNAIL_FOLDER
         thumbnail_folder = THUMBNAIL_FOLDER
     else:
         is_sample = True
+        is_sample_param = "?Q=xyz"
         subfolder_path = subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER
         thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
 
@@ -112,7 +116,7 @@ def subfolder_images(subfolder_name):
     # サブフォルダ内の画像ファイルの一覧を取得
     image_files = [f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
 
-    return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, page=page)
+    return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, is_sample_param=is_sample_param, page=page)
 
 @app.route('/images/<path:image_file>')
 def get_image(image_file):

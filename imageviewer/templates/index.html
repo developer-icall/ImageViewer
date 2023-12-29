@@ -58,7 +58,7 @@
                 {% if page_num == pagination_info.page %}
                     <li class="active"><span>{{ page_num }}</span></li>
                 {% else %}
-                    <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                    <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                 {% endif %}
             {% endfor %}
         {% else %}
@@ -67,49 +67,49 @@
                     {% if page_num == pagination_info.page %}
                         <li class="active"><span>{{ page_num }}</span></li>
                     {% else %}
-                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 <li><span>...</span></li>
                 {% if pagination_info.has_next %}
-                <li><a href="?page={{ pagination_info.page + 1 }}">&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page + 1 }}">&gt;</a></li>
                 {% endif %}
-                <li><a href="?page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
             {% elif pagination_info.page >= pagination_info.total_pages - 4 %}
-                <li><a href="?page=1">&lt;&lt;</a></li>
-                <li><a href="?page={{ pagination_info.page - 1 }}">&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page=1">&lt;&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page - 1 }}">&lt;</a></li>
                 <li><span>...</span></li>
                 {% for page_num in range(pagination_info.total_pages - 9, pagination_info.total_pages + 1) %}
                     {% if page_num == pagination_info.page %}
                         <li class="active"><span>{{ page_num }}</span></li>
                     {% else %}
-                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if pagination_info.has_next %}
-                <li><a href="?page={{ pagination_info.page + 1 }}">&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page + 1 }}">&gt;</a></li>
                 {% endif %}
             {% else %}
-                <li><a href="?page=1">&lt;&lt;</a></li>
-                <li><a href="?page={{ pagination_info.page - 1 }}">&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page=1">&lt;&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page - 1 }}">&lt;</a></li>
                 <li><span>...</span></li>
                 {% for page_num in range(pagination_info.page - 4, pagination_info.page + 6) %}
                     {% if page_num == pagination_info.page %}
                         <li class="active"><span>{{ page_num }}</span></li>
                     {% else %}
-                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 <li><span>...</span></li>
-                <li><a href="?page={{ pagination_info.page + 1 }}">&gt;</a></li>
-                <li><a href="?page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page + 1 }}">&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
             {% endif %}
         {% endif %}
     </ul>
     <ul class="images">
         {% for subfolder_name, first_image in subfolder_images %}
             <li>
-                <a href="/subfolders/{{ subfolder_name }}/?is_sample={{ is_sample }}&page={{ pagination_info.page }}">
+                <a href="/subfolders/{{ subfolder_name }}/{{is_sample_param}}&page={{ pagination_info.page }}">
                     <img src="{{ first_image }}" alt="{{ subfolder_name }}" width="206" height="383">
                 </a>
                 <h4>{{ subfolder_name }}</h4>
@@ -126,7 +126,7 @@
                 {% if page_num == pagination_info.page %}
                     <li class="active"><span>{{ page_num }}</span></li>
                 {% else %}
-                    <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                    <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                 {% endif %}
             {% endfor %}
         {% else %}
@@ -135,42 +135,42 @@
                     {% if page_num == pagination_info.page %}
                         <li class="active"><span>{{ page_num }}</span></li>
                     {% else %}
-                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 <li><span>...</span></li>
                 {% if pagination_info.has_next %}
-                <li><a href="?page={{ pagination_info.page + 1 }}">&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page + 1 }}">&gt;</a></li>
                 {% endif %}
-                <li><a href="?page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
             {% elif pagination_info.page >= pagination_info.total_pages - 4 %}
-                <li><a href="?page=1">&lt;&lt;</a></li>
-                <li><a href="?page={{ pagination_info.page - 1 }}">&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page=1">&lt;&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page - 1 }}">&lt;</a></li>
                 <li><span>...</span></li>
                 {% for page_num in range(pagination_info.total_pages - 9, pagination_info.total_pages + 1) %}
                     {% if page_num == pagination_info.page %}
                         <li class="active"><span>{{ page_num }}</span></li>
                     {% else %}
-                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if pagination_info.has_next %}
-                <li><a href="?page={{ pagination_info.page + 1 }}">&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page + 1 }}">&gt;</a></li>
                 {% endif %}
             {% else %}
-                <li><a href="?page=1">&lt;&lt;</a></li>
-                <li><a href="?page={{ pagination_info.page - 1 }}">&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page=1">&lt;&lt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page - 1 }}">&lt;</a></li>
                 <li><span>...</span></li>
                 {% for page_num in range(pagination_info.page - 4, pagination_info.page + 6) %}
                     {% if page_num == pagination_info.page %}
                         <li class="active"><span>{{ page_num }}</span></li>
                     {% else %}
-                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        <li><a href="{{is_sample_param}}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 <li><span>...</span></li>
-                <li><a href="?page={{ pagination_info.page + 1 }}">&gt;</a></li>
-                <li><a href="?page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.page + 1 }}">&gt;</a></li>
+                <li><a href="{{is_sample_param}}&page={{ pagination_info.total_pages }}">&gt;&gt;</a></li>
             {% endif %}
         {% endif %}
     </ul>
