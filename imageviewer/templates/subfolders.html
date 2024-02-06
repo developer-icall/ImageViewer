@@ -32,7 +32,11 @@
 <body>
     <h1>{{ subfolder_name }} Image Gallery</h1>
     <!-- 元のページに戻るリンク -->
-    <a class="back-link" href="/{{ is_sample_param }}&page={{ page }}">Back to Main Page</a>
+    {% if is_male %}
+        <a class="back-link" href="/male/{{ add_param }}&page={{ page }}">Back to Main Page</a>
+    {% else %}
+        <a class="back-link" href="/{{ add_param }}&page={{ page }}">Back to Main Page</a>
+    {% endif %}
     <ul>
         {% for image_file in image_files %}
             <li>
@@ -40,9 +44,9 @@
                 {% if is_sample %}
                     <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
                 {% else %}
-                    <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ is_sample_param }}" target="_blank">
+                    <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
                 {% endif %}
-                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ is_sample_param }}" alt="{{ image_file }}" width="206" height="383">
+                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="206" height="383">
                     </a>
             </li>
             {% if loop.index % 4 == 0 %}
@@ -52,6 +56,10 @@
     </ul>
 
     <!-- 元のページに戻るリンク -->
-    <a class="back-link" href="/{{ is_sample_param }}&page={{ page }}">Back to Main Page</a>
+    {% if is_male %}
+        <a class="back-link" href="/male/{{ add_param }}&page={{ page }}">Back to Main Page</a>
+    {% else %}
+        <a class="back-link" href="/{{ add_param }}&page={{ page }}">Back to Main Page</a>
+    {% endif %}
 </body>
 </html>
