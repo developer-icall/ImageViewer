@@ -24,6 +24,9 @@ MALE_FOLDER_PREFIX = "-men"
 # 背景透過画像保存先のフォルダパスの prefix
 TRANSPARENT_BACKGROUND_FOLDER_PREFIX = "-transparent"
 
+# セルフィー画像保存先のフォルダパスの prefix
+SELFIE_FOLDER_PREFIX = "-selfie"
+
 # 1ページ当たりの表示件数
 INDEX_PER_PAGE = 20
 
@@ -49,7 +52,7 @@ def get_first_image(subfolder_path, is_male=False):
                     return os.path.join(root, file).replace("\\", "/")
     return None
 
-def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transparent_background=False):
+def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transparent_background=False, is_selfie=False):
     subfolders = []
     start_index = (page - 1) * INDEX_PER_PAGE
     end_index = start_index + INDEX_PER_PAGE
@@ -79,6 +82,12 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
             if is_transparent_background and TRANSPARENT_BACKGROUND_FOLDER_PREFIX not in subfolder_path:
                 continue
 
+            if is_selfie == False:
+                if any(x in subfolder_path for x in [SELFIE_FOLDER_PREFIX]):
+                    continue
+            if is_selfie and SELFIE_FOLDER_PREFIX not in subfolder_path:
+                continue
+
             if is_sample:
                 first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER, is_male)
             else:
@@ -99,9 +108,16 @@ def index():
     is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
 
     # URLのパラメータから is_transparent を取得
-    is_transparent_background_param = request.args.get('is_transparent', 'false')
+    is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     is_transparent_background = False
-    is_transparent_param = ""
+    is_transparent_background_set_param = ""
+
+    # URLのパラメータから is_selfie を取得
+    is_selfie_get_param = request.args.get('is_selfie', 'false')
+    is_selfie = False
+    is_selfie_set_param = ""
+
+    print("request.args: " + str(request.args))
    
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
@@ -113,20 +129,25 @@ def index():
         add_param = "?Q=866Tvdnm9f1iuWn6opQZ"
 
     # is_transparent パラメータが"true"の場合、Trueをセット
-    if is_transparent_background_param.lower() == 'true':
+    if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
-        is_transparent_param = "&is_transparent=true"
+        is_transparent_background_set_param = "&is_transparent=true"
+
+    # is_selfie パラメータが"true"の場合、Trueをセット
+    if is_selfie_get_param.lower() == 'true':
+        is_selfie = True
+        is_selfie_set_param = "&is_selfie=true"
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
 
     # サブフォルダのリストを取得
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, is_sample, False, is_transparent_background)
+    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, is_sample, False, is_transparent_background, is_selfie)
 
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=is_transparent_background, is_transparent_param=is_transparent_param)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
 
 @app.route('/male/')
 def index_male():
@@ -134,9 +155,14 @@ def index_male():
     is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
 
     # URLのパラメータから is_transparent を取得
-    is_transparent_background_param = request.args.get('is_transparent', 'false')
+    is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     is_transparent_background = False
-    is_transparent_param = ""
+    is_transparent_background_set_param = ""
+
+    # URLのパラメータから is_selfie を取得
+    is_selfie_get_param = request.args.get('is_selfie', 'false')
+    is_selfie = False
+    is_selfie_set_param = ""
 
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
@@ -148,20 +174,25 @@ def index_male():
         add_param = "?Q=866Tvdnm9f1iuWn6opQZ"
 
     # is_transparent パラメータが"true"の場合、Trueをセット
-    if is_transparent_background_param.lower() == 'true':
+    if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
-        is_transparent_param = "&is_transparent=true"
+        is_transparent_background_set_param = "&is_transparent=true"
+    
+    # is_selfie パラメータが"true"の場合、Trueをセット
+    if is_selfie_get_param.lower() == 'true':
+        is_selfie = True
+        is_selfie_set_param = "&is_selfie=true"
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
 
     # サブフォルダのリストを取得
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, is_sample, True, is_transparent_background)
+    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, is_sample, True, is_transparent_background, is_selfie)
 
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=True, is_transparent_background=is_transparent_background, is_transparent_param=is_transparent_param)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=True, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
 
 @app.route('/subfolders/<subfolder_name>/')
 def subfolder_images(subfolder_name):
@@ -172,6 +203,7 @@ def subfolder_images(subfolder_name):
     is_male_get_param = request.args.get('is_male', 'false')
     is_male = False
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
+    is_selfie_get_param = request.args.get('is_selfie', 'false')
     page = request.args.get('page', 1)
     
     # is_sampleパラメータが"false"の場合、Falseをセット
@@ -200,6 +232,12 @@ def subfolder_images(subfolder_name):
     else:
         add_param = add_param + "&is_transparent=False"
 
+    # is_selfie パラメータが"true"の場合、Trueをセット
+    if is_selfie_get_param.lower() == 'true':
+        add_param = add_param + "&is_selfie=True"
+    else:
+        add_param = add_param + "&is_selfie=False"
+
     # サブフォルダ内の画像ファイルの一覧を取得
     image_files = [f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
 
@@ -208,7 +246,7 @@ def subfolder_images(subfolder_name):
 @app.route('/images/<path:image_file>/')
 def get_image(image_file):
 
-    # URLのパラメータからis_sampleを取得
+    # URLのパラメータからis_sampleを取得12qwASZX!
     is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
     
     # is_sampleパラメータが"false"の場合、Falseをセット
