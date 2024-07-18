@@ -28,7 +28,7 @@ TRANSPARENT_BACKGROUND_FOLDER_PREFIX = "-transparent"
 SELFIE_FOLDER_PREFIX = "-selfie"
 
 # 1ページ当たりの表示件数
-INDEX_PER_PAGE = 20
+INDEX_PER_PAGE = 12
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
@@ -260,6 +260,11 @@ def get_image(image_file):
 
     # 原寸大の画像を表示
     return send_from_directory(IMAGE_FOLDER, image_file)
+
+@app.route('/bootstrap/')
+def index_bootstrap():
+
+    return render_template('bootstrap.html')
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
