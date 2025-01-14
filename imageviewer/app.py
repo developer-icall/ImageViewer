@@ -105,7 +105,7 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
 @app.route('/')
 def index():
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -152,7 +152,7 @@ def index():
 @app.route('/male/')
 def index_male():
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -199,7 +199,7 @@ def subfolder_images(subfolder_name):
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
     is_male_get_param = request.args.get('is_male', 'false')
     is_male = False
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -247,7 +247,7 @@ def subfolder_images(subfolder_name):
 def get_image(image_file):
 
     # URLのパラメータからis_sampleを取得12qwASZX!
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'true')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
     
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
