@@ -153,6 +153,11 @@
                 <p class="lead text-body-secondary">AIで生成されたハイクオリティな写真ギャラリーへようこそ。</p>
                 <p class="lead text-body-secondary">写真をクリックすると似た人物の写真が12種類閲覧できます。</p>
                 <p>
+                {% if is_background %}
+                    <a class="btn btn-primary my-2" href="/{{add_param}}">人物</a>
+                {% else %}
+                    <a class="btn btn-primary my-2" href="/background/{{add_param}}">背景</a>
+                {% endif %}
                 {% if is_male %}
                     <a class="btn btn-primary my-2" href="/{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}">女性</a>
                 {% else %}
