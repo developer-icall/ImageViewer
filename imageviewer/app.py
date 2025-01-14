@@ -293,6 +293,10 @@ def subfolder_images(subfolder_name):
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male)
 
+@app.route('/user_policy/')
+def index_user_policy():
+    return render_template('user_policy.html')
+
 @app.route('/images/<path:image_file>/')
 def get_image(image_file):
 
