@@ -55,67 +55,8 @@
             <a class="history-back-button" href="#" onclick="window.history.back(); return false;">Back</a>
 
             <section class="container">
-                <!--
-                <h1>
-                    画像をダウンロード
-                </h1>
-                -->
-                <div class="card w-75 mx-auto shadow-sm" style="max-width: 316px;">
-                    {% set sample_image_file_without_suffix = image_files[0].replace("-thumbnail", "") %}
-
-                    {% if is_sample %}
-                        <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                    {% else %}
-                        <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                    {% endif %}
-                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_files[0] }}/{{ add_param }}" alt="{{ image_files[0] }}" width="100%">
-                        </a>
-
-                    <div class="card-body">
-                        {% if is_sample %}
-                        <a download id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                        {% else %}
-                        <a download id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                        {% endif %}
-                            ダウンロード
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-
-            <section class="container">
-                <h2>
-                    似ている画像
-                </h2>
-                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
-                    {% for image_file in image_files %}
-                        {% if loop.index > 1 %} {# 最初の画像をスキップ #}
-                            <div class="col">
-                                <div class="card shadow-sm">
-                                    {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
-
-                                    {% if is_sample %}
-                                        <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                                    {% else %}
-                                        <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                                    {% endif %}
-                                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%">
-                                        </a>
-                                    <div class="card-body">
-                                        {% if is_sample %}
-                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                                        {% else %}
-                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                                        {% endif %}
-                                            ダウンロード
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                <h1>利用規約</h1>
+                <p>整備中</p>
             </section>
         </main>
 

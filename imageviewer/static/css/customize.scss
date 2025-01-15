@@ -1,0 +1,400 @@
+//-------------------------------------------------------
+// 定数
+//-------------------------------------------------------
+$COLOR_DARK: #212529;
+$SP_WIDTH: 1200px;//bootstrapのxlサイズの値
+$PC_WIDTH: $SP_WIDTH + 1px;//上記超えたらPCデザインにする
+$MAX_WIDTH: 1320px;//画面の最大幅 bootstrap準拠
+
+//-------------------------------------------------------
+// mixin
+//-------------------------------------------------------
+//アイコン使用時に併記
+@mixin icon_font($code) {
+    content: $code;
+	font-family: 'Font Awesome 6 Free';
+	font-weight: 700;
+}
+
+//-------------------------------------------------------
+// style
+//-------------------------------------------------------
+html {
+	font-size: 16px;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Noto Sans JP', 'sans-serif';
+	font-weight: 400;
+	font-size: 0.9rem;
+	word-break: break-all;
+    color: #101010;
+    background: #fafafa;
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        font-size: 1rem;
+    }
+
+    main{
+        flex: 1;
+        min-height: max-content;
+    }
+}
+
+ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+p{
+    margin: 0;
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+    &:hover{
+        opacity: 0.6;
+    }
+    //外部リンクの場合、クラスを付与するとアイコンがつく
+    &.external-link{
+        &:after{
+            @include icon_font('\f08e');
+            margin-left: 4px;
+            font-size: 0.75em;
+            opacity: 0.5;
+            vertical-align: middle;
+        }
+    }
+}
+
+h1{
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 2px;
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        margin-bottom: 40px;
+    }
+}
+
+h2{
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    font-weight: 400;
+    text-align: center;
+    color: #595959;
+    letter-spacing: 2px;
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        margin-bottom: 40px;
+    }
+}
+
+section{
+    padding-bottom: 40px;
+    &:first-of-type{
+        padding-top: 40px;
+    }
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        padding-bottom: 60px;
+        &:first-of-type{
+            padding-top: 60px;
+        }
+    }
+}
+
+header{
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    color: #FFFFFF;
+    background-color: $COLOR_DARK;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    z-index: 1000;
+
+    .header-logo{
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        font-weight: 200;
+        color: inherit !important;
+        letter-spacing: 2px;
+        //PC
+        @media only screen and (min-width: $PC_WIDTH) {
+            font-size: 1.3rem;
+        }
+
+        svg{
+            width: 1.5rem;
+            height: 1.5rem;
+            margin: 2px 4px 0 2px;
+            color: #4eb3ff;
+        }
+    }
+    .header-catch-copy{
+        display: block;
+        font-size: 0.6rem;
+        font-weight: 600;
+        color: #999999;
+    }
+
+    .header-sp-menu,
+    .header-sp-menu-button{
+        color: inherit !important;
+        //PC
+        @media only screen and (min-width: $PC_WIDTH) {
+            display: none !important;
+        }
+    }
+    .header-sp-menu{
+        >ul{
+            padding: 0 0 8px;
+            >li{
+                padding: 20px 0;
+                text-align: center;
+                letter-spacing: 2px;
+
+                &:not(:last-child){
+                    border-bottom: 1px solid #333333;
+                }
+
+                >a{
+                    display: block;
+                }
+            }
+        }
+    }
+
+    .header-pc-menu{
+        //SP
+        @media only screen and (max-width: $SP_WIDTH) {
+            display: none !important;
+        }
+        >ul{
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            >li{
+                margin-left: 40px;
+            }
+        }
+    }
+}
+
+footer{
+    padding: 32px 0;
+    color: #FFFFFF;
+    background-color: $COLOR_DARK;
+
+    >ul{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        //SP
+        @media only screen and (max-width: $SP_WIDTH) {
+            font-size: 0.8rem;
+        }
+
+        >li{
+            margin: 0 40px;
+        }
+    }
+
+    .footer-copyright{
+        margin-top: 60px;
+        font-size: 0.6rem;
+        text-align: center;
+        opacity: 0.2;
+
+        .footer-copyright-logo{
+            display: block;
+            width: 100px;
+            margin: 0 auto 8px;
+
+            >img{
+                width: 100%;
+            }
+        }
+    }
+}
+
+//最上部スクロールボタン
+.to-top-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    color: #FFFFFF;
+    background-color: #333333;
+    z-index: 1001;
+
+    &:after{
+        @include icon_font('\f102');
+    }
+
+    &:hover{
+        opacity: 1;
+        background-color: #5d5d5d;
+    }
+}
+
+//前のページへ戻るボタン
+.history-back-button{
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    margin-top: 12px;
+    border-radius: 0 8px 8px 0;
+    box-sizing: border-box;
+    padding: 4px 12px 4px calc((100vw - #{$MAX_WIDTH}) * 0.5);
+    text-align: right;
+    color: #FFFFFF;
+    background-color: #333333;
+    z-index: 1001;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+
+    &:before{
+        @include icon_font('\f0d9');
+        margin: 0 4px 0 12px;
+    }
+
+    &:hover{
+        opacity: 1;
+        background-color: #5d5d5d;
+    }
+}
+
+// ページネーション
+.pagination {
+    margin: 40px auto;
+    justify-content: center;
+    &:last-child{
+        margin-bottom: 0;
+    }
+
+    .page-item{
+        &.active{
+            .page-link{
+                color: #FFFFFF;
+                background-color: $COLOR_DARK;
+            }
+        }
+        .page-link{
+            color: $COLOR_DARK;
+            &:hover{
+                color: #333333;
+            }
+        }
+    }
+}
+
+// 一覧切り替え用のUI
+.list-switcher{
+    margin-bottom: 40px;
+    color: #FFFFFF;
+    background: #333333;
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        margin-bottom: 60px;
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+    }
+
+    .list{
+        margin: -20px 0;
+
+        //PC
+        @media only screen and (min-width: $PC_WIDTH) {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .headline{
+            color: #8d8d8d;
+            font-size: 0.8rem;
+            font-weight: 200;
+            text-align: center;
+            letter-spacing: 6px;
+            //PC
+            @media only screen and (min-width: $PC_WIDTH) {
+                margin-right: 40px;
+            }
+        }
+
+        dl{
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 0;
+            //PC
+            @media only screen and (min-width: $PC_WIDTH) {
+                margin-right: 40px;
+            }
+
+            dt,
+            dd{
+                margin: 0;
+                padding: 0;
+            }
+            dt{
+                margin-right: 16px;
+                font-weight: inherit;
+                //SP
+                @media only screen and (max-width: $SP_WIDTH) {
+                    flex: 0.3;
+                }
+            }
+            dd{
+                display: flex;
+                align-items: center;
+                //SP
+                @media only screen and (max-width: $SP_WIDTH) {
+                    flex: 0.7;
+                }
+
+                >a{
+                    display: block;
+                    padding: 4px 16px;
+                    font-weight: 600;
+                    color: #333333;
+                    background: #fafafa;
+                    //SP
+                    @media only screen and (max-width: $SP_WIDTH) {
+                        width: 50%;
+                        text-align: center;
+                    }
+
+                    &:first-child{
+                        border-radius: 4px 0 0 4px;
+                    }
+                    &:last-child{
+                        border-radius: 0 4px 4px 0;
+                    }
+
+                    &.selected{
+                        color: #ffffff;
+                        background: #4eb3ff;
+                        cursor: none;
+                        pointer-events: none;
+                    }
+                }
+            }
+        }
+    }
+}
