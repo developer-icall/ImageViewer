@@ -25,7 +25,7 @@
                             ai-gaz<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" aria-hidden="true" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>u.com
                         </a>
                         <span class="header-catch-copy">
-                            ＡＩ生成画像を無料で公開　商用利用もOK！
+                            AI生成画像を無料で公開　商用利用もOK！
                         </span>
                     </div>
 
@@ -51,54 +51,71 @@
         </header>
 
         <main>
-            <section class="text-center container">
-                <div class="row py-lg-2">
-                    <div class="col-lg-6 col-md-8 mx-auto">
-                        <h1 class="fw-light">AI Photo Gallery</h1>
-                        <p class="lead text-body-secondary">Photo ID: {{ subfolder_name }}</p>
+            <!-- 元のページに戻るリンク -->
+            <a class="history-back-button" href="#" onclick="window.history.back(); return false;">Back</a>
+
+            <section class="container">
+                <!--
+                <h1>
+                    画像をダウンロード
+                </h1>
+                -->
+                <div class="card w-75 mx-auto shadow-sm" style="max-width: 316px;">
+                    {% set sample_image_file_without_suffix = image_files[0].replace("-thumbnail", "") %}
+
+                    {% if is_sample %}
+                        <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
+                    {% else %}
+                        <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
+                    {% endif %}
+                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_files[0] }}/{{ add_param }}" alt="{{ image_files[0] }}" width="100%">
+                        </a>
+
+                    <div class="card-body">
+                        {% if is_sample %}
+                        <a download id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
+                        {% else %}
+                        <a download id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
+                        {% endif %}
+                            ダウンロード
+                        </a>
                     </div>
                 </div>
             </section>
 
-            <!-- 元のページに戻るリンク -->
-            <section class="text-center container">
-                <a class="btn btn-primary my-2 align-items-center text-center" href="#" onclick="window.history.back(); return false;">Back to Main Page</a>
-            </section>
 
-            <div class="album py-5">
-                <div class="container">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
-                        {% for image_file in image_files %}
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
+            <section class="container">
+                <h2>
+                    似ている画像
+                </h2>
+                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
+                    {% for image_file in image_files %}
+                        {% if loop.index > 1 %} {# 最初の画像をスキップ #}
+                            <div class="col">
+                                <div class="card shadow-sm">
+                                    {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
 
-                                {% if is_sample %}
-                                    <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                                {% else %}
-                                    <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                                {% endif %}
-                                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%" height="100%">
-                                    </a>
-                                <div class="card-body">
                                     {% if is_sample %}
-                                    <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
+                                        <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
                                     {% else %}
-                                    <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
+                                        <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
                                     {% endif %}
-                                        ダウンロード
-                                    </a>
+                                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%">
+                                        </a>
+                                    <div class="card-body">
+                                        {% if is_sample %}
+                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
+                                        {% else %}
+                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
+                                        {% endif %}
+                                            ダウンロード
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {% endfor %}
-                    </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
-            </div>
-
-            <!-- 元のページに戻るリンク -->
-            <section class="text-center container">
-                <a class="btn btn-primary my-2 align-items-center text-center" href="#" onclick="window.history.back(); return false;">Back to Main Page</a>
             </section>
         </main>
 

@@ -8,9 +8,15 @@ body {
   min-height: 100vh;
   font-family: "Noto Sans JP", "sans-serif";
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 0.9rem;
   word-break: break-all;
+  color: #101010;
   background: #fafafa;
+}
+@media only screen and (min-width: 1201px) {
+  body {
+    font-size: 1rem;
+  }
 }
 body main {
   flex: 1;
@@ -24,10 +30,14 @@ ul {
   list-style: none;
 }
 
+p {
+  margin: 0;
+}
+
 a {
   color: inherit;
   text-decoration: none;
-  transition: opacity 0.3s;
+  transition: all 0.3s;
 }
 a:hover {
   opacity: 0.6;
@@ -43,9 +53,45 @@ a.external-link:after {
 }
 
 h1 {
-  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
   font-weight: 700;
-  margin-bottom: 16px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+@media only screen and (min-width: 1201px) {
+  h1 {
+    margin-bottom: 40px;
+  }
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  font-weight: 400;
+  text-align: center;
+  color: #595959;
+  letter-spacing: 2px;
+}
+@media only screen and (min-width: 1201px) {
+  h2 {
+    margin-bottom: 40px;
+  }
+}
+
+section {
+  padding-bottom: 40px;
+}
+section:first-of-type {
+  padding-top: 40px;
+}
+@media only screen and (min-width: 1201px) {
+  section {
+    padding-bottom: 60px;
+  }
+  section:first-of-type {
+    padding-top: 60px;
+  }
 }
 
 header {
@@ -61,10 +107,15 @@ header {
 header .header-logo {
   display: flex;
   align-items: center;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 200;
   color: inherit !important;
   letter-spacing: 2px;
+}
+@media only screen and (min-width: 1201px) {
+  header .header-logo {
+    font-size: 1.3rem;
+  }
 }
 header .header-logo svg {
   width: 1.5rem;
@@ -74,7 +125,6 @@ header .header-logo svg {
 }
 header .header-catch-copy {
   display: block;
-  margin-top: 4px;
   font-size: 0.6rem;
   font-weight: 600;
   color: #999999;
@@ -90,7 +140,7 @@ header .header-sp-menu-button {
   }
 }
 header .header-sp-menu > ul {
-  padding: 20px 0;
+  padding: 0 0 8px;
 }
 header .header-sp-menu > ul > li {
   padding: 20px 0;
@@ -127,18 +177,23 @@ footer > ul {
   justify-content: center;
   align-items: center;
 }
+@media only screen and (max-width: 1200px) {
+  footer > ul {
+    font-size: 0.8rem;
+  }
+}
 footer > ul > li {
   margin: 0 40px;
 }
 footer .footer-copyright {
-  margin-top: 32px;
+  margin-top: 60px;
   font-size: 0.6rem;
   text-align: center;
   opacity: 0.2;
 }
 footer .footer-copyright .footer-copyright-logo {
   display: block;
-  width: 160px;
+  width: 100px;
   margin: 0 auto 8px;
 }
 footer .footer-copyright .footer-copyright-logo > img {
@@ -156,7 +211,7 @@ footer .footer-copyright .footer-copyright-logo > img {
   height: 60px;
   border-radius: 50%;
   color: #FFFFFF;
-  background-color: #212529;
+  background-color: #333333;
   z-index: 1001;
 }
 .to-top-button:after {
@@ -164,11 +219,146 @@ footer .footer-copyright .footer-copyright-logo > img {
   font-family: "Font Awesome 6 Free";
   font-weight: 700;
 }
+.to-top-button:hover {
+  opacity: 1;
+  background-color: #5d5d5d;
+}
 
-section {
-  padding: 40px;
+.history-back-button {
+  display: block;
+  width: -moz-max-content;
+  width: max-content;
+  max-width: 100%;
+  margin-top: 12px;
+  border-radius: 0 8px 8px 0;
+  box-sizing: border-box;
+  padding: 4px 12px 4px calc((100vw - 1320px) * 0.5);
+  text-align: right;
+  color: #FFFFFF;
+  background-color: #333333;
+  z-index: 1001;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+}
+.history-back-button:before {
+  content: "\f0d9";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 700;
+  margin: 0 4px 0 12px;
+}
+.history-back-button:hover {
+  opacity: 1;
+  background-color: #5d5d5d;
 }
 
 .pagination {
+  margin: 40px auto;
   justify-content: center;
+}
+.pagination:last-child {
+  margin-bottom: 0;
+}
+.pagination .page-item.active .page-link {
+  color: #FFFFFF;
+  background-color: #212529;
+}
+.pagination .page-item .page-link {
+  color: #212529;
+}
+.pagination .page-item .page-link:hover {
+  color: #333333;
+}
+
+.list-switcher {
+  margin-bottom: 40px;
+  color: #FFFFFF;
+  background: #333333;
+}
+@media only screen and (min-width: 1201px) {
+  .list-switcher {
+    margin-bottom: 60px;
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+}
+.list-switcher .list {
+  margin: -20px 0;
+}
+@media only screen and (min-width: 1201px) {
+  .list-switcher .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}
+.list-switcher .list .headline {
+  color: #8d8d8d;
+  font-size: 0.8rem;
+  font-weight: 200;
+  text-align: center;
+  letter-spacing: 6px;
+}
+@media only screen and (min-width: 1201px) {
+  .list-switcher .list .headline {
+    margin-right: 40px;
+  }
+}
+.list-switcher .list dl {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  padding: 0;
+}
+@media only screen and (min-width: 1201px) {
+  .list-switcher .list dl {
+    margin-right: 40px;
+  }
+}
+.list-switcher .list dl dt,
+.list-switcher .list dl dd {
+  margin: 0;
+  padding: 0;
+}
+.list-switcher .list dl dt {
+  margin-right: 16px;
+  font-weight: inherit;
+}
+@media only screen and (max-width: 1200px) {
+  .list-switcher .list dl dt {
+    flex: 0.3;
+  }
+}
+.list-switcher .list dl dd {
+  display: flex;
+  align-items: center;
+}
+@media only screen and (max-width: 1200px) {
+  .list-switcher .list dl dd {
+    flex: 0.7;
+  }
+}
+.list-switcher .list dl dd > a {
+  display: block;
+  padding: 4px 16px;
+  font-weight: 600;
+  color: #333333;
+  background: #fafafa;
+}
+@media only screen and (max-width: 1200px) {
+  .list-switcher .list dl dd > a {
+    width: 50%;
+    text-align: center;
+  }
+}
+.list-switcher .list dl dd > a:first-child {
+  border-radius: 4px 0 0 4px;
+}
+.list-switcher .list dl dd > a:last-child {
+  border-radius: 0 4px 4px 0;
+}
+.list-switcher .list dl dd > a.selected {
+  color: #ffffff;
+  background: #4eb3ff;
+  cursor: none;
+  pointer-events: none;
 }
