@@ -1,0 +1,207 @@
+//-------------------------------------------------------
+// 定数
+//-------------------------------------------------------
+$COLOR_DARK: #212529;
+$SP_WIDTH: 1200px;//bootstrapのxlサイズの値
+$PC_WIDTH: $SP_WIDTH + 1px;//上記超えたらPCデザインにする
+
+//-------------------------------------------------------
+// mixin
+//-------------------------------------------------------
+//アイコン使用時に併記
+@mixin icon_font($code) {
+    content: $code;
+	font-family: 'Font Awesome 6 Free';
+	font-weight: 700;
+}
+
+//-------------------------------------------------------
+// style
+//-------------------------------------------------------
+html {
+	font-size: 16px;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    font-family: 'Noto Sans JP', 'sans-serif';
+	font-weight: 400;
+	font-size: 1rem;
+	word-break: break-all;
+    background: #fafafa;
+
+    main{
+        flex: 1;
+        min-height: max-content;
+    }
+}
+
+ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s;
+    &:hover{
+        opacity: 0.6;
+    }
+    //外部リンクの場合、クラスを付与するとアイコンがつく
+    &.external-link{
+        &:after{
+            @include icon_font('\f08e');
+            margin-left: 4px;
+            font-size: 0.75em;
+            opacity: 0.5;
+            vertical-align: middle;
+        }
+    }
+}
+
+h1{
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+header{
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    color: #FFFFFF;
+    background-color: $COLOR_DARK;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    z-index: 1000;
+
+    .header-logo{
+        display: flex;
+        align-items: center;
+        font-size: 1.3rem;
+        font-weight: 200;
+        color: inherit !important;
+        letter-spacing: 2px;
+
+        svg{
+            width: 1.5rem;
+            height: 1.5rem;
+            margin: 2px 4px 0 2px;
+            color: #4eb3ff;
+        }
+    }
+    .header-catch-copy{
+        display: block;
+        margin-top: 4px;
+        font-size: 0.6rem;
+        font-weight: 600;
+        color: #999999;
+    }
+
+    .header-sp-menu,
+    .header-sp-menu-button{
+        color: inherit !important;
+        //PC
+        @media only screen and (min-width: $PC_WIDTH) {
+            display: none !important;
+        }
+    }
+    .header-sp-menu{
+        >ul{
+            padding: 20px 0;
+            >li{
+                padding: 20px 0;
+                text-align: center;
+                letter-spacing: 2px;
+
+                &:not(:last-child){
+                    border-bottom: 1px solid #333333;
+                }
+
+                >a{
+                    display: block;
+                }
+            }
+        }
+    }
+
+    .header-pc-menu{
+        //SP
+        @media only screen and (max-width: $SP_WIDTH) {
+            display: none !important;
+        }
+        >ul{
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            >li{
+                margin-left: 40px;
+            }
+        }
+    }
+}
+
+footer{
+    padding: 32px 0;
+    color: #FFFFFF;
+    background-color: $COLOR_DARK;
+
+    >ul{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        >li{
+            margin: 0 40px;
+        }
+    }
+
+    .footer-copyright{
+        margin-top: 32px;
+        font-size: 0.6rem;
+        text-align: center;
+        opacity: 0.2;
+
+        .footer-copyright-logo{
+            display: block;
+            width: 160px;
+            margin: 0 auto 8px;
+            >img{
+                width: 100%;
+            }
+        }
+    }
+}
+
+//最上部スクロールボタン
+.to-top-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    color: #FFFFFF;
+    background-color: $COLOR_DARK;
+    z-index: 1001;
+
+    &:after{
+        @include icon_font('\f102');
+    }
+}
+
+// セクション
+section{
+    padding: 40px;
+}
+
+// ページネーション
+.pagination {
+    justify-content: center;
+}
