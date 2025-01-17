@@ -28,7 +28,7 @@ body {
     min-height: 100vh;
     font-family: 'Noto Sans JP', 'sans-serif';
 	font-weight: 400;
-	font-size: 0.9rem;
+	font-size: 0.8rem;
 	word-break: break-all;
     color: #101010;
     background: #fafafa;
@@ -192,6 +192,7 @@ header{
 
 footer{
     padding: 32px 0;
+    font-size: 0.8rem;
     color: #FFFFFF;
     background-color: $COLOR_DARK;
 
@@ -199,11 +200,6 @@ footer{
         display: flex;
         justify-content: center;
         align-items: center;
-        //SP
-        @media only screen and (max-width: $SP_WIDTH) {
-            font-size: 0.8rem;
-        }
-
         >li{
             margin: 0 40px;
         }
@@ -290,8 +286,12 @@ footer{
     .page-item{
         &.active{
             .page-link{
-                color: #FFFFFF;
+                border-color: $COLOR_DARK;
                 background-color: $COLOR_DARK;
+                color: #FFFFFF;
+                &:hover{
+                    color: #FFFFFF;
+                }
             }
         }
         .page-link{
@@ -311,18 +311,18 @@ footer{
     //PC
     @media only screen and (min-width: $PC_WIDTH) {
         margin-bottom: 60px;
-        padding-top: 20px !important;
-        padding-bottom: 20px !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
     }
 
     .list{
         margin: -20px 0;
-
         //PC
         @media only screen and (min-width: $PC_WIDTH) {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
+            margin: -12px 0;
         }
 
         .headline{
@@ -333,7 +333,7 @@ footer{
             letter-spacing: 6px;
             //PC
             @media only screen and (min-width: $PC_WIDTH) {
-                margin-right: 40px;
+                margin-right: 32px;
             }
         }
 
@@ -342,9 +342,10 @@ footer{
             align-items: center;
             margin: 20px 0;
             padding: 0;
+	        font-size: 0.8rem;
             //PC
             @media only screen and (min-width: $PC_WIDTH) {
-                margin-right: 40px;
+                margin: 12px 32px 12px 0;
             }
 
             dt,

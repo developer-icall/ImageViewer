@@ -8,7 +8,7 @@ body {
   min-height: 100vh;
   font-family: "Noto Sans JP", "sans-serif";
   font-weight: 400;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   word-break: break-all;
   color: #101010;
   background: #fafafa;
@@ -169,6 +169,7 @@ header .header-pc-menu > ul > li {
 
 footer {
   padding: 32px 0;
+  font-size: 0.8rem;
   color: #FFFFFF;
   background-color: #212529;
 }
@@ -176,11 +177,6 @@ footer > ul {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-@media only screen and (max-width: 1200px) {
-  footer > ul {
-    font-size: 0.8rem;
-  }
 }
 footer > ul > li {
   margin: 0 40px;
@@ -259,8 +255,12 @@ footer .footer-copyright .footer-copyright-logo > img {
   margin-bottom: 0;
 }
 .pagination .page-item.active .page-link {
-  color: #FFFFFF;
+  border-color: #212529;
   background-color: #212529;
+  color: #FFFFFF;
+}
+.pagination .page-item.active .page-link:hover {
+  color: #FFFFFF;
 }
 .pagination .page-item .page-link {
   color: #212529;
@@ -277,8 +277,8 @@ footer .footer-copyright .footer-copyright-logo > img {
 @media only screen and (min-width: 1201px) {
   .list-switcher {
     margin-bottom: 60px;
-    padding-top: 20px !important;
-    padding-bottom: 20px !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
   }
 }
 .list-switcher .list {
@@ -289,6 +289,7 @@ footer .footer-copyright .footer-copyright-logo > img {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    margin: -12px 0;
   }
 }
 .list-switcher .list .headline {
@@ -300,7 +301,7 @@ footer .footer-copyright .footer-copyright-logo > img {
 }
 @media only screen and (min-width: 1201px) {
   .list-switcher .list .headline {
-    margin-right: 40px;
+    margin-right: 32px;
   }
 }
 .list-switcher .list dl {
@@ -308,10 +309,11 @@ footer .footer-copyright .footer-copyright-logo > img {
   align-items: center;
   margin: 20px 0;
   padding: 0;
+  font-size: 0.8rem;
 }
 @media only screen and (min-width: 1201px) {
   .list-switcher .list dl {
-    margin-right: 40px;
+    margin: 12px 32px 12px 0;
   }
 }
 .list-switcher .list dl dt,

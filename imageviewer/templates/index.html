@@ -126,8 +126,8 @@
 
                 <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
                     {% for subfolder_name, first_image in subfolder_images %}
-                        <div class="col shadow-sm">
-                            <a href="/subfolders/{{ subfolder_name }}/{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page }}&is_male={{ is_male }}">
+                        <div class="col">
+                            <a class="d-block shadow-sm" href="/subfolders/{{ subfolder_name }}/{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page }}&is_male={{ is_male }}">
                                 <img src="{{ first_image }}" alt="{{ subfolder_name }}" width="100%">
                             </a>
                         </div>
