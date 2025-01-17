@@ -56,7 +56,7 @@ p{
 a{
     color: inherit;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: all 0.2s;
     &:hover{
         opacity: 0.6;
     }
@@ -112,6 +112,7 @@ section{
 }
 
 .btn{
+    transition: all 0.2s;
 	font-size: 0.8rem;
     //PC
     @media only screen and (min-width: $PC_WIDTH) {
@@ -258,10 +259,12 @@ footer{
 
 //前のページへ戻るボタン
 .history-back-button{
+    position: fixed;
+    top: 76px;
+    left: 0;
     display: block;
     width: max-content;
     max-width: 100%;
-    margin-top: 12px;
     border-radius: 0 8px 8px 0;
     box-sizing: border-box;
     padding: 4px 12px 4px calc((100vw - #{$MAX_WIDTH}) * 0.5);
