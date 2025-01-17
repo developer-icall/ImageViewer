@@ -60,7 +60,7 @@
                     画像をダウンロード
                 </h1>
                 -->
-                <div class="card w-75 mx-auto shadow-sm" style="max-width: 316px;">
+                <div class="card w-75 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
                     {% set sample_image_file_without_suffix = image_files[0].replace("-thumbnail", "") %}
 
                     {% if is_sample %}
@@ -92,7 +92,7 @@
                     {% for image_file in image_files %}
                         {% if loop.index > 1 %} {# 最初の画像をスキップ #}
                             <div class="col">
-                                <div class="card shadow-sm">
+                                <div class="card overflow-hidden shadow-sm">
                                     {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
 
                                     {% if is_sample %}
