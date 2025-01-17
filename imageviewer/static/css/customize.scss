@@ -28,7 +28,7 @@ body {
     min-height: 100vh;
     font-family: 'Noto Sans JP', 'sans-serif';
 	font-weight: 400;
-	font-size: 0.9rem;
+	font-size: 0.8rem;
 	word-break: break-all;
     color: #101010;
     background: #fafafa;
@@ -56,7 +56,7 @@ p{
 a{
     color: inherit;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: all 0.2s;
     &:hover{
         opacity: 0.6;
     }
@@ -72,15 +72,17 @@ a{
     }
 }
 
-h1{
-    margin-bottom: 20px;
-    font-size: 1.6rem;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 2px;
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        margin-bottom: 40px;
+body{
+    h1{
+        margin-bottom: 20px;
+        font-size: 1.6rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 2px;
+        //PC
+        @media only screen and (min-width: $PC_WIDTH) {
+            margin-bottom: 40px;
+        }
     }
 }
 
@@ -111,6 +113,15 @@ section{
     }
 }
 
+.btn{
+    transition: all 0.2s;
+	font-size: 0.8rem;
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        font-size: 1rem;
+    }
+}
+
 header{
     position: sticky;
     top: 0;
@@ -121,6 +132,12 @@ header{
     box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
     z-index: 1000;
 
+    h1{
+        margin: 0;
+        line-height: inherit;
+        color: inherit;
+        letter-spacing: 0;
+    }
     .header-logo{
         display: flex;
         align-items: center;
@@ -192,6 +209,7 @@ header{
 
 footer{
     padding: 32px 0;
+    font-size: 0.8rem;
     color: #FFFFFF;
     background-color: $COLOR_DARK;
 
@@ -199,11 +217,6 @@ footer{
         display: flex;
         justify-content: center;
         align-items: center;
-        //SP
-        @media only screen and (max-width: $SP_WIDTH) {
-            font-size: 0.8rem;
-        }
-
         >li{
             margin: 0 40px;
         }
@@ -254,10 +267,12 @@ footer{
 
 //前のページへ戻るボタン
 .history-back-button{
+    position: fixed;
+    top: 76px;
+    left: 0;
     display: block;
     width: max-content;
     max-width: 100%;
-    margin-top: 12px;
     border-radius: 0 8px 8px 0;
     box-sizing: border-box;
     padding: 4px 12px 4px calc((100vw - #{$MAX_WIDTH}) * 0.5);
@@ -290,14 +305,46 @@ footer{
     .page-item{
         &.active{
             .page-link{
-                color: #FFFFFF;
+                border-color: $COLOR_DARK;
                 background-color: $COLOR_DARK;
+                color: #FFFFFF;
+                &:hover{
+                    color: #FFFFFF;
+                }
             }
         }
         .page-link{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 36px;
+            height: 36px;
+            padding: 4px;
             color: $COLOR_DARK;
+            font-size: 0.8rem;
             &:hover{
                 color: #333333;
+                &:after{
+                    opacity: 0.75;
+                }
+            }
+            &:after{
+                margin-top: 2px;//若干上にずれて見えるので
+                font-size: 0.6rem;
+                color: #9d9d9d;
+                transition: all 0.2s;
+            }
+            &.first:after{
+                @include icon_font('\f100');
+            }
+            &.prev:after{
+                @include icon_font('\f104');
+            }
+            &.next:after{
+                @include icon_font('\f105');
+            }
+            &.last:after{
+                @include icon_font('\f101');
             }
         }
     }
@@ -311,18 +358,18 @@ footer{
     //PC
     @media only screen and (min-width: $PC_WIDTH) {
         margin-bottom: 60px;
-        padding-top: 20px !important;
-        padding-bottom: 20px !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
     }
 
     .list{
         margin: -20px 0;
-
         //PC
         @media only screen and (min-width: $PC_WIDTH) {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
+            margin: -12px 0;
         }
 
         .headline{
@@ -333,7 +380,7 @@ footer{
             letter-spacing: 6px;
             //PC
             @media only screen and (min-width: $PC_WIDTH) {
-                margin-right: 40px;
+                margin-right: 32px;
             }
         }
 
@@ -342,9 +389,10 @@ footer{
             align-items: center;
             margin: 20px 0;
             padding: 0;
+	        font-size: 0.8rem;
             //PC
             @media only screen and (min-width: $PC_WIDTH) {
-                margin-right: 40px;
+                margin: 12px 32px 12px 0;
             }
 
             dt,

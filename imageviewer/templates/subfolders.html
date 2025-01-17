@@ -1,34 +1,90 @@
 <!doctype html>
+
+{% set category_name = "" %}
+{% if is_background %}
+    {% set category_name = "背景" %}
+{% else %}
+    {% set category_name = "人物" %}
+{% endif %}
+
+{% set gender_name = "" %}
+{% set option_name = "" %}
+{% if not is_background %}
+    {% if is_male %}
+        {% set gender_name = "男性 " %}
+    {% else %}
+        {% set gender_name = "女性 " %}
+    {% endif %}
+    {% if is_transparent_background %}
+        {% set option_name = option_name ~ "/ 背景透過 " %}
+    {% endif %}
+    {% if is_selfie %}
+        {% set option_name = option_name ~ "/ セルフィー " %}
+    {% endif %}
+{% endif %}
+
 <html lang="en" data-bs-theme="auto">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Hugo 0.112.5">
-        <title>ai-gazou.com</title>
+        <meta name="author" content="AI生成人物画像素材ダウンロードサイト「ai-gazou.com」 | 登録不要ですぐに使える！商用利用可能なAI生成人物画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta name="publisher" content="ai-gazou.com">
+        <meta name="description" content="登録不要ですぐに使える！商用利用可能なAI生成人物画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta name="robots" content="max-image-preview:large">
+        <meta property="og:title" content="登録不要ですぐに使える！商用利用可能なAI生成人物画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://ai-gazou.com/">
+        <meta property="og:image" content="https://ai-gazou.com/images/20231212-19-1961075593/00009-1961075593.png">
+        <meta property="og:description" content="登録不要ですぐに使える！商用利用可能なAI生成人物画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta property="og:site_name" content="ai-gazou.com">
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "ai-gazou.com",
+                "alternateName": "AI生成人物画像素材ダウンロードサイト",
+                "url": "https://ai-gazou.com/",
+                "description": "登録不要ですぐに使える！商用利用可能なAI生成人物画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」",
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "ai-gazou.com"
+                },
+                "image": "https://ai-gazou.com/images/20231212-19-1961075593/00009-1961075593.png"
+            }
+        </script>
+        <title>{{ gender_name }}{{ option_name }}高クオリティAI生成{{ category_name }}画像 | 登録不要ですぐに使える！商用利用可能なAI生成人物画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」</title>
         <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/album/">
         <link href="/static/css/bootstrap.min.css" rel="stylesheet">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-        <link href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" rel="stylesheet">
+        <link href="/static/css/webfonts_css/all.min.css" rel="stylesheet">
         <link href="/static/css/customize.css" rel="stylesheet">
         <script src="/static/js/util.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-P56QKXK1G8"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-P56QKXK1G8');
+        </script>
     </head>
     <body>
         <header>
             <div class="navbar navbar-dark">
                 <div class="container">
                     <div class="navbar-brand">
-                        <a href="/" class="header-logo">
-                            ai-gaz<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" aria-hidden="true" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>u.com
-                        </a>
-                        <span class="header-catch-copy">
-                            AI生成画像を無料で公開　商用利用もOK！
-                        </span>
+                        <h1 id="site-title" itemprop="name">
+                            <a href="/" class="header-logo">
+                                ai-gaz<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" aria-hidden="true" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>u.com
+                            </a>
+                            <span class="header-catch-copy">
+                                AI生成画像を無料で公開　商用利用もOK！
+                            </span>
+                        </h1>
                     </div>
-
                     <button class="header-sp-menu-button navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -55,34 +111,20 @@
             <a class="history-back-button" href="#" onclick="window.history.back(); return false;">Back</a>
 
             <section class="container">
-                <!--
-                <h1>
-                    画像をダウンロード
-                </h1>
-                -->
-                <div class="card w-75 mx-auto shadow-sm" style="max-width: 316px;">
+                <div class="card w-75 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
                     {% set sample_image_file_without_suffix = image_files[0].replace("-thumbnail", "") %}
-
-                    {% if is_sample %}
-                        <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                    {% else %}
-                        <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                    {% endif %}
-                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_files[0] }}/{{ add_param }}" alt="{{ image_files[0] }}" width="100%">
-                        </a>
-
+                    <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
+                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_files[0] }}/{{ add_param }}" alt="{{ image_files[0] }}" width="100%">
+                    </a>
                     <div class="card-body">
-                        {% if is_sample %}
-                        <a download id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                        {% else %}
-                        <a download id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                        {% endif %}
+                        <a download 
+                        id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
+                        onclick="gtag('event','download_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});">
                             ダウンロード
                         </a>
                     </div>
                 </div>
             </section>
-
 
             <section class="container">
                 <h2>
@@ -92,22 +134,15 @@
                     {% for image_file in image_files %}
                         {% if loop.index > 1 %} {# 最初の画像をスキップ #}
                             <div class="col">
-                                <div class="card shadow-sm">
+                                <div class="card overflow-hidden shadow-sm">
                                     {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
-
-                                    {% if is_sample %}
-                                        <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                                    {% else %}
-                                        <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                                    {% endif %}
-                                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%">
-                                        </a>
+                                    <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
+                                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%">
+                                    </a>
                                     <div class="card-body">
-                                        {% if is_sample %}
-                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                                        {% else %}
-                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                                        {% endif %}
+                                        <a download 
+                                        class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
+                                        onclick="gtag('event','download_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});">
                                             ダウンロード
                                         </a>
                                     </div>
