@@ -72,20 +72,6 @@ a{
     }
 }
 
-body{
-    h1{
-        margin-bottom: 20px;
-        font-size: 1.6rem;
-        font-weight: 700;
-        text-align: center;
-        letter-spacing: 2px;
-        //PC
-        @media only screen and (min-width: $PC_WIDTH) {
-            margin-bottom: 40px;
-        }
-    }
-}
-
 h2{
     margin-bottom: 20px;
     font-size: 1.4rem;
