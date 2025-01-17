@@ -275,10 +275,46 @@ footer .footer-copyright .footer-copyright-logo > img {
   color: #FFFFFF;
 }
 .pagination .page-item .page-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 4px;
   color: #212529;
+  font-size: 0.8rem;
 }
 .pagination .page-item .page-link:hover {
   color: #333333;
+}
+.pagination .page-item .page-link:hover:after {
+  opacity: 0.75;
+}
+.pagination .page-item .page-link:after {
+  margin-top: 2px;
+  font-size: 0.6rem;
+  color: #9d9d9d;
+  transition: all 0.2s;
+}
+.pagination .page-item .page-link.first:after {
+  content: "\f100";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 700;
+}
+.pagination .page-item .page-link.prev:after {
+  content: "\f104";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 700;
+}
+.pagination .page-item .page-link.next:after {
+  content: "\f105";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 700;
+}
+.pagination .page-item .page-link.last:after {
+  content: "\f101";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 700;
 }
 
 .list-switcher {
