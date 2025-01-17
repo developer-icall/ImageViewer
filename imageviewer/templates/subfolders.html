@@ -118,7 +118,7 @@
                     </a>
                     <div class="card-body">
                         <a download 
-                        id="download_button_{{ subfolder_name }}_1" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
+                        class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
                         onclick="gtag('event','download_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});">
                             ダウンロード
                         </a>
