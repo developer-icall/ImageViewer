@@ -7,17 +7,8 @@
 
 <section class="container">
     <div class="card w-75 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
-        {% set sample_image_file_without_suffix = image_files[0].replace("-thumbnail", "") %}
-        <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_files[0] }}/{{ add_param }}" alt="{{ image_files[0] }}" width="100%">
-        </a>
-        <div class="card-body">
-            <a download 
-            class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
-            onclick="gtag('event','download_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});">
-                ダウンロード
-            </a>
-        </div>
+        {% set image_name = image_files[0] %}
+        {% include 'parts/subfolder_image_download_form.html' %}
     </div>
 </section>
 
@@ -30,17 +21,8 @@
             {% if loop.index > 1 %} {# 最初の画像をスキップ #}
                 <div class="col">
                     <div class="card overflow-hidden shadow-sm">
-                        {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
-                        <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%">
-                        </a>
-                        <div class="card-body">
-                            <a download 
-                            class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
-                            onclick="gtag('event','download_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});">
-                                ダウンロード
-                            </a>
-                        </div>
+                        {% set image_name = image_file %}
+                        {% include 'parts/subfolder_image_download_form.html' %}
                     </div>
                 </div>
             {% endif %}
