@@ -111,6 +111,14 @@ section{
     }
 }
 
+.btn{
+	font-size: 0.8rem;
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        font-size: 1rem;
+    }
+}
+
 header{
     position: sticky;
     top: 0;
