@@ -245,11 +245,14 @@ def subfolder_images(subfolder_name):
     is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
     is_male_get_param = request.args.get('is_male', 'false')
     is_male = False
+    is_transparent_background = False
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
+    is_selfie = False
     is_selfie_get_param = request.args.get('is_selfie', 'false')
+    is_background = False
     is_background_get_param = request.args.get('is_background', 'false')
     page = request.args.get('page', 1)
-    
+
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
         is_sample = False
@@ -273,25 +276,28 @@ def subfolder_images(subfolder_name):
     # is_transparent パラメータが"true"の場合、Trueをセット
     if is_transparent_background_get_param.lower() == 'true':
         add_param = add_param + "&is_transparent=True"
+        is_transparent_background = True
     else:
         add_param = add_param + "&is_transparent=False"
 
     # is_selfie パラメータが"true"の場合、Trueをセット
     if is_selfie_get_param.lower() == 'true':
         add_param = add_param + "&is_selfie=True"
+        is_selfie = True
     else:
         add_param = add_param + "&is_selfie=False"
 
     # is_background パラメータが"true"の場合、Trueをセット
     if is_background_get_param.lower() == 'true':
         add_param = add_param + "&is_background=True"
+        is_background = True
     else:
         add_param = add_param + "&is_background=False"
 
     # サブフォルダ内の画像ファイルの一覧を取得
     image_files = [f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
 
-    return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male)
+    return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male, is_transparent_background=is_transparent_background, is_selfie=is_selfie, is_background=is_background)
 
 @app.route('/user_policy/')
 def index_user_policy():
