@@ -1,0 +1,126 @@
+{# 画像のジャンル #}
+{% set category_name = "人物" %}
+{% if is_background %}
+    {% set category_name = "背景" %}
+{% endif %}
+
+{# 画像の性別 #}
+{% set gender_name = "" %}
+{# 背景ではなく人物画像なら、性別を明示 #}
+{% if not is_background %}
+    {% if is_male %}
+        {% set gender_name = "男性" %}
+    {% else %}
+        {% set gender_name = "女性" %}
+    {% endif %}
+{% endif %}
+
+{# 画像のオプション #}
+{% set option_name = "" %}
+{# 背景ではなく人物画像なら、透過やセルフィーなど通常との差分を明記 #}
+{% if not is_background %}
+    {% if is_transparent_background %}
+        {% set option_name = option_name ~ "/" ~ "背景透過" %}
+    {% endif %}
+    {% if is_selfie %}
+        {% set option_name = option_name ~ "/" ~ "セルフィー" %}
+    {% endif %}
+{% endif %}
+
+{# ページタイトル #}
+{# 画像詳細ページなら上記変数を使った専用タイトルを充てる #}
+{% if request.path.startswith('/subfolders/') %}
+    {% set page_name = gender_name ~ option_name ~ "の高クオリティAI生成" ~ category_name ~ "画像" %}
+{% endif %}
+{# 親テンプレートでアサインがないならデフォルト文言を充てる #}
+{% if not page_name %}
+    {% set page_name = "AI生成" ~ category_name ~ "画像素材ダウンロードサイト「ai-gazou.com」" %}
+{% endif %}
+
+{# ページタイトル + サイト紹介文 をサイト名とする #}
+{% set site_title = page_name ~ " | 登録不要ですぐに使える！商用利用可能なAI生成" ~ category_name ~ "画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」" %}
+
+<html lang="en" data-bs-theme="auto">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="Hugo 0.112.5">
+        <meta name="author" content="AI生成{{ category_name }}画像素材ダウンロードサイト「ai-gazou.com」 | 登録不要ですぐに使える！商用利用可能なAI生成{{ category_name }}画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta name="publisher" content="ai-gazou.com">
+        <meta name="description" content="登録不要ですぐに使える！商用利用可能なAI生成{{ category_name }}画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta name="robots" content="max-image-preview:large">
+        <meta property="og:title" content="登録不要ですぐに使える！商用利用可能なAI生成{{ category_name }}画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://ai-gazou.com/">
+        <meta property="og:image" content="https://ai-gazou.com/images/20231212-19-1961075593/00009-1961075593.png">
+        <meta property="og:description" content="登録不要ですぐに使える！商用利用可能なAI生成{{ category_name }}画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
+        <meta property="og:site_name" content="ai-gazou.com">
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "ai-gazou.com",
+                "alternateName": "AI生成{{ category_name }}画像素材ダウンロードサイト",
+                "url": "https://ai-gazou.com/",
+                "description": "登録不要ですぐに使える！商用利用可能なAI生成{{ category_name }}画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」",
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "ai-gazou.com"
+                },
+                "image": "https://ai-gazou.com/images/20231212-19-1961075593/00009-1961075593.png"
+            }
+        </script>
+        <title>{{ site_title }}</title>
+        <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/album/">
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <link href="/static/css/webfonts_css/all.min.css" rel="stylesheet">
+        <link href="/static/css/customize.css" rel="stylesheet">
+        <script src="/static/js/util.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-P56QKXK1G8"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-P56QKXK1G8');
+        </script>
+    </head>
+    <body>
+        <header>
+            <div class="navbar navbar-dark">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <h1 id="site-title" itemprop="name">
+                            <a href="/" class="header-logo">
+                                ai-gaz<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" aria-hidden="true" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>u.com
+                            </a>
+                            <span class="header-catch-copy">
+                                AI生成画像を無料で公開　商用利用もOK！
+                            </span>
+                        </h1>
+                    </div>
+                    <button class="header-sp-menu-button navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="header-pc-menu">
+                        <ul>
+                            <li><a href="/">TOP</a></li>
+                            <li><a href="/user_policy">利用規約</a></li>
+                            <li><a href="https://www.i-call.co.jp/contact" class="external-link" target="_brank">お問い合わせ</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="header-sp-menu collapse" id="navbarHeader">
+                <ul class="container">
+                    <li><a href="/">TOP</a></li>
+                    <li><a href="/user_policy">利用規約</a></li>
+                    <li><a href="https://www.i-call.co.jp/contact" class="external-link" target="_brank">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <main>

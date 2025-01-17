@@ -52,19 +52,6 @@ a.external-link:after {
   vertical-align: middle;
 }
 
-body h1 {
-  margin-bottom: 20px;
-  font-size: 1.6rem;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 2px;
-}
-@media only screen and (min-width: 1201px) {
-  body h1 {
-    margin-bottom: 40px;
-  }
-}
-
 h2 {
   margin-bottom: 20px;
   font-size: 1.4rem;
