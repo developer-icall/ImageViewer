@@ -92,20 +92,11 @@
                             <div class="col">
                                 <div class="card overflow-hidden shadow-sm">
                                     {% set sample_image_file_without_suffix = image_file.replace("-thumbnail", "") %}
-
-                                    {% if is_sample %}
-                                        <a href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                                    {% else %}
-                                        <a href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                                    {% endif %}
-                                            <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%">
-                                        </a>
+                                    <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
+                                        <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_file }}/{{ add_param }}" alt="{{ image_file }}" width="100%">
+                                    </a>
                                     <div class="card-body">
-                                        {% if is_sample %}
-                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/sample/{{ sample_image_file_without_suffix }}/" target="_blank">
-                                        {% else %}
-                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
-                                        {% endif %}
+                                        <a download id="download_button_{{ subfolder_name }}_{{ loop.index }}" class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" target="_blank">
                                             ダウンロード
                                         </a>
                                     </div>
