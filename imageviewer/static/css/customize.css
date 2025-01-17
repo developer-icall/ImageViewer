@@ -52,7 +52,7 @@ a.external-link:after {
   vertical-align: middle;
 }
 
-h1 {
+body h1 {
   margin-bottom: 20px;
   font-size: 1.6rem;
   font-weight: 700;
@@ -60,7 +60,7 @@ h1 {
   letter-spacing: 2px;
 }
 @media only screen and (min-width: 1201px) {
-  h1 {
+  body h1 {
     margin-bottom: 40px;
   }
 }
@@ -113,6 +113,12 @@ header {
   background-color: #212529;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   z-index: 1000;
+}
+header h1 {
+  margin: 0;
+  line-height: inherit;
+  color: inherit;
+  letter-spacing: 0;
 }
 header .header-logo {
   display: flex;

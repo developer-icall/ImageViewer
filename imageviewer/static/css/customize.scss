@@ -72,15 +72,17 @@ a{
     }
 }
 
-h1{
-    margin-bottom: 20px;
-    font-size: 1.6rem;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 2px;
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        margin-bottom: 40px;
+body{
+    h1{
+        margin-bottom: 20px;
+        font-size: 1.6rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 2px;
+        //PC
+        @media only screen and (min-width: $PC_WIDTH) {
+            margin-bottom: 40px;
+        }
     }
 }
 
@@ -130,6 +132,12 @@ header{
     box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
     z-index: 1000;
 
+    h1{
+        margin: 0;
+        line-height: inherit;
+        color: inherit;
+        letter-spacing: 0;
+    }
     .header-logo{
         display: flex;
         align-items: center;
