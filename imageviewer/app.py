@@ -39,7 +39,8 @@ INDEX_PER_PAGE = 12
 # テンプレートに渡す定数
 @app.before_request
 def before_request():
-    g.domain_name = DOMAIN_NAME  # gオブジェクトにDOMAIN_NAMEを設定
+    g.domain_name = DOMAIN_NAME  # ドメイン
+    g.site_name = DOMAIN_NAME  # サイト名
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
