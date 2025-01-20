@@ -275,6 +275,9 @@ def subfolder_images(subfolder_name):
         subfolder_path = subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER
         thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
 
+    # page数もパラメータで保持(戻るボタンに必要)
+    add_param = add_param + "&page=" + str(page)
+
     # is_maleパラメータが"true"の場合、Trueをセット
     if is_male_get_param.lower() == 'true':
         is_male = True
