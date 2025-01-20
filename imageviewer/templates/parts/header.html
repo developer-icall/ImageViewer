@@ -93,13 +93,15 @@
         <link href="/static/css/customize.css" rel="stylesheet">
         <script src="/static/js/util.js"></script>
         <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-P56QKXK1G8"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-P56QKXK1G8');
-        </script>
+        {% if current_host == 'ai-gazou.com' %}{# 開発環境では有効にならないようにする #}
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-P56QKXK1G8"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-P56QKXK1G8');
+            </script>
+        {% endif %}
     </head>
     <body>
         <header>
