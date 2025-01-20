@@ -5,7 +5,7 @@
 <div class="card-body">
     <a download 
     class="btn btn-dark d-block" href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
-    {% if current_host == 'ai-gazou.com' %}onclick="gtag('event','download_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});"{% endif %}>
+    {% if request.host == 'ai-gazou.com' %}onclick="gtag('event','download_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});"{% endif %}>
         ダウンロード
     </a>
 </div>
