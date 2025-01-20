@@ -1,7 +1,10 @@
 import os
-from flask import Flask, render_template, send_from_directory, request, abort
+from flask import Flask, render_template, send_from_directory, request, abort, g
 
 app = Flask(__name__)
+
+# ドメイン
+DOMAIN_NAME = 'ai-gazou.com'
 
 # 画像フォルダのパス
 IMAGE_FOLDER = './static/sync_images'
@@ -32,6 +35,11 @@ SELFIE_FOLDER_PREFIX = "-selfie"
 
 # 1ページ当たりの表示件数
 INDEX_PER_PAGE = 12
+
+# テンプレートに渡す定数
+@app.before_request
+def before_request():
+    g.domain_name = DOMAIN_NAME  # gオブジェクトにDOMAIN_NAMEを設定
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):

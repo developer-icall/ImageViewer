@@ -1,5 +1,36 @@
 <!doctype html>
 
+{# 画像のジャンル #}
+{% set category_name = "人物" %}
+{% if is_background %}
+    {% set category_name = "背景" %}
+{% endif %}
+
+{# 画像の性別 #}
+{% set gender_name = "" %}
+{# 背景ではなく人物画像なら、性別を明示 #}
+{% if not is_background %}
+    {% if is_male %}
+        {% set gender_name = "男性" %}
+    {% else %}
+        {% set gender_name = "女性" %}
+    {% endif %}
+{% endif %}
+
+{# 画像のオプション #}
+{% set option_name = "" %}
+{# 背景ではなく人物画像なら、透過やセルフィーなど通常との差分を明記 #}
+{% if not is_background %}
+    {% if is_transparent_background %}
+        {% set option_name = option_name ~ "/" ~ "背景透過" %}
+    {% endif %}
+    {% if is_selfie %}
+        {% set option_name = option_name ~ "/" ~ "セルフィー" %}
+    {% endif %}
+{% endif %}
+
+{% set page_name = gender_name ~ option_name ~ "の高クオリティAI生成" ~ category_name ~ "画像" %}
+{% set site_keyword = "AI, 画像生成, 背景透過, セルフィー, フリー素材" %}
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->

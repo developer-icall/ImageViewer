@@ -1,49 +1,18 @@
-{# 画像のジャンル #}
-{% set category_name = "人物" %}
-{% if is_background %}
-    {% set category_name = "背景" %}
-{% endif %}
+{# キャッチコピー #}
+{% set site_copy = "無料でAI生成画像をダウンロード「" ~ g.domain_name ~ "」" %}
 
-{# 画像の性別 #}
-{% set gender_name = "" %}
-{# 背景ではなく人物画像なら、性別を明示 #}
-{% if not is_background %}
-    {% if is_male %}
-        {% set gender_name = "男性" %}
-    {% else %}
-        {% set gender_name = "女性" %}
-    {% endif %}
+{# ページタイトル + キャッチコピー をサイト名とする #}
+{% if page_name %}
+    {% set site_title = page_name ~ " | " ~ site_copy %}
+{% else %}
+    {# 親テンプレートでページタイトルのアサインがないならコピーのみとする #}
+    {% set site_title = site_copy %}
 {% endif %}
-
-{# 画像のオプション #}
-{% set option_name = "" %}
-{# 背景ではなく人物画像なら、透過やセルフィーなど通常との差分を明記 #}
-{% if not is_background %}
-    {% if is_transparent_background %}
-        {% set option_name = option_name ~ "/" ~ "背景透過" %}
-    {% endif %}
-    {% if is_selfie %}
-        {% set option_name = option_name ~ "/" ~ "セルフィー" %}
-    {% endif %}
-{% endif %}
-
-{# ページタイトル #}
-{# 画像詳細ページなら上記変数を使った専用タイトルを充てる #}
-{% if request.path.startswith('/subfolders/') %}
-    {% set page_name = gender_name ~ option_name ~ "の高クオリティAI生成" ~ category_name ~ "画像" %}
-{% endif %}
-{# 親テンプレートでアサインがないならデフォルト文言を充てる #}
-{% if not page_name %}
-    {% set page_name = "AI生成" ~ category_name ~ "画像素材ダウンロードサイト「ai-gazou.com」" %}
-{% endif %}
-
-{# ページタイトル + サイト紹介文 をサイト名とする #}
-{% set site_title = page_name ~ " | 登録不要ですぐに使える！商用利用可能なAI生成" ~ category_name ~ "画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」" %}
 
 {# ページ説明 #}
 {# 親テンプレートでアサインがないならデフォルト文言を充てる #}
 {% if not site_description %}
-    {% set site_description = "登録不要ですぐに使える！商用利用可能なAI生成" ~ category_name ~ "画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」" %}
+    {% set site_description = "登録不要でAI生成画像をすぐに使える！商用利用も可能！" %}
 {% endif %}
 
 {# キーワード ※カンマ区切りの文字列で指定 #}
@@ -57,30 +26,30 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="generator" content="Hugo 0.112.5">
-        <meta name="author" content="AI生成{{ category_name }}画像素材ダウンロードサイト「ai-gazou.com」 | 登録不要ですぐに使える！商用利用可能なAI生成{{ category_name }}画像素材が無料(フリー)ダウンロードできるサイト「ai-gazou.com」">
-        <meta name="publisher" content="ai-gazou.com">
+        <meta name="author" content="{{ site_copy }}">
+        <meta name="publisher" content="{{ g.domain_name }}">
         <meta name="description" content="{{ site_description }}">
         <meta name="keywords" content="{{ site_keyword }}">
         <meta name="robots" content="max-image-preview:large">
         <meta property="og:title" content="{{ site_title }}">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="https://ai-gazou.com/">
-        <meta property="og:image" content="https://ai-gazou.com/images/20231212-19-1961075593/00009-1961075593.png">
+        <meta property="og:url" content="https://{{ g.domain_name }}">
+        <meta property="og:image" content="https://{{ g.domain_name }}/images/20231212-19-1961075593/00009-1961075593.png">
         <meta property="og:description" content="{{ site_description }}">
-        <meta property="og:site_name" content="ai-gazou.com">
+        <meta property="og:site_name" content="{{ g.domain_name }}">
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
-                "name": "ai-gazou.com",
-                "alternateName": "AI生成{{ category_name }}画像素材ダウンロードサイト",
-                "url": "https://ai-gazou.com/",
+                "name": "{{ g.domain_name }}",
+                "alternateName": "AI生成画像素材ダウンロードサイト",
+                "url": "https://{{ g.domain_name }}",
                 "description": "{{ site_description }}",
                 "publisher": {
                     "@type": "Organization",
-                    "name": "ai-gazou.com"
+                    "name": "{{ g.domain_name }}"
                 },
-                "image": "https://ai-gazou.com/images/20231212-19-1961075593/00009-1961075593.png"
+                "image": "https://{{ g.domain_name }}/images/20231212-19-1961075593/00009-1961075593.png"
             }
         </script>
         <title>{{ site_title }}</title>
@@ -93,7 +62,7 @@
         <link href="/static/css/customize.css" rel="stylesheet">
         <script src="/static/js/util.js"></script>
         <!-- Google tag (gtag.js) -->
-        {% if request.host == 'ai-gazou.com' %}{# 開発環境では有効にならないようにする #}
+        {% if request.host == g.domain_name %}{# 開発環境では有効にならないようにする #}
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-P56QKXK1G8"></script>
             <script>
                 window.dataLayer = window.dataLayer || [];
@@ -136,7 +105,7 @@
                                 <a href="https://www.i-call.co.jp/contact" 
                                 class="external-link" 
                                 target="_brank" 
-                                {% if request.host == 'ai-gazou.com' %}
+                                {% if request.host == g.domain_name %}
                                     onclick="gtag('event','visit_contact');"
                                 {% endif %}
                                 >
@@ -163,7 +132,7 @@
                         <a href="https://www.i-call.co.jp/contact" 
                         class="external-link" 
                         target="_brank" 
-                        {% if request.host == 'ai-gazou.com' %}
+                        {% if request.host == g.domain_name %}
                             onclick="gtag('event','visit_contact');"
                         {% endif %}
                         >
