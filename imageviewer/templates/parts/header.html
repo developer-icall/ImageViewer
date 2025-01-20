@@ -122,18 +122,54 @@
                     </button>
                     <div class="header-pc-menu">
                         <ul>
-                            <li><a href="/">TOP</a></li>
-                            <li><a href="/user_policy">利用規約</a></li>
-                            <li><a href="https://www.i-call.co.jp/contact" class="external-link" target="_brank">お問い合わせ</a></li>
+                            <li>
+                                <a href="/">
+                                    TOP
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user_policy">
+                                    利用規約
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.i-call.co.jp/contact" 
+                                class="external-link" 
+                                target="_brank" 
+                                {% if request.host == 'ai-gazou.com' %}
+                                    onclick="gtag('event','visit_contact');"
+                                {% endif %}
+                                >
+                                    お問い合わせ
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="header-sp-menu collapse" id="navbarHeader">
                 <ul class="container">
-                    <li><a href="/">TOP</a></li>
-                    <li><a href="/user_policy">利用規約</a></li>
-                    <li><a href="https://www.i-call.co.jp/contact" class="external-link" target="_brank">お問い合わせ</a></li>
+                    <li>
+                        <a href="/">
+                            TOP
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/user_policy">
+                            利用規約
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.i-call.co.jp/contact" 
+                        class="external-link" 
+                        target="_brank" 
+                        {% if request.host == 'ai-gazou.com' %}
+                            onclick="gtag('event','visit_contact');"
+                        {% endif %}
+                        >
+                            お問い合わせ
+                        </a>
+                    </li>
                 </ul>
             </div>
         </header>

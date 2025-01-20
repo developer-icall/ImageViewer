@@ -2,8 +2,22 @@
 
         <footer>
             <ul class="container">
-                <li><a href="/user_policy">利用規約</a></li>
-                <li><a href="https://www.i-call.co.jp/contact" class="external-link" target="_brank">お問い合わせ</a></li>
+                <li>
+                    <a href="/user_policy">
+                        利用規約
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.i-call.co.jp/contact" 
+                    class="external-link" 
+                    target="_brank" 
+                    {% if request.host == 'ai-gazou.com' %}
+                        onclick="gtag('event','visit_contact');"
+                    {% endif %}
+                    >
+                        お問い合わせ
+                    </a>
+                </li>
             </ul>
             <div class="footer-copyright">
                 <a href="https://www.i-call.co.jp" class="footer-copyright-logo" target="_brank">
