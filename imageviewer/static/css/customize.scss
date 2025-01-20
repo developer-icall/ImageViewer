@@ -135,36 +135,28 @@ header{
     box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
     z-index: 1000;
 
-    h1{
-        margin: 0;
-        line-height: inherit;
-        color: inherit;
-        letter-spacing: 0;
-    }
-    .header-logo{
-        display: flex;
-        align-items: center;
-        font-size: 1rem;
-        font-weight: 200;
-        color: inherit !important;
-        letter-spacing: 2px;
-        //PC
-        @media only screen and (min-width: $PC_WIDTH) {
-            font-size: 1.3rem;
+    .navbar-brand{
+        padding: 0;
+        h1{
+            margin: 0;
+            line-height: inherit;
+            color: inherit;
+            letter-spacing: 0;
         }
-
-        svg{
-            width: 1.5rem;
-            height: 1.5rem;
-            margin: 2px 4px 0 2px;
-            color: #4eb3ff;
+        .header-logo{
+            display: block;
+            margin: 2px 0;
+            img{
+                display: block;
+                width: 140px;
+            }
         }
-    }
-    .header-catch-copy{
-        display: block;
-        font-size: 0.6rem;
-        font-weight: 600;
-        color: #999999;
+        .header-catch-copy{
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #999999;
+        }
     }
 
     .header-sp-menu,
