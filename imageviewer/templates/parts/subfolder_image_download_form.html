@@ -2,7 +2,7 @@
 <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
 target="_blank"
 {% if request.host == 'ai-gazou.com' %}
-    onclick="gtag('event','zoom_image',{'url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});"
+    onclick="gtag('event','zoom_image',{'zoom_url':'https://ai-gazou.com/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});"
 {% endif %}
 >
     <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_name }}/{{ add_param }}" alt="{{ image_name }}" width="100%">
