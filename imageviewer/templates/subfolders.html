@@ -1,36 +1,34 @@
 <!doctype html>
 
 {# 画像のジャンル #}
-{% set category_name = "人物" %}
+{% set category = "人物" %}
 {% if is_background %}
-    {% set category_name = "背景" %}
+    {% set category = "背景" %}
 {% endif %}
 
-{# 画像の性別 #}
-{% set gender_name = "" %}
-{# 背景ではなく人物画像なら、性別を明示 #}
+{# オプション #}
+{% set options = [] %}
 {% if not is_background %}
+    {# 性別 #}
     {% if is_male %}
-        {% set gender_name = "男性" %}
+        {% set options = options + ["男性"] %}
     {% else %}
-        {% set gender_name = "女性" %}
+        {% set options = options + ["女性"] %}
     {% endif %}
-{% endif %}
 
-{# 画像のオプション #}
-{% set option_name = "" %}
-{# 背景ではなく人物画像なら、透過やセルフィーなど通常との差分を明記 #}
-{% if not is_background %}
+    {# 背景透過 #}
     {% if is_transparent_background %}
-        {% set option_name = option_name ~ "/" ~ "背景透過" %}
+        {% set options = options + ["背景透過"] %}
     {% endif %}
+
+    {# セルフィー #}
     {% if is_selfie %}
-        {% set option_name = option_name ~ "/" ~ "セルフィー" %}
+        {% set options = options + ["セルフィー"] %}
     {% endif %}
 {% endif %}
 
-{% set page_name = gender_name ~ option_name ~ "の高クオリティAI生成" ~ category_name ~ "画像" %}
-{% set site_keyword = "AI, 画像生成, 背景透過, セルフィー, フリー素材" %}
+{% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" %}
+{% set unique_keyword = category ~ "," ~ options|join(',') %}
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->

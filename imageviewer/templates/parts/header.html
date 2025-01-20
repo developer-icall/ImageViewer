@@ -11,14 +11,21 @@
 
 {# ページ説明 #}
 {# 親テンプレートでアサインがないならデフォルト文言を充てる #}
-{% if not site_description %}
-    {% set site_description = "登録不要でAI生成画像をすぐに使える！商用利用も可能！" %}
+{% if not unique_description %}
+    {% set site_description = "登録不要でAI生成画像をすぐに使える！商用利用も可能！「" ~ g.site_name ~ "」" %}
+{% else %}
+    {% set site_description = unique_description %}
 {% endif %}
 
 {# キーワード ※カンマ区切りの文字列で指定 #}
-{# 親テンプレートでアサインがないならデフォルト文言を充てる #}
-{% if not site_keyword %}
-    {% set site_keyword = "AI, 画像生成, 背景透過, セルフィー, フリー素材" %}
+{# 全ページ共通のキーワード ※カンマで終わらせる #}
+{% set default_keyword = g.site_name ~ ",AI,画像生成,フリー素材,フリ素,画像素材,画像,写真素材,写真,商用可,無料,ダウンロード," %}
+{% if not unique_keyword %}
+    {# 親テンプレートでアサインがないなら全ジャンル・オプションを記載 #}
+    {% set site_keyword = default_keyword ~ "人物,男性,女性,背景透過,セルフィー" %}
+{% else %}
+    {# アサインがあるなら共通キーワードの次に記載 #}
+    {% set site_keyword = default_keyword ~ unique_keyword %}
 {% endif %}
 
 <html lang="ja" data-bs-theme="auto">
