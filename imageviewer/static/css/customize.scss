@@ -2,6 +2,7 @@
 // 定数
 //-------------------------------------------------------
 $COLOR_DARK: #212529;
+$COLOR_FONT: #101010;
 $SP_WIDTH: 1200px;//bootstrapのxlサイズの値
 $PC_WIDTH: $SP_WIDTH + 1px;//上記超えたらPCデザインにする
 $MAX_WIDTH: 1320px;//画面の最大幅 bootstrap準拠
@@ -30,7 +31,7 @@ body {
 	font-weight: 400;
 	font-size: 0.8rem;
 	word-break: break-all;
-    color: #101010;
+    color: $COLOR_FONT;
     background: #fafafa;
     //PC
     @media only screen and (min-width: $PC_WIDTH) {
@@ -47,6 +48,12 @@ ul{
     margin: 0;
     padding: 0;
     list-style: none;
+
+    //箇条書きリスト
+    &.bullet-list{
+        padding-left: 1.4rem;
+        list-style: disc;
+    }
 }
 
 p{
@@ -82,6 +89,16 @@ h2{
     //PC
     @media only screen and (min-width: $PC_WIDTH) {
         margin-bottom: 40px;
+    }
+}
+h3{
+    margin-bottom: .5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $COLOR_FONT;
+    //PC
+    @media only screen and (min-width: $PC_WIDTH) {
+        font-size: 1.2rem;
     }
 }
 
