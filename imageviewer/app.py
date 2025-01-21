@@ -12,6 +12,10 @@ IMAGE_FOLDER = './static/sync_images'
 # サムネイル用画像の保存先フォルダのパス
 THUMBNAIL_FOLDER = "/thumbnail"
 
+# 表示する画像をSample文字入りにするかのフラグ(true: Sample文字入り, false: Sample文字なし)
+# 2025/1/21 一旦無料DL用ページとするため、falseにする
+SAMPLE_IMAGE_FLAG= 'false'
+
 # Sample文字が入っている等倍画像の保存先フォルダのパス
 WITH_SAMPLE_TEXT_FOLDER = "/sample"
 
@@ -132,7 +136,7 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
 @app.route('/')
 def index():
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -179,7 +183,7 @@ def index():
 @app.route('/male/')
 def index_male():
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -224,7 +228,7 @@ def index_male():
 @app.route('/background/')
 def index_background():
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
 
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
@@ -251,7 +255,7 @@ def subfolder_images(subfolder_name):
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
     # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
     is_male_get_param = request.args.get('is_male', 'false')
     is_male = False
     is_transparent_background = False
@@ -319,7 +323,7 @@ def index_user_policy():
 def get_image(image_file):
 
     # URLのパラメータからis_sampleを取得12qwASZX!
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', 'false')
+    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
     
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample_get_param.lower() == 'false':
