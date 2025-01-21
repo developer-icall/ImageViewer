@@ -74,7 +74,7 @@
         <link rel="icon" href="/static/ui_images/favicon.ico">
         <script src="/static/js/util.js"></script>
         <!-- Google tag (gtag.js) -->
-        {% if request.host == g.domain_name %}{# 本番環境でのみ表示 #}
+        {% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-P56QKXK1G8"></script>
             <script>
                 window.dataLayer = window.dataLayer || [];
