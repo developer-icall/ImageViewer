@@ -8,6 +8,13 @@
 - 画像サムネイルをクリックすると、対象人物の別ポーズ・衣装の画像一覧へ遷移します
 - URLのパラメータに`hidden_secret_param_is_sample=False`を追加すると画像サムネイルから Sample の文字が消えます　※20250121 デフォルトで追加されるよう設定済
 
+## 各種ファイル
+- アプリ設定・定数などがまとまった根幹となるファイル `imageviewer\app.py`
+- テンプレート `imageviewer\templates`
+- scss `imageviewer\static\css\customize.scss`
+- UI用の画像 `imageviewer\static\ui_images`
+  - ※AI生成した画像については別フォルダで管理します。詳しくは後述します
+
 ## 使用方法
 1. 下記 インストール手順 に従って諸々セットアップする
 2. `.\ImageViewer\imageviewer` ディレクトリにて `poetry run python app.py` でファイルを実行する
