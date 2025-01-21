@@ -150,18 +150,18 @@ header .header-sp-menu-button {
     display: none !important;
   }
 }
-header .header-sp-menu > ul {
+header .header-sp-menu ul {
   padding: 0 0 8px;
 }
-header .header-sp-menu > ul > li {
+header .header-sp-menu ul > li {
   padding: 20px 0;
   text-align: center;
   letter-spacing: 2px;
 }
-header .header-sp-menu > ul > li:not(:last-child) {
+header .header-sp-menu ul > li:not(:last-child) {
   border-bottom: 1px solid #333333;
 }
-header .header-sp-menu > ul > li > a {
+header .header-sp-menu ul > li > a {
   display: block;
 }
 @media only screen and (max-width: 1200px) {
