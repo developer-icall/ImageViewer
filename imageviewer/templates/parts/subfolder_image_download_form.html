@@ -1,7 +1,7 @@
 {% set sample_image_file_without_suffix = image_name.replace("-thumbnail", "") %}
 <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
 target="_blank"
-{% if request.host == g.domain_name %}{# 本番環境でのみ表示 #}
+{% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
     onclick="gtag('event','zoom_image',{'zoom_option':'{{ options|join('/') }}', 'zoom_url':'https://{{ g.domain_name }}/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});"
 {% endif %}
 >
@@ -11,7 +11,7 @@ target="_blank"
     <a download 
     href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
     class="btn btn-dark d-block" 
-    {% if request.host == g.domain_name %}{# 本番環境でのみ表示 #}
+    {% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
         onclick="gtag('event','download_image',{'dowmload_option':'{{ options|join('/') }}', 'dowmload_url':'https://{{ g.domain_name }}/images/{{ subfolder_name }}/{{ sample_image_file_without_suffix }}'});"
     {% endif %}
     >
