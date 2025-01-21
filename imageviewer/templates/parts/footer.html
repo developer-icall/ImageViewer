@@ -11,7 +11,7 @@
                     <a href="https://www.i-call.co.jp/contact" 
                     class="external-link" 
                     target="_brank" 
-                    {% if request.host == g.domain_name %}
+                    {% if request.host == g.domain_name %}{# 本番環境でのみ表示 #}
                         onclick="gtag('event','visit_contact');"
                     {% endif %}
                     >
