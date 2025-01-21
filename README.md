@@ -6,12 +6,21 @@
 ## 機能
 - 指定フォルダ(static/sync_images)以下にあるフォルダ内を検索し、1件目の画像サムネイル(sample-thumbnail内)を一覧表示します
 - 画像サムネイルをクリックすると、対象人物の別ポーズ・衣装の画像一覧へ遷移します
-- URLのパラメータに`hidden_secret_param_is_sample=False`を追加すると画像サムネイルから Sample の文字が消えます
+- URLのパラメータに`hidden_secret_param_is_sample=False`を追加すると画像サムネイルから Sample の文字が消えます　※20250121 デフォルトで追加されるよう設定済
 
 ## 使用方法
 1. 下記 インストール手順 に従って諸々セットアップする
 2. `.\ImageViewer\imageviewer` ディレクトリにて `poetry run python app.py` でファイルを実行する
 3. ブラウザで http://{ローカルIP}:5000/ へアクセスする
+4. `gitには反映しないでください`ホットリロード有効化のため、app.py末尾を以下のように書き換える
+    ```  
+    if __name__ == '__main__':
+    # デバッグモードを有効にし、ホットリロードを有効化
+    app.run(debug=True, host='0.0.0.0', use_reloader=True)
+    # 自動更新を有効にする設定を追加
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    ```
 
 ## インストール手順
 1. Pythonをインストールする
@@ -44,6 +53,6 @@
     # 必要なモジュールをインストール
     pip install Flask
     ```
-5. sync_images フォルダはシンボリックリンクになっているので、開発環境として独自に使用する際は一旦削除し、同名のフォルダを作成してください
-6. sync_images フォルダに AIで生成された画像フォルダを任意に配置してください
-   - 女性、男性(-men)、セルフィー写真(-selfie)、透過写真(-transparent)などの種類がフォルダ名で分かれています
+5. imageviewer/static/sync_images フォルダを作成し、 AIで生成された画像フォルダを任意に配置してください
+   - 女性、男性(-men)、セルフィー写真(-selfie)、透過写真(-transparent)、背景(-background)などの種類がフォルダ名で分かれています
+   - 当該フォルダは、実際のサイト上ではシンボリックリンクとして扱われています
