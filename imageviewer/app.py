@@ -333,6 +333,11 @@ def get_image(image_file):
     # 原寸大の画像を表示
     return send_from_directory(IMAGE_FOLDER, image_file)
 
+@app.route('/sitemap.xml')
+def get_sitemap():
+    # サイトマップを表示
+    return send_from_directory('./', 'sitemap.xml')
+
 @app.route('/bootstrap/')
 def index_bootstrap():
 
