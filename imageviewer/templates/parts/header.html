@@ -12,7 +12,7 @@
 {# ページ説明 #}
 {# 親テンプレートでアサインがないならデフォルト文言を充てる #}
 {% if not unique_description %}
-    {% set site_description = "登録不要でAI生成画像をすぐに使える！商用利用も可能！「" ~ g.site_name ~ "」" %}
+    {% set site_description = "登録不要でAI生成画像をすぐに使える！商用利用も可能！" %}
 {% else %}
     {% set site_description = unique_description %}
 {% endif %}
