@@ -312,7 +312,7 @@ def subfolder_images(subfolder_name):
         add_param = add_param + "&is_background=False"
 
     # サブフォルダ内の画像ファイルの一覧を取得
-    image_files = [f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    image_files = sorted([f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))])
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male, is_transparent_background=is_transparent_background, is_selfie=is_selfie, is_background=is_background)
 
