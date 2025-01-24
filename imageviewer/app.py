@@ -135,6 +135,10 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
             index = index + 1
     return subfolders, index
 
+def extract_number(filename):
+    match = re.match(r"(\d+)", filename)
+    return int(match.group(1)) if match else float('inf')
+
 @app.route('/')
 def index():
     # URLのパラメータからis_sampleを取得
@@ -315,7 +319,8 @@ def subfolder_images(subfolder_name):
     # サブフォルダ内の画像ファイルの一覧を取得
     image_files = []
     for root, dirs, files in os.walk(subfolder_path):
-        files.sort()
+        # ファイル名の先頭の数字をキーにしてソート
+        files.sort(key=lambda f: extract_number(f))
         for file in files:
             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 image_files.append(file)
