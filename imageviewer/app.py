@@ -135,10 +135,6 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
             index = index + 1
     return subfolders, index
 
-def extract_number(filename):
-    match = re.match(r"(\d+)", filename)
-    return int(match.group(1)) if match else float('inf')
-
 @app.route('/')
 def index():
     # URLのパラメータからis_sampleを取得
@@ -323,7 +319,6 @@ def subfolder_images(subfolder_name):
         for file in files:
             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 image_files.append(file)
-    image_files.sort(key=extract_number)
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male, is_transparent_background=is_transparent_background, is_selfie=is_selfie, is_background=is_background)
 
