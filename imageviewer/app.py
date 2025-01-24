@@ -59,9 +59,9 @@ def get_pagination_info(total_items, items_per_page):
 
 def get_first_image(subfolder_path, is_dig=False):
     for root, dirs, files in os.walk(subfolder_path):
+        files.sort()  # ファイル名順にソート
         for file in files:
-            if file.lower().endswith(('.png')):
-                # パスの置換を削除し、OSに依存しない形に
+            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):  # 他の画像形式も含める
                 image_path = os.path.join(root, file)
                 if is_dig:
                     return "." + image_path
