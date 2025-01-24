@@ -61,11 +61,12 @@ def get_first_image(subfolder_path, is_dig=False):
     for root, dirs, files in os.walk(subfolder_path):
         for file in files:
             if file.lower().endswith(('.png')):
-                # print({os.path.join(root, file).replace("\\", "/")})
+                # パスの置換を削除し、OSに依存しない形に
+                image_path = os.path.join(root, file)
                 if is_dig:
-                    return "." + os.path.join(root, file).replace("\\", "/")    
+                    return "." + image_path
                 else:
-                    return os.path.join(root, file).replace("\\", "/")
+                    return image_path
     return None
 
 def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transparent_background=False, is_selfie=False, is_background=False):
