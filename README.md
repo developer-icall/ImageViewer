@@ -48,7 +48,7 @@
         ```
     2. 仮想環境を開始
         ```
-        .\venv\Scripts\activate
+        .\.venv\Scripts\activate
         # 以下のように表示されていればOK
         (venv) PS C:\Users\k.hongou\Documents\Codes\PythonProjects\ImageViewer>
         ```
@@ -62,5 +62,9 @@
     pip install Flask
     ```
 5. imageviewer/static/sync_images フォルダを作成し、 AIで生成された画像フォルダを任意に配置してください
-   - 女性、男性(-men)、セルフィー写真(-selfie)、透過写真(-transparent)、背景(-background)などの種類がフォルダ名で分かれています
-   - 当該フォルダは、実際のサイト上ではシンボリックリンクとして扱われています
+    - 女性、男性(-men)、セルフィー写真(-selfie)、透過写真(-transparent)、背景(-background)などの種類がフォルダ名で分かれています
+    - 当該フォルダは、実際のサイト上ではシンボリックリンクとして扱われています
+        - AutoImageGenerator で画像生成を行っている PC と ImageViewer が同じ PC の場合は、PowerShell(管理者で実行)にて以下のようなコマンド(環境によって変更)でシンボリックリンクを作成できます
+            ```
+            New-Item -ItemType SymbolicLink -Path "C:\Users\k.hongou\Documents\Codes\PythonProjects\ImageViewer\imageviewer\static\sync_images" -Target "C:\Users\k.hongou\Documents\Codes\PythonProjects\AutoImageGenerator\images\output"
+            ```
