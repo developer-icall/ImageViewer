@@ -13,9 +13,9 @@ IMAGE_FOLDER = './static/sync_images'
 # サムネイル用画像の保存先フォルダのパス
 THUMBNAIL_FOLDER = "/thumbnail"
 
-# 表示する画像をSample文字入りにするかのフラグ(true: Sample文字入り, false: Sample文字なし)
-# 2025/1/21 一旦無料DL用ページとするため、falseにする
-SAMPLE_IMAGE_FLAG= 'false'
+# 表示する画像をSample文字入りにするかのフラグ(True: Sample文字入り, False: Sample文字なし)
+# 2025/1/21 一旦無料DL用ページとするため、Falseにする
+SAMPLE_IMAGE_FLAG= False
 
 # Sample文字が入っている等倍画像の保存先フォルダのパス
 WITH_SAMPLE_TEXT_FOLDER = "/sample"
@@ -141,8 +141,10 @@ def extract_number(filename):
 
 @app.route('/')
 def index():
-    # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
+    add_param = '?'
+
+    # サンプル画像か否か
+    is_sample = SAMPLE_IMAGE_FLAG
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -155,15 +157,6 @@ def index():
     is_selfie_set_param = ""
 
     print("request.args: " + str(request.args))
-   
-    # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample_get_param.lower() == 'false':
-        is_sample = False
-        add_param = "?hidden_secret_param_is_sample=False"
-    else:
-        is_sample = True
-        # ダミーパラメータをセット(以降に追加するパラメータを`&xxxx`の形式で追加できるようにするためと、パラメータ解析防止のハッタリのため)
-        add_param = "?Q=866Tvdnm9f1iuWn6opQZ"
 
     # is_transparent パラメータが"true"の場合、Trueをセット
     if is_transparent_background_get_param.lower() == 'true':
@@ -188,8 +181,10 @@ def index():
 
 @app.route('/male/')
 def index_male():
-    # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
+    add_param = '?'
+
+    # サンプル画像か否か
+    is_sample = SAMPLE_IMAGE_FLAG
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -200,15 +195,6 @@ def index_male():
     is_selfie_get_param = request.args.get('is_selfie', 'false')
     is_selfie = False
     is_selfie_set_param = ""
-
-    # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample_get_param.lower() == 'false':
-        is_sample = False
-        add_param = "?hidden_secret_param_is_sample=False"
-    else:
-        is_sample = True
-        # ダミーパラメータをセット(以降に追加するパラメータを`&xxxx`の形式で追加できるようにするためと、パラメータ解析防止のハッタリのため)
-        add_param = "?Q=866Tvdnm9f1iuWn6opQZ"
 
     # is_transparent パラメータが"true"の場合、Trueをセット
     if is_transparent_background_get_param.lower() == 'true':
@@ -233,17 +219,10 @@ def index_male():
 
 @app.route('/background/')
 def index_background():
-    # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
+    add_param = '?'
 
-    # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample_get_param.lower() == 'false':
-        is_sample = False
-        add_param = "?hidden_secret_param_is_sample=False"
-    else:
-        is_sample = True
-        # ダミーパラメータをセット(以降に追加するパラメータを`&xxxx`の形式で追加できるようにするためと、パラメータ解析防止のハッタリのため)
-        add_param = "?Q=866Tvdnm9f1iuWn6opQZ"
+    # サンプル画像か否か
+    is_sample = SAMPLE_IMAGE_FLAG
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -258,10 +237,11 @@ def index_background():
 
 @app.route('/subfolders/<subfolder_name>/')
 def subfolder_images(subfolder_name):
+    add_param = '?'
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
-    # URLのパラメータからis_sampleを取得
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
+    # サンプル画像か否か
+    is_sample = SAMPLE_IMAGE_FLAG
     is_male_get_param = request.args.get('is_male', 'false')
     is_male = False
     is_transparent_background = False
@@ -273,17 +253,12 @@ def subfolder_images(subfolder_name):
     page = request.args.get('page', 1)
 
     # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample_get_param.lower() == 'false':
-        is_sample = False
-        add_param = "?hidden_secret_param_is_sample=False"
-        subfolder_path = subfolder_path + THUMBNAIL_FOLDER
-        thumbnail_folder = THUMBNAIL_FOLDER
-    else:
-        is_sample = True
-        # ダミーパラメータをセット(以降に追加するパラメータを`&xxxx`の形式で追加できるようにするためと、パラメータ解析防止のハッタリのため)
-        add_param = "?Q=866Tvdnm9f1iuWn6opQZ"
+    if is_sample:
         subfolder_path = subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER
         thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
+    else:
+        subfolder_path = subfolder_path + THUMBNAIL_FOLDER
+        thumbnail_folder = THUMBNAIL_FOLDER
 
     # page数もパラメータで保持(戻るボタンに必要)
     add_param = add_param + "&page=" + str(page)
@@ -334,14 +309,11 @@ def index_user_policy():
 @app.route('/images/<path:image_file>/')
 def get_image(image_file):
 
-    # URLのパラメータからis_sampleを取得12qwASZX!
-    is_sample_get_param = request.args.get('hidden_secret_param_is_sample', SAMPLE_IMAGE_FLAG)
-    
-    # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample_get_param.lower() == 'false':
-        is_sample = False
-    else:
-        is_sample = True
+    # サンプル画像か否か
+    is_sample = SAMPLE_IMAGE_FLAG
+
+    # is_sampleパラメータが"false"の場合
+    if is_sample:
         # image_file の文字列内に`sample`が含まれていなかった場合404エラーを返す
         if 'sample' not in image_file:
             abort(404)
