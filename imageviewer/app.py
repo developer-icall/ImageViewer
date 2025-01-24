@@ -319,6 +319,7 @@ def subfolder_images(subfolder_name):
     # サブフォルダ内の画像ファイルの一覧を取得
     image_files = []
     for root, dirs, files in os.walk(subfolder_path):
+        files.sort()
         for file in files:
             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 image_files.append(file)
