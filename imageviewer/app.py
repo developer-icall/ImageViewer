@@ -1,4 +1,5 @@
 import os
+import re
 from flask import Flask, render_template, send_from_directory, request, abort, g
 
 app = Flask(__name__)
@@ -133,6 +134,10 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
                 print(f"first image not found:{subfolder_path}")
             index = index + 1
     return subfolders, index
+
+def extract_number(filename):
+    match = re.match(r"(\d+)", filename)
+    return int(match.group(1)) if match else float('inf')
 
 @app.route('/')
 def index():
@@ -312,7 +317,10 @@ def subfolder_images(subfolder_name):
         add_param = add_param + "&is_background=False"
 
     # サブフォルダ内の画像ファイルの一覧を取得
-    image_files = sorted([f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))])
+    image_files = sorted(
+        [f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))],
+        key=extract_number
+    )
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male, is_transparent_background=is_transparent_background, is_selfie=is_selfie, is_background=is_background)
 
