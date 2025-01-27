@@ -2,7 +2,7 @@
 <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
 target="_blank"
 {% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
-    onclick="gtag('event','zoom_image',{'zoom_option':'{{ options|join('/') }}'});"
+    onclick="gtag('event','zoom_image',{'image_option':'{{ options|join('/') }}'});"
 {% endif %}
 >
     <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_name }}/{{ add_param }}" alt="{{ image_name }}" width="100%">
@@ -12,7 +12,7 @@ target="_blank"
     href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
     class="btn btn-dark d-block" 
     {% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
-        onclick="gtag('event','download_image',{'dowmload_option':'{{ options|join('/') }}'});"
+        onclick="gtag('event','download_image',{'image_option':'{{ options|join('/') }}'});"
     {% endif %}
     >
         ダウンロード
