@@ -5,7 +5,7 @@ target="_blank"
     onclick="gtag('event','zoom_image',{'image_option':'{{ options|join('/') }}'});"
 {% endif %}
 >
-    <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_name }}/{{ add_param }}" alt="{{ image_name }}" width="100%">
+    <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_name }}/{{ add_param }}" alt="{{ options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" }}" width="100%">
 </a>
 <div class="card-body">
     <a download 
