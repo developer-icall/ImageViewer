@@ -77,7 +77,6 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
     print(f"start_index: {start_index}")
     print(f"end_index: {end_index}")
     index = 0
-    total_count = 0
 
     for root, dirs, files in os.walk(folder_path):
         dirs.sort()  # フォルダの一覧をABC順にソート
