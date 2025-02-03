@@ -235,7 +235,6 @@ def subfolder_images(subfolder_name):
     is_transparent_background = False
     is_selfie = False
     is_background = False
-    is_background_get_param = request.args.get('is_background', 'false')
 
     # g.is_sampleパラメータが"false"の場合、Falseをセット
     if g.is_sample:
