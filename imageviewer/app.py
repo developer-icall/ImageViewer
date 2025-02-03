@@ -45,6 +45,7 @@ INDEX_PER_PAGE = 12
 def before_request():
     g.domain_name = DOMAIN_NAME  # ドメイン
     g.site_name = DOMAIN_NAME  # サイト名
+    g.is_sample = SAMPLE_IMAGE_FLAG # 表示する画像をSample文字入りにするかのフラグ
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
@@ -70,7 +71,7 @@ def get_first_image(subfolder_path, is_dig=False):
     return None
 
 # サブフォルダ内の画像をすべて取得
-def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transparent_background=False, is_selfie=False, is_background=False):
+def get_subfolders(folder_path, page, is_male=False, is_transparent_background=False, is_selfie=False, is_background=False):
     subfolders = []
     start_index = (page - 1) * INDEX_PER_PAGE
     end_index = start_index + INDEX_PER_PAGE
@@ -120,7 +121,7 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
             if is_selfie and SELFIE_FOLDER_PREFIX not in subfolder_path:
                 continue
 
-            if is_sample:
+            if g.is_sample:
                 first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER, is_dig)
             else:
                 if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER]):
@@ -138,9 +139,6 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
 @app.route('/')
 def index():
     add_param = '?'
-
-    # サンプル画像か否か
-    is_sample = SAMPLE_IMAGE_FLAG
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -168,7 +166,7 @@ def index():
     page = request.args.get('page', default=1, type=int)
 
     # サブフォルダのリストを取得
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, is_sample, False, is_transparent_background, is_selfie)
+    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, False, is_transparent_background, is_selfie)
 
     print(f"total_count: {total_count}")
 
@@ -179,9 +177,6 @@ def index():
 @app.route('/male/')
 def index_male():
     add_param = '?'
-
-    # サンプル画像か否か
-    is_sample = SAMPLE_IMAGE_FLAG
 
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
@@ -207,7 +202,7 @@ def index_male():
     page = request.args.get('page', default=1, type=int)
 
     # サブフォルダのリストを取得
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, is_sample, True, is_transparent_background, is_selfie)
+    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, True, is_transparent_background, is_selfie)
 
     print(f"total_count: {total_count}")
 
@@ -219,14 +214,11 @@ def index_male():
 def index_background():
     add_param = '?'
 
-    # サンプル画像か否か
-    is_sample = SAMPLE_IMAGE_FLAG
-
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
 
     # サブフォルダのリストを取得
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, is_sample, False, False, False, True)
+    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, False, False, False, True)
 
     print(f"total_count: {total_count}")
 
@@ -239,7 +231,6 @@ def subfolder_images(subfolder_name):
     add_param = '?'
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
-    is_sample = SAMPLE_IMAGE_FLAG # サンプル画像か否か
     is_male = False
     is_male_get_param = request.args.get('is_male', 'false')
     is_transparent_background = False
@@ -249,8 +240,8 @@ def subfolder_images(subfolder_name):
     is_background = False
     is_background_get_param = request.args.get('is_background', 'false')
 
-    # is_sampleパラメータが"false"の場合、Falseをセット
-    if is_sample:
+    # g.is_sampleパラメータが"false"の場合、Falseをセット
+    if g.is_sample:
         subfolder_path = subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER
         thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
     else:
@@ -314,12 +305,8 @@ def index_user_policy():
 # 画像拡大表示
 @app.route('/images/<path:image_file>/')
 def get_image(image_file):
-
-    # サンプル画像か否か
-    is_sample = SAMPLE_IMAGE_FLAG
-
-    # is_sampleパラメータが"false"の場合
-    if is_sample:
+    # g.is_sampleパラメータが"false"の場合
+    if g.is_sample:
         # image_file の文字列内に`sample`が含まれていなかった場合404エラーを返す
         if 'sample' not in image_file:
             abort(404)
