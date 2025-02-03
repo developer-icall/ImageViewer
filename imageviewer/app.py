@@ -252,25 +252,22 @@ def subfolder_images(subfolder_name):
     page = request.args.get('page', 1)
     add_param = add_param + "&page=" + str(page)
 
-    # is_maleパラメータが"true"の場合、Trueをセット
-    if is_male_get_param.lower() == 'true':
+    # サブフォルダパスのによって、Trueをセット
+    if subfolder_name.endswith(MALE_FOLDER_PREFIX):
         is_male = True
         add_param = add_param + "&is_male=True"
-
     # is_transparent パラメータが"true"の場合、Trueをセット
-    if is_transparent_background_get_param.lower() == 'true':
-        add_param = add_param + "&is_transparent=True"
+    if subfolder_name.endswith(TRANSPARENT_BACKGROUND_FOLDER_PREFIX):
         is_transparent_background = True
-
+        add_param = add_param + "&is_transparent=True"
     # is_selfie パラメータが"true"の場合、Trueをセット
-    if is_selfie_get_param.lower() == 'true':
-        add_param = add_param + "&is_selfie=True"
+    if subfolder_name.endswith(SELFIE_FOLDER_PREFIX):
         is_selfie = True
-
+        add_param = add_param + "&is_selfie=True"
     # is_background パラメータが"true"の場合、Trueをセット
-    if is_background_get_param.lower() == 'true':
-        add_param = add_param + "&is_background=True"
+    if subfolder_name.endswith(BACKGROUND_FOLDER_PREFIX):
         is_background = True
+        add_param = add_param + "&is_background=True"
 
     # 画像のジャンル
     category = "人物"
