@@ -322,7 +322,6 @@ def get_sitemap():
 
 @app.route('/bootstrap/')
 def index_bootstrap():
-
     return render_template('bootstrap.html')
 
 if __name__ == '__main__':
