@@ -223,7 +223,7 @@ def index_background():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=False, is_transparent_background_set_param="", is_selfie=False, is_selfie_set_param="", is_background=True, is_background_set_param="&is_background=true")
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=False, is_transparent_background_set_param="", is_selfie=False, is_selfie_set_param="", is_background=True)
 
 # 画像詳細ページ
 @app.route('/subfolders/<subfolder_name>/')
