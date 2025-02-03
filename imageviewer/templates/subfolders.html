@@ -1,32 +1,5 @@
 <!doctype html>
 
-{# 画像のジャンル #}
-{% set category = "人物" %}
-{% if is_background %}
-    {% set category = "背景" %}
-{% endif %}
-
-{# オプション #}
-{% set options = [] %}
-{% if not is_background %}
-    {# 性別 #}
-    {% if is_male %}
-        {% set options = options + ["男性"] %}
-    {% else %}
-        {% set options = options + ["女性"] %}
-    {% endif %}
-
-    {# 背景透過 #}
-    {% if is_transparent_background %}
-        {% set options = options + ["背景透過"] %}
-    {% endif %}
-
-    {# セルフィー #}
-    {% if is_selfie %}
-        {% set options = options + ["セルフィー"] %}
-    {% endif %}
-{% endif %}
-
 {% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" %}
 {% set unique_keyword = category ~ "," ~ options|join(',') %}
 {% include 'parts/header.html' %}

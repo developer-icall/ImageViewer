@@ -194,7 +194,7 @@ def index_male():
     if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
         is_transparent_background_set_param = "&is_transparent=true"
-    
+
     # is_selfie パラメータが"true"の場合、Trueをセット
     if is_selfie_get_param.lower() == 'true':
         is_selfie = True
@@ -284,6 +284,26 @@ def subfolder_images(subfolder_name):
         is_background = True
     else:
         add_param = add_param + "&is_background=False"
+
+    # 画像のジャンル
+    category = "人物"
+    if is_background:
+        category = "背景"
+
+    # オプション
+    options = []
+    if not is_background:
+        # 性別
+        if is_male:
+            options.append("男性")
+        else:
+            options.append("女性")
+        # 背景透過
+        if is_transparent_background:
+            options.append("背景透過")
+        # セルフィー
+        if is_selfie:
+            options.append("セルフィー")
 
     # サブフォルダ内の画像ファイルの一覧を取得
     image_files = [f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
