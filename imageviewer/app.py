@@ -57,17 +57,19 @@ def get_pagination_info(total_items, items_per_page):
         'has_next': page < total_pages
     }
 
+# サブフォルダ内で最初の画像を取得
 def get_first_image(subfolder_path, is_dig=False):
     for root, dirs, files in os.walk(subfolder_path):
         for file in files:
             if file.lower().endswith(('.png')):
-                # print({os.path.join(root, file).replace("\\", "/")})
+                # もう1階層遡る ./→../
                 if is_dig:
                     return "." + os.path.join(root, file).replace("\\", "/")    
                 else:
                     return os.path.join(root, file).replace("\\", "/")
     return None
 
+# サブフォルダ内の画像をすべて取得
 def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transparent_background=False, is_selfie=False, is_background=False):
     subfolders = []
     start_index = (page - 1) * INDEX_PER_PAGE
@@ -133,6 +135,7 @@ def get_subfolders(folder_path, page, is_sample=True, is_male=False, is_transpar
             index = index + 1
     return subfolders, index
 
+# TOP(女性画像)
 @app.route('/')
 def index():
     add_param = '?'
@@ -173,6 +176,7 @@ def index():
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
     return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
 
+# 男性画像
 @app.route('/male/')
 def index_male():
     add_param = '?'
@@ -211,6 +215,7 @@ def index_male():
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
     return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=True, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
 
+# 背景画像
 @app.route('/background/')
 def index_background():
     add_param = '?'
@@ -229,22 +234,21 @@ def index_background():
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
     return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=False, is_transparent_background_set_param="", is_selfie=False, is_selfie_set_param="", is_background=True, is_background_set_param="&is_background=true")
 
+# 画像詳細ページ
 @app.route('/subfolders/<subfolder_name>/')
 def subfolder_images(subfolder_name):
     add_param = '?'
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
-    # サンプル画像か否か
-    is_sample = SAMPLE_IMAGE_FLAG
-    is_male_get_param = request.args.get('is_male', 'false')
+    is_sample = SAMPLE_IMAGE_FLAG # サンプル画像か否か
     is_male = False
+    is_male_get_param = request.args.get('is_male', 'false')
     is_transparent_background = False
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     is_selfie = False
     is_selfie_get_param = request.args.get('is_selfie', 'false')
     is_background = False
     is_background_get_param = request.args.get('is_background', 'false')
-    page = request.args.get('page', 1)
 
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample:
@@ -255,35 +259,28 @@ def subfolder_images(subfolder_name):
         thumbnail_folder = THUMBNAIL_FOLDER
 
     # page数もパラメータで保持(戻るボタンに必要)
+    page = request.args.get('page', 1)
     add_param = add_param + "&page=" + str(page)
 
     # is_maleパラメータが"true"の場合、Trueをセット
     if is_male_get_param.lower() == 'true':
         is_male = True
         add_param = add_param + "&is_male=True"
-    else:
-        add_param = add_param + "&is_male=False"
 
     # is_transparent パラメータが"true"の場合、Trueをセット
     if is_transparent_background_get_param.lower() == 'true':
         add_param = add_param + "&is_transparent=True"
         is_transparent_background = True
-    else:
-        add_param = add_param + "&is_transparent=False"
 
     # is_selfie パラメータが"true"の場合、Trueをセット
     if is_selfie_get_param.lower() == 'true':
         add_param = add_param + "&is_selfie=True"
         is_selfie = True
-    else:
-        add_param = add_param + "&is_selfie=False"
 
     # is_background パラメータが"true"の場合、Trueをセット
     if is_background_get_param.lower() == 'true':
         add_param = add_param + "&is_background=True"
         is_background = True
-    else:
-        add_param = add_param + "&is_background=False"
 
     # 画像のジャンル
     category = "人物"
@@ -310,10 +307,12 @@ def subfolder_images(subfolder_name):
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male, is_transparent_background=is_transparent_background, is_selfie=is_selfie, is_background=is_background)
 
+# 利用規約
 @app.route('/user_policy/')
 def index_user_policy():
     return render_template('user_policy.html')
 
+# 画像拡大表示
 @app.route('/images/<path:image_file>/')
 def get_image(image_file):
 
@@ -329,6 +328,7 @@ def get_image(image_file):
     # 原寸大の画像を表示
     return send_from_directory(IMAGE_FOLDER, image_file)
 
+# sitemap.xml
 @app.route('/sitemap.xml')
 def get_sitemap():
     # サイトマップを表示
