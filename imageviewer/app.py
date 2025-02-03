@@ -232,11 +232,8 @@ def subfolder_images(subfolder_name):
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
     is_male = False
-    is_male_get_param = request.args.get('is_male', 'false')
     is_transparent_background = False
-    is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     is_selfie = False
-    is_selfie_get_param = request.args.get('is_selfie', 'false')
     is_background = False
     is_background_get_param = request.args.get('is_background', 'false')
 
@@ -253,21 +250,21 @@ def subfolder_images(subfolder_name):
     add_param = add_param + "&page=" + str(page)
 
     # サブフォルダパスのによって、Trueをセット
-    if subfolder_name.endswith(MALE_FOLDER_PREFIX):
-        is_male = True
-        add_param = add_param + "&is_male=True"
-    # is_transparent パラメータが"true"の場合、Trueをセット
-    if subfolder_name.endswith(TRANSPARENT_BACKGROUND_FOLDER_PREFIX):
-        is_transparent_background = True
-        add_param = add_param + "&is_transparent=True"
-    # is_selfie パラメータが"true"の場合、Trueをセット
-    if subfolder_name.endswith(SELFIE_FOLDER_PREFIX):
-        is_selfie = True
-        add_param = add_param + "&is_selfie=True"
-    # is_background パラメータが"true"の場合、Trueをセット
+    # 背景画像
     if subfolder_name.endswith(BACKGROUND_FOLDER_PREFIX):
         is_background = True
-        add_param = add_param + "&is_background=True"
+    # 人物画像
+    # 男性
+    if subfolder_name.endswith(MALE_FOLDER_PREFIX):
+        is_male = True
+    # 背景透過
+    if subfolder_name.endswith(TRANSPARENT_BACKGROUND_FOLDER_PREFIX):
+        is_transparent_background = True
+        add_param = add_param + "&is_transparent=True" #パラメータもセット
+    # セルフィー
+    if subfolder_name.endswith(SELFIE_FOLDER_PREFIX):
+        is_selfie = True
+        add_param = add_param + "&is_selfie=True" #パラメータもセット
 
     # 画像のジャンル
     category = "人物"
