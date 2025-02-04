@@ -222,7 +222,7 @@ def index_background():
 # 画像詳細ページ
 @app.route('/subfolders/<subfolder_name>/')
 def subfolder_images(subfolder_name):
-    add_param = '?'
+    param_list = []
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
     is_background = False
@@ -236,9 +236,9 @@ def subfolder_images(subfolder_name):
 
     # page数もパラメータで保持(戻るボタンに必要)
     page = request.args.get('page', 1)
-    add_param = add_param + "&page=" + str(page)
+    param_list.append("&page=" + str(page))
 
-    # サブフォルダパスのによって、Trueをセット
+    # サブフォルダパスによって、Trueをセット
     # 背景画像
     if subfolder_name.endswith(BACKGROUND_FOLDER_PREFIX) or BACKGROUND_FOLDER_PREFIX + '-' in subfolder_name:
         is_background = True
@@ -249,11 +249,14 @@ def subfolder_images(subfolder_name):
     # 背景透過
     if subfolder_name.endswith(TRANSPARENT_BACKGROUND_FOLDER_PREFIX) or TRANSPARENT_BACKGROUND_FOLDER_PREFIX + '-' in subfolder_name:
         is_transparent_background = True
-        add_param = add_param + "&is_transparent=True" #パラメータもセット
+        param_list.append("&is_transparent=True") #パラメータもセット
     # セルフィー
     if subfolder_name.endswith(SELFIE_FOLDER_PREFIX) or SELFIE_FOLDER_PREFIX + '-' in subfolder_name:
         is_selfie = True
-        add_param = add_param + "&is_selfie=True" #パラメータもセット
+        param_list.append("&is_selfie=True") #パラメータもセット
+
+    # パラメータ整形
+    add_param = join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
 
     # 画像のジャンル
     category = "人物"
