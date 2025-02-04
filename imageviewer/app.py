@@ -159,7 +159,7 @@ def index():
         param_list.append(g.is_selfie_param)
 
     # パラメータ整形
-    add_param = "".join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
+    add_param = "".join(param_list)
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -194,7 +194,7 @@ def index_male():
         param_list.append(g.is_selfie_param)
 
     # パラメータ整形
-    add_param = "".join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
+    add_param = "".join(param_list)
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -210,6 +210,11 @@ def index_male():
 # 背景画像
 @app.route('/background/')
 def index_background():
+    param_list = []
+
+    # パラメータ整形
+    add_param = "".join(param_list)
+
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
 
@@ -219,7 +224,7 @@ def index_background():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=False, is_transparent_background=False, is_selfie=False, is_background=True)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=False, is_selfie=False, is_background=True)
 
 # 画像詳細ページ
 @app.route('/subfolders/<subfolder_name>/')
@@ -235,10 +240,6 @@ def subfolder_images(subfolder_name):
     # g.is_sampleパラメータが"True"の場合、サムネイルの参照場所を変更
     if g.is_sample:
         thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
-
-    # page数もパラメータで保持(戻るボタンに必要)
-    page = request.args.get('page', 1)
-    param_list.append("&page=" + str(page))
 
     # サブフォルダパスによって、Trueをセット
     # 背景画像
@@ -258,7 +259,18 @@ def subfolder_images(subfolder_name):
         param_list.append(g.is_selfie_param) #パラメータもセット
 
     # パラメータ整形
-    add_param = "".join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
+    add_param = "".join(param_list)
+
+    # 遷移元のpage数も取得(戻るボタンに必要)
+    page = request.args.get('page', 1)
+
+    # 戻るボタンのリンク
+    back_url = "/"
+    if is_background:
+        back_url = "/background/"
+    elif is_male:
+        back_url = "/male/"
+    back_url = back_url + "?page=" + str(page) + add_param
 
     # 画像のジャンル
     category = "人物"

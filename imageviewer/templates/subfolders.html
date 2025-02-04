@@ -5,13 +5,7 @@
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->
-{% set back_url = "/" %}
-{% if is_background %}
-    {% set back_url = "/background/" %}
-{% elif is_male %}
-    {% set back_url = "/male/" %}
-{% endif %}
-<a class="history-back-button" href="{{ back_url }}{{ add_param }}">Back</a>
+<a class="history-back-button" href="{{ back_url }}">Back</a>
 
 <section class="container">
     <div class="card w-75 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
