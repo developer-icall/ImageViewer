@@ -236,13 +236,9 @@ def subfolder_images(subfolder_name):
     is_selfie = False
     is_background = False
 
-    # g.is_sampleパラメータが"false"の場合、Falseをセット
+    # g.is_sampleパラメータが"True"の場合、サムネイルの参照場所を変更
     if g.is_sample:
-        subfolder_path = subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER
         thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
-    else:
-        subfolder_path = subfolder_path + THUMBNAIL_FOLDER
-        thumbnail_folder = THUMBNAIL_FOLDER
 
     # page数もパラメータで保持(戻るボタンに必要)
     page = request.args.get('page', 1)
@@ -285,8 +281,8 @@ def subfolder_images(subfolder_name):
         if is_selfie:
             options.append("セルフィー")
 
-    # サブフォルダ内の画像ファイルの一覧を取得
-    image_files = [f.name for f in os.scandir(subfolder_path) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    # サブフォルダ内のサムネイル一覧を取得
+    image_files = [f.name for f in os.scandir(subfolder_path + thumbnail_folder) if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, category=category, options=options, add_param=add_param, page=page, is_male=is_male, is_transparent_background=is_transparent_background, is_selfie=is_selfie, is_background=is_background)
 
