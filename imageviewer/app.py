@@ -250,7 +250,7 @@ def subfolder_images(subfolder_name):
         param_list.append("&is_selfie=True") #パラメータもセット
 
     # パラメータ整形
-    add_param = join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
+    add_param = "".join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
 
     # 画像のジャンル
     category = "人物"
