@@ -46,7 +46,7 @@
                         <a href="/{% if is_male %}male/{% endif %}" class="{% if not is_transparent_background %}selected{% endif %}">
                             OFF
                         </a>
-                        <a href="/{% if is_male %}male/{% endif %}?is_transparent=true" class="{% if is_transparent_background %}selected{% endif %}">
+                        <a href="/{% if is_male %}male/{% endif %}?{{ g.is_transparent_param }}" class="{% if is_transparent_background %}selected{% endif %}">
                             ON
                         </a>
                     </dd>
@@ -59,7 +59,7 @@
                         <a href="/{% if is_male %}male/{% endif %}" class="{% if not is_selfie %}selected{% endif %}">
                             OFF
                         </a>
-                        <a href="/{% if is_male %}male/{% endif %}?is_selfie=True" class="{% if is_selfie %}selected{% endif %}">
+                        <a href="/{% if is_male %}male/{% endif %}?{{ g.is_selfie_param }}" class="{% if is_selfie %}selected{% endif %}">
                             ON
                         </a>
                     </dd>

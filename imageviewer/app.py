@@ -46,6 +46,8 @@ def before_request():
     g.domain_name = DOMAIN_NAME  # ドメイン
     g.site_name = DOMAIN_NAME  # サイト名
     g.is_sample = SAMPLE_IMAGE_FLAG # 表示する画像をSample文字入りにするかのフラグ
+    g.is_transparent_param = "&is_transparent=True" # 背景透過画像かのパラメータ
+    g.is_selfie_param = "&is_selfie=True" # セルフィー画像かのパラメータ
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
@@ -145,7 +147,7 @@ def index():
     is_transparent_background_set_param = ""
     if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
-        is_transparent_background_set_param = "&is_transparent=true"
+        is_transparent_background_set_param = g.is_transparent_param
 
     # URLのパラメータから is_selfie を取得
     is_selfie_get_param = request.args.get('is_selfie', 'false')
@@ -154,7 +156,7 @@ def index():
     is_selfie_set_param = ""
     if is_selfie_get_param.lower() == 'true':
         is_selfie = True
-        is_selfie_set_param = "&is_selfie=true"
+        is_selfie_set_param = g.is_selfie_param
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -177,7 +179,7 @@ def index_male():
     is_transparent_background_set_param = ""
     if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
-        is_transparent_background_set_param = "&is_transparent=true"
+        is_transparent_background_set_param = g.is_transparent_param
 
     # URLのパラメータから is_selfie を取得
     is_selfie_get_param = request.args.get('is_selfie', 'false')
@@ -186,7 +188,7 @@ def index_male():
     is_selfie_set_param = ""
     if is_selfie_get_param.lower() == 'true':
         is_selfie = True
-        is_selfie_set_param = "&is_selfie=true"
+        is_selfie_set_param = g.is_selfie_param
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -243,11 +245,11 @@ def subfolder_images(subfolder_name):
     # 背景透過
     if subfolder_name.endswith(TRANSPARENT_BACKGROUND_FOLDER_PREFIX) or TRANSPARENT_BACKGROUND_FOLDER_PREFIX + '-' in subfolder_name:
         is_transparent_background = True
-        param_list.append("&is_transparent=True") #パラメータもセット
+        param_list.append(g.is_transparent_param) #パラメータもセット
     # セルフィー
     if subfolder_name.endswith(SELFIE_FOLDER_PREFIX) or SELFIE_FOLDER_PREFIX + '-' in subfolder_name:
         is_selfie = True
-        param_list.append("&is_selfie=True") #パラメータもセット
+        param_list.append(g.is_selfie_param) #パラメータもセット
 
     # パラメータ整形
     add_param = "".join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
