@@ -231,10 +231,10 @@ def subfolder_images(subfolder_name):
     add_param = '?'
     subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name).replace("\\", "/")
     thumbnail_folder = THUMBNAIL_FOLDER
+    is_background = False
     is_male = False
     is_transparent_background = False
     is_selfie = False
-    is_background = False
 
     # g.is_sampleパラメータが"True"の場合、サムネイルの参照場所を変更
     if g.is_sample:
@@ -246,18 +246,18 @@ def subfolder_images(subfolder_name):
 
     # サブフォルダパスのによって、Trueをセット
     # 背景画像
-    if subfolder_name.endswith(BACKGROUND_FOLDER_PREFIX):
+    if subfolder_name.endswith(BACKGROUND_FOLDER_PREFIX) or BACKGROUND_FOLDER_PREFIX + '-' in subfolder_name:
         is_background = True
     # 人物画像
     # 男性
-    if subfolder_name.endswith(MALE_FOLDER_PREFIX):
+    if subfolder_name.endswith(MALE_FOLDER_PREFIX) or MALE_FOLDER_PREFIX + '-' in subfolder_name:
         is_male = True
     # 背景透過
-    if subfolder_name.endswith(TRANSPARENT_BACKGROUND_FOLDER_PREFIX):
+    if subfolder_name.endswith(TRANSPARENT_BACKGROUND_FOLDER_PREFIX) or TRANSPARENT_BACKGROUND_FOLDER_PREFIX + '-' in subfolder_name:
         is_transparent_background = True
         add_param = add_param + "&is_transparent=True" #パラメータもセット
     # セルフィー
-    if subfolder_name.endswith(SELFIE_FOLDER_PREFIX):
+    if subfolder_name.endswith(SELFIE_FOLDER_PREFIX) or SELFIE_FOLDER_PREFIX + '-' in subfolder_name:
         is_selfie = True
         add_param = add_param + "&is_selfie=True" #パラメータもセット
 
