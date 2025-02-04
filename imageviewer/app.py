@@ -140,23 +140,26 @@ def get_subfolders(folder_path, page, is_male=False, is_transparent_background=F
 # TOP(女性画像)
 @app.route('/')
 def index():
+    param_list = []
+
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     # is_transparent パラメータが"true"の場合、Trueをセット
     is_transparent_background = False
-    is_transparent_background_set_param = ""
     if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
-        is_transparent_background_set_param = g.is_transparent_param
+        param_list.append(g.is_transparent_param)
 
     # URLのパラメータから is_selfie を取得
     is_selfie_get_param = request.args.get('is_selfie', 'false')
     # is_selfie パラメータが"true"の場合、Trueをセット
     is_selfie = False
-    is_selfie_set_param = ""
     if is_selfie_get_param.lower() == 'true':
         is_selfie = True
-        is_selfie_set_param = g.is_selfie_param
+        param_list.append(g.is_selfie_param)
+
+    # パラメータ整形
+    add_param = "".join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -167,28 +170,31 @@ def index():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=False, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=is_transparent_background, is_selfie=is_selfie)
 
 # 男性画像
 @app.route('/male/')
 def index_male():
+    param_list = []
+
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     # is_transparent パラメータが"true"の場合、Trueをセット
     is_transparent_background = False
-    is_transparent_background_set_param = ""
     if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
-        is_transparent_background_set_param = g.is_transparent_param
+        param_list.append(g.is_transparent_param)
 
     # URLのパラメータから is_selfie を取得
     is_selfie_get_param = request.args.get('is_selfie', 'false')
     # is_selfie パラメータが"true"の場合、Trueをセット
     is_selfie = False
-    is_selfie_set_param = ""
     if is_selfie_get_param.lower() == 'true':
         is_selfie = True
-        is_selfie_set_param = g.is_selfie_param
+        param_list.append(g.is_selfie_param)
+
+    # パラメータ整形
+    add_param = "".join(param_list).replace("&", "?", 1)  # 先頭の&を?に置換
 
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
@@ -199,7 +205,7 @@ def index_male():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=True, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=True, is_transparent_background=is_transparent_background, is_selfie=is_selfie)
 
 # 背景画像
 @app.route('/background/')
@@ -213,7 +219,7 @@ def index_background():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=False, is_transparent_background=False, is_transparent_background_set_param="", is_selfie=False, is_selfie_set_param="", is_background=True)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=False, is_transparent_background=False, is_selfie=False, is_background=True)
 
 # 画像詳細ページ
 @app.route('/subfolders/<subfolder_name>/')

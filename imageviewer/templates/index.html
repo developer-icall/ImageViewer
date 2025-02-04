@@ -30,10 +30,10 @@
                         性別
                     </dt>
                     <dd>
-                        <a href="/?{{is_transparent_background_set_param}}{{is_selfie_set_param}}" class="{% if not is_male %}selected{% endif %}">
+                        <a href="/{{ add_param }}" class="{% if not is_male %}selected{% endif %}">
                             女性
                         </a>
-                        <a href="/male/?{{is_transparent_background_set_param}}{{is_selfie_set_param}}" class="{% if is_male %}selected{% endif %}">
+                        <a href="/male/{{ add_param }}" class="{% if is_male %}selected{% endif %}">
                             男性
                         </a>
                     </dd>
@@ -78,7 +78,7 @@
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
         {% for subfolder_name, first_image in subfolder_images %}
             <div class="col">
-                <a class="d-block shadow-sm" href="/subfolders/{{ subfolder_name }}?page={{ pagination_info.page }}">
+                <a class="d-block shadow-sm" href="/subfolders/{{ subfolder_name }}{{ add_param }}&page={{ pagination_info.page }}">
                     <img src="{{ first_image }}" alt="{{ subfolder_name }}" width="100%">
                 </a>
             </div>
@@ -92,7 +92,7 @@
                 {% if page_num == pagination_info.page %}
                     <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ add_param }}&page={{ page_num }}">{{ page_num }}</a></li>
                 {% endif %}
             {% endfor %}
         {% else %}
@@ -101,38 +101,38 @@
                     {% if page_num == pagination_info.page %}
                         <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ add_param }}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if pagination_info.has_next %}
-                <li class="page-item"><a class="page-link next" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page + 1 }}"></a></li>
+                <li class="page-item"><a class="page-link next" href="{{ add_param }}&page={{ pagination_info.page + 1 }}"></a></li>
                 {% endif %}
-                <li class="page-item"><a class="page-link last" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.total_pages }}"></a></li>
+                <li class="page-item"><a class="page-link last" href="{{ add_param }}&page={{ pagination_info.total_pages }}"></a></li>
             {% elif pagination_info.page >= pagination_info.total_pages - 2 %}
-                <li class="page-item"><a class="page-link first" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page=1"></a></li>
-                <li class="page-item"><a class="page-link prev" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page - 1 }}"></a></li>
+                <li class="page-item"><a class="page-link first" href="{{ add_param }}&page=1"></a></li>
+                <li class="page-item"><a class="page-link prev" href="{{ add_param }}&page={{ pagination_info.page - 1 }}"></a></li>
                 {% for page_num in range(pagination_info.total_pages - 4, pagination_info.total_pages + 1) %}
                     {% if page_num == pagination_info.page %}
                         <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ add_param }}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if pagination_info.has_next %}
-                <li class="page-item"><a class="page-link next" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page + 1 }}"></a></li>
+                <li class="page-item"><a class="page-link next" href="{{ add_param }}&page={{ pagination_info.page + 1 }}"></a></li>
                 {% endif %}
             {% else %}
-                <li class="page-item"><a class="page-link first" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page=1"></a></li>
-                <li class="page-item"><a class="page-link prev" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page - 1 }}"></a></li>
+                <li class="page-item"><a class="page-link first" href="{{ add_param }}&page=1"></a></li>
+                <li class="page-item"><a class="page-link prev" href="{{ add_param }}&page={{ pagination_info.page - 1 }}"></a></li>
                 {% for page_num in range(pagination_info.page - 2, pagination_info.page + 3) %}
                     {% if page_num == pagination_info.page %}
                         <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ add_param }}&page={{ page_num }}">{{ page_num }}</a></li>
                     {% endif %}
                 {% endfor %}
-                <li class="page-item"><a class="page-link next" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page + 1 }}"></a></li>
-                <li class="page-item"><a class="page-link last" href="?{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.total_pages }}"></a></li>
+                <li class="page-item"><a class="page-link next" href="{{ add_param }}&page={{ pagination_info.page + 1 }}"></a></li>
+                <li class="page-item"><a class="page-link last" href="{{ add_param }}&page={{ pagination_info.total_pages }}"></a></li>
             {% endif %}
         {% endif %}
     </ul>
