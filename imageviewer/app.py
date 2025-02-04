@@ -140,22 +140,18 @@ def get_subfolders(folder_path, page, is_male=False, is_transparent_background=F
 def index():
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
+    # is_transparent パラメータが"true"の場合、Trueをセット
     is_transparent_background = False
     is_transparent_background_set_param = ""
-
-    # URLのパラメータから is_selfie を取得
-    is_selfie_get_param = request.args.get('is_selfie', 'false')
-    is_selfie = False
-    is_selfie_set_param = ""
-
-    print("request.args: " + str(request.args))
-
-    # is_transparent パラメータが"true"の場合、Trueをセット
     if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
         is_transparent_background_set_param = "&is_transparent=true"
 
+    # URLのパラメータから is_selfie を取得
+    is_selfie_get_param = request.args.get('is_selfie', 'false')
     # is_selfie パラメータが"true"の場合、Trueをセット
+    is_selfie = False
+    is_selfie_set_param = ""
     if is_selfie_get_param.lower() == 'true':
         is_selfie = True
         is_selfie_set_param = "&is_selfie=true"
@@ -176,20 +172,18 @@ def index():
 def index_male():
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
+    # is_transparent パラメータが"true"の場合、Trueをセット
     is_transparent_background = False
     is_transparent_background_set_param = ""
-
-    # URLのパラメータから is_selfie を取得
-    is_selfie_get_param = request.args.get('is_selfie', 'false')
-    is_selfie = False
-    is_selfie_set_param = ""
-
-    # is_transparent パラメータが"true"の場合、Trueをセット
     if is_transparent_background_get_param.lower() == 'true':
         is_transparent_background = True
         is_transparent_background_set_param = "&is_transparent=true"
 
+    # URLのパラメータから is_selfie を取得
+    is_selfie_get_param = request.args.get('is_selfie', 'false')
     # is_selfie パラメータが"true"の場合、Trueをセット
+    is_selfie = False
+    is_selfie_set_param = ""
     if is_selfie_get_param.lower() == 'true':
         is_selfie = True
         is_selfie_set_param = "&is_selfie=true"
