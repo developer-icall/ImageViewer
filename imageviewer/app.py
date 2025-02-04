@@ -138,8 +138,6 @@ def get_subfolders(folder_path, page, is_male=False, is_transparent_background=F
 # TOP(女性画像)
 @app.route('/')
 def index():
-    add_param = '?'
-
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     is_transparent_background = False
@@ -171,13 +169,11 @@ def index():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=False, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
 
 # 男性画像
 @app.route('/male/')
 def index_male():
-    add_param = '?'
-
     # URLのパラメータから is_transparent を取得
     is_transparent_background_get_param = request.args.get('is_transparent', 'false')
     is_transparent_background = False
@@ -207,13 +203,11 @@ def index_male():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=True, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=True, is_transparent_background=is_transparent_background, is_transparent_background_set_param=is_transparent_background_set_param, is_selfie=is_selfie, is_selfie_set_param=is_selfie_set_param)
 
 # 背景画像
 @app.route('/background/')
 def index_background():
-    add_param = '?'
-
     # 現在のページ番号を取得
     page = request.args.get('page', default=1, type=int)
 
@@ -223,7 +217,7 @@ def index_background():
     print(f"total_count: {total_count}")
 
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, add_param=add_param, is_male=False, is_transparent_background=False, is_transparent_background_set_param="", is_selfie=False, is_selfie_set_param="", is_background=True)
+    return render_template('index.html', subfolder_images=subfolder_images, pagination_info=pagination_info, is_male=False, is_transparent_background=False, is_transparent_background_set_param="", is_selfie=False, is_selfie_set_param="", is_background=True)
 
 # 画像詳細ページ
 @app.route('/subfolders/<subfolder_name>/')
