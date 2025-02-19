@@ -9,58 +9,44 @@
                 OPTION
             </div>
 
-            <!--
             <dl>
                 <dt>
-                    ジャンル
+                    画像タイプ
                 </dt>
                 <dd>
-                    <a href="/{{ add_param }}" class="{% if not is_background %}selected{% endif %}">
-                        人物
+                    <a href="/{{ add_param }}" class="{% if not is_background and not is_rpgicon and not is_male and not is_transparent_background and not is_selfie %}selected{% endif %}">
+                        女性
+                    </a>
+                    <a href="/male/{{ add_param }}" class="{% if is_male and not is_transparent_background and not is_selfie %}selected{% endif %}">
+                        男性
+                    </a>
+                    <a href="/{{ add_param }}&is_transparent=true" class="{% if is_transparent_background %}selected{% endif %}">
+                        透明背景
+                    </a>
+                    <a href="/{{ add_param }}&is_selfie=true" class="{% if is_selfie %}selected{% endif %}">
+                        セルフィー
+                    </a>
+                    <a href="/{{ add_param }}&is_rpgicon=true" class="{% if is_rpgicon %}selected{% endif %}">
+                        RPGIcon
                     </a>
                     <a href="/background/{{ add_param }}" class="{% if is_background %}selected{% endif %}">
                         背景
                     </a>
                 </dd>
             </dl>
-            -->
-            {% if not is_background %}
+
+            {# 人物画像の場合のみ追加オプションを表示 #}
+            {% if not is_background and not is_rpgicon and (not is_transparent_background and not is_selfie) %}
                 <dl>
                     <dt>
                         性別
                     </dt>
                     <dd>
-                        <a href="/{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}" class="{% if not is_male %}selected{% endif %}">
+                        <a href="/{{add_param}}" class="{% if not is_male %}selected{% endif %}">
                             女性
                         </a>
-                        <a href="/male/{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}" class="{% if is_male %}selected{% endif %}">
+                        <a href="/male/{{add_param}}" class="{% if is_male %}selected{% endif %}">
                             男性
-                        </a>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>
-                        背景透過
-                    </dt>
-                    <dd>
-                        <a href="/{% if is_male %}male/{% endif %}{{add_param}}&is_transparent=false" class="{% if not is_transparent_background %}selected{% endif %}">
-                            OFF
-                        </a>
-                        <a href="/{% if is_male %}male/{% endif %}{{add_param}}&is_transparent=true" class="{% if is_transparent_background %}selected{% endif %}">
-                            ON
-                        </a>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>
-                        セルフィー
-                    </dt>
-                    <dd>
-                        <a href="/{% if is_male %}male/{% endif %}{{add_param}}&is_selfie=false" class="{% if not is_selfie %}selected{% endif %}">
-                            OFF
-                        </a>
-                        <a href="/{% if is_male %}male/{% endif %}{{add_param}}&is_selfie=true" class="{% if is_selfie %}selected{% endif %}">
-                            ON
                         </a>
                     </dd>
                 </dl>
@@ -78,7 +64,7 @@
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
         {% for subfolder_name, first_image in subfolder_images %}
             <div class="col">
-                <a class="d-block shadow-sm" href="/subfolders/{{ subfolder_name }}/{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page }}&is_male={{ is_male }}">
+                <a class="d-block shadow-sm" href="/subfolders/{{ subfolder_name }}/{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}{{is_rpgicon_set_param}}&page={{ pagination_info.page }}&is_male={{ is_male }}">
                     <img src="{{ first_image }}" alt="{{ subfolder_name }}" width="100%">
                 </a>
             </div>

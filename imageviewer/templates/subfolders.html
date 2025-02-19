@@ -4,11 +4,13 @@
 {% set category = "人物" %}
 {% if is_background %}
     {% set category = "背景" %}
+{% elif is_rpgicon %}
+    {% set category = "RPGアイコン" %}
 {% endif %}
 
 {# オプション #}
 {% set options = [] %}
-{% if not is_background %}
+{% if not is_background and not is_rpgicon %}
     {# 性別 #}
     {% if is_male %}
         {% set options = options + ["男性"] %}
@@ -37,12 +39,28 @@
     {% set back_url = "/background/" %}
 {% elif is_male %}
     {% set back_url = "/male/" %}
+{% elif is_rpgicon %}
+    {% set back_url = "/" %}
 {% endif %}
-<a class="history-back-button" href="{{ back_url }}{{ add_param }}">Back</a>
+
+{# 戻るリンクのパラメータを設定 #}
+{% set back_params = add_param %}
+{% if is_rpgicon %}
+    {% if "is_rpgicon=true" not in back_params %}
+        {% if "?" in back_params %}
+            {% set back_params = back_params + "&is_rpgicon=true" %}
+        {% else %}
+            {% set back_params = "?is_rpgicon=true" %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+<a class="history-back-button" href="{{ back_url }}{{ back_params }}">Back</a>
 
 <section class="container">
     <div class="card w-75 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
         {% set image_name = image_files[0] %}
+        {% set image_path = base_folder + '/' + subfolder_name + '/' + image_name %}
         {% include 'parts/subfolder_image_download_form.html' %}
     </div>
 </section>
@@ -57,6 +75,7 @@
                 <div class="col">
                     <div class="card overflow-hidden shadow-sm">
                         {% set image_name = image_file %}
+                        {% set image_path = base_folder + '/' + subfolder_name + '/' + image_name %}
                         {% include 'parts/subfolder_image_download_form.html' %}
                     </div>
                 </div>
