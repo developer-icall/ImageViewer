@@ -84,12 +84,22 @@ def get_first_image(subfolder_path, is_dig=False):
     for root, dirs, files in os.walk(subfolder_path):
         files.sort()  # ファイル名順にソート
         for file in files:
-            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):  # 他の画像形式も含める
-                image_path = os.path.join(root, file)
-                if is_dig:
-                    return "." + image_path
+            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                image_path = os.path.join(root, file).replace("\\", "/")
+
+                # フォルダ名を取得（例：20231124-17-1409855962）
+                folder_name = os.path.basename(os.path.dirname(os.path.dirname(image_path)))
+
+                # ベースフォルダを判定（brav, rpgicon, background）
+                if RPGICON_FOLDER in subfolder_path:
+                    base_folder = 'RPGIcon'
+                elif BACKGROUND_FOLDER in subfolder_path:
+                    base_folder = 'background'
                 else:
-                    return image_path
+                    base_folder = 'brav'
+
+                # 画像のURLパスを構築
+                return f"/images/{folder_name}/thumbnail/{file}"
     return None
 
 def get_subfolders(folder_path, page, image_type):
@@ -121,7 +131,7 @@ def get_subfolders(folder_path, page, image_type):
                 continue
 
             # 背景画像の場合は他のフィルタリングをスキップ
-            if not image_type.is_background:
+            if not image_type.is_background and not image_type.is_rpgicon:
                 # 男性画像を表示するか否かに応じてフォルダーをスキップ
                 if not image_type.is_male:
                     if any(x in subfolder_path for x in [MALE_FOLDER_PREFIX]):
@@ -174,7 +184,7 @@ def brav_female():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -195,7 +205,7 @@ def brav_female_transparent():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -216,7 +226,7 @@ def brav_female_selfie():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -237,7 +247,7 @@ def brav_male():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -258,7 +268,7 @@ def brav_male_transparent():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -279,7 +289,7 @@ def brav_male_selfie():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -298,7 +308,7 @@ def rpgicon():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -317,7 +327,7 @@ def background():
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-    
+
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
@@ -327,17 +337,19 @@ def background():
                          is_rpgicon=False,
                          is_background=True)
 
-@app.route('/<path:category>/subfolders/<subfolder_name>/')
-def subfolder_images_new(category, subfolder_name):
+@app.route('/brav/<gender>/subfolders/<subfolder_name>/')
+@app.route('/brav/<gender>/<option>/subfolders/<subfolder_name>/')
+@app.route('/<category>/subfolders/<subfolder_name>/')
+def subfolder_images_new(subfolder_name, gender=None, option=None, category=None):
     # カテゴリーからパラメータを解析
-    is_male = 'male' in category
-    is_transparent_background = 'transparent' in category
-    is_selfie = 'selfie' in category
-    is_background = category == 'background'
-    is_rpgicon = category == 'rpgicon'
-    
+    is_male = gender == 'male' if gender else False
+    is_transparent_background = option == 'transparent' if option else False
+    is_selfie = option == 'selfie' if option else False
+    is_background = category == 'background' if category else False
+    is_rpgicon = category == 'rpgicon' if category else False
+
     page = request.args.get('page', 1)
-    
+
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=is_male,
@@ -346,18 +358,18 @@ def subfolder_images_new(category, subfolder_name):
         is_background=is_background,
         is_rpgicon=is_rpgicon
     )
-    
+
     # ベースフォルダパスの決定
     base_folder = image_type.get_folder_path()
     subfolder_path = os.path.join(base_folder, subfolder_name).replace("\\", "/")
-    
+
     # サムネイルフォルダの設定
     thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER if image_type.is_sample else THUMBNAIL_FOLDER
-    
+
     # サブフォルダ内の画像ファイルの一覧を取得
     image_files = []
     target_path = subfolder_path + thumbnail_folder
-    
+
     if os.path.exists(target_path):
         for root, dirs, files in os.walk(target_path):
             files.sort(key=lambda f: extract_number(f))
@@ -366,12 +378,12 @@ def subfolder_images_new(category, subfolder_name):
                     image_files.append(file)
     else:
         abort(404)
-    
+
     if not image_files:
         abort(404)
-    
+
     base_folder = os.path.basename(base_folder)
-    
+
     return render_template('subfolders.html',
                          subfolder_name=subfolder_name,
                          base_folder=base_folder,
@@ -390,45 +402,38 @@ def subfolder_images_new(category, subfolder_name):
 def index_user_policy():
     return render_template('user_policy.html')
 
-@app.route('/images/<path:image_file>/')
+@app.route('/images/<path:image_file>')
 def get_image(image_file):
-    # サンプル画像か否か
-    is_sample = SAMPLE_IMAGE_FLAG
+    # 末尾のスラッシュを削除
+    image_file = image_file.rstrip('/')
 
-    # URLパラメータを取得
-    is_male = request.args.get('is_male', 'false').lower() == 'true'
-    is_transparent_background = request.args.get('is_transparent', 'false').lower() == 'true'
-    is_selfie = request.args.get('is_selfie', 'false').lower() == 'true'
-    is_background = request.args.get('is_background', 'false').lower() == 'true'
-    is_rpgicon = request.args.get('is_rpgicon', 'false').lower() == 'true'
-
-    # 画像タイプを作成
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=is_male,
-        is_transparent_background=is_transparent_background,
-        is_selfie=is_selfie,
-        is_background=is_background,
-        is_rpgicon=is_rpgicon
-    )
-
-    # パスの各部分を取得
+    # パスの各部分を取得（例：20231124-17-1409855962/thumbnail/00000-1409855962-thumbnail.png）
     path_parts = image_file.split('/')
-    subfolder_name = path_parts[0]
-    image_name = path_parts[-1]
+    folder_name = path_parts[0]  # 例：20231124-17-1409855962
+
+    # thumbnailフォルダ以降のパスを結合して画像名を取得
+    image_path = '/'.join(path_parts[2:]) if len(path_parts) > 2 else path_parts[-1]
 
     # サムネイルフォルダの設定
-    if is_sample:
-        thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER
-    else:
-        thumbnail_folder = THUMBNAIL_FOLDER
+    thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER if SAMPLE_IMAGE_FLAG else THUMBNAIL_FOLDER
 
-    # 完全なパスを構築（static/sync_imagesからの相対パス）
-    full_path = f"{os.path.basename(image_type.get_folder_path())}/{subfolder_name}{thumbnail_folder}/{image_name}".replace('\\', '/')
+    # まず、bravフォルダで探す
+    possible_paths = [
+        f"sync_images/brav/{folder_name}{thumbnail_folder}/{image_path}",
+        f"sync_images/RPGIcon/{folder_name}{thumbnail_folder}/{image_path}",
+        f"sync_images/background/{folder_name}{thumbnail_folder}/{image_path}"
+    ]
 
-    print(f"full_path: {full_path}")
-    # 原寸大の画像を表示（ベースディレクトリはIMAGE_FOLDERの親ディレクトリ）
-    return send_from_directory('./static', f"sync_images/{full_path}")
+    print(f"Looking for image in paths: {possible_paths}")  # デバッグ用
+
+    # 存在するパスを探す
+    for full_path in possible_paths:
+        if os.path.exists(os.path.join('./static', full_path)):
+            print(f"Found image at: {full_path}")
+            return send_from_directory('./static', full_path)
+
+    # 画像が見つからない場合は404
+    abort(404)
 
 @app.route('/sitemap.xml')
 def get_sitemap():

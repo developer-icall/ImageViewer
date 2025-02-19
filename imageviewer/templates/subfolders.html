@@ -34,13 +34,23 @@
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->
-{% set back_url = "/" %}
+{% set back_url = namespace(value='') %}
 {% if is_background %}
-    {% set back_url = "/background/" %}
-{% elif is_male %}
-    {% set back_url = "/male/" %}
+    {% set back_url.value = '/background/' %}
 {% elif is_rpgicon %}
-    {% set back_url = "/" %}
+    {% set back_url.value = '/rpgicon/' %}
+{% else %}
+    {% set back_url.value = '/brav/' %}
+    {% if is_male %}
+        {% set back_url.value = back_url.value + 'male/' %}
+    {% else %}
+        {% set back_url.value = back_url.value + 'female/' %}
+    {% endif %}
+    {% if is_transparent_background %}
+        {% set back_url.value = back_url.value + 'transparent/' %}
+    {% elif is_selfie %}
+        {% set back_url.value = back_url.value + 'selfie/' %}
+    {% endif %}
 {% endif %}
 
 {# 戻るリンクのパラメータを設定 #}
@@ -55,12 +65,20 @@
     {% endif %}
 {% endif %}
 
-<a class="history-back-button" href="{{ back_url }}{{ back_params }}">Back</a>
+<a class="history-back-button" href="{{ back_url.value }}{% if page %}?page={{ page }}{% endif %}">Back</a>
 
 <section class="container">
     <div class="card w-75 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
         {% set image_name = image_files[0] %}
-        {% set image_path = base_folder + '/' + subfolder_name + '/' + image_name %}
+        {% set category = namespace(value='') %}
+        {% if is_background %}
+            {% set category.value = 'background' %}
+        {% elif is_rpgicon %}
+            {% set category.value = 'rpgicon' %}
+        {% else %}
+            {% set category.value = 'brav' %}
+        {% endif %}
+        {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
         {% include 'parts/subfolder_image_download_form.html' %}
     </div>
 </section>
@@ -75,7 +93,7 @@
                 <div class="col">
                     <div class="card overflow-hidden shadow-sm">
                         {% set image_name = image_file %}
-                        {% set image_path = base_folder + '/' + subfolder_name + '/' + image_name %}
+                        {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
                         {% include 'parts/subfolder_image_download_form.html' %}
                     </div>
                 </div>

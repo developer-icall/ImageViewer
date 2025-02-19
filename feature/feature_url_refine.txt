@@ -1,0 +1,23 @@
+仕様変更があるので実装お願いします
+
+# 仕様
+- 今までURLのパラメータで表示する画像種類を指定していましたが、パラメータではなく URL で判別できるようにする
+    - /brav/female/ という URL では brav で生成された女性の通常画像を表示する(サブフォルダになると/brav/female/subfolders/ という URL になる)
+        - /brav/female/transparent/ という URL では brav で生成された男性の透明背景画像を表示する(サブフォルダになると/brav/female/transparent/subfolders/ という URL になる)
+        - /brav/female/selfie/ という URL では brav で生成された男性のセルフィー画像を表示する(サブフォルダになると/brav/female/selfie/subfolders/ という URL になる)
+    - /brav/male/ という URL では brav で生成された男性の通常画像を表示する(サブフォルダになると/brav/male/subfolders/ という URL になる)
+        - /brav/male/selfie/ という URL では brav で生成された男性のセルフィー画像を表示する(サブフォルダになると/brav/male/selfie/subfolders/ という URL になる)
+        - /brav/male/transparent/ という URL では brav で生成された男性の透明背景画像を表示する(サブフォルダになると/brav/male/transparent/subfolders/ という URL になる)
+    - /rpgicon/ という URL では RPGIcon の画像を表示する(サブフォルダになると/rpgicon/subfolders/ という URL になる)
+    - /background/ という URL では背景の画像を表示する(サブフォルダになると/background/subfolders/ という URL になる)
+
+# 関連ファイル
+@app.py @index.html @images.html @subfolders.html
+
+---
+以下のステップで進みたいです
+1. @app.py の @app.route を仕様に沿って適切に構築する
+2. 各種パラメータで指定していた部分を全て、新たに追加した URL に沿って設定する
+3. @index.html @subfolders.html を仕様に沿って適切に構築する
+
+それではステップ1からお願いします
