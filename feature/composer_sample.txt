@@ -1,0 +1,35 @@
+仕様変更および新規機能を作るので実装お願いします
+
+# 仕様
+- 今までの画像フォルダは static/sync_images 直下にあるものを参照していたが、画像の種類ごとに参照するフォルダを変更できるようにする
+- 画像の種類と参照フォルダは以下の通り
+    - brav生成リアル男女写真: static/sync_images/brav
+        - パラメータなし: 女性
+        - is_male=true: 男性
+        - is_selfie=true: セルフィー
+        - is_transparent=true: 透明背景
+    - RPGIcon生成画像: static/sync_images/RPGIcon
+        - is_rpgicon=true: RPGIcon生成画像
+    - 背景のみ: static/sync_images/background
+        - is_background=true: 背景のみ
+
+# 関連ファイル
+@app.py @index.html @images.html @subfolders.html
+
+---
+以下のステップで進みたいです
+1. brav生成リアル男女写真: static/sync_images/brav のフォルダをパラメータに応じて参照するようにする
+2. RPGIcon生成画像: static/sync_images/RPGIcon のフォルダをパラメータに応じて参照するようにする
+3. 背景のみ: static/sync_images/background のフォルダをパラメータに応じて参照するようにする
+4. 画面上で表示する画像タイプを選択できるようにする
+    - brav生成リアル男女写真
+        - パラメータなし: 女性
+        - is_male=true: 男性
+        - is_selfie=true: セルフィー
+        - is_transparent=true: 透明背景
+    - RPGIcon生成画像
+        - is_rpgicon=true: RPGIcon生成画像
+    - 背景のみ
+        - is_background=true: 背景のみ
+
+それではステップ1からお願いします
