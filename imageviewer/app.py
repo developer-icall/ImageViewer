@@ -1,5 +1,6 @@
 import os
 import re
+import json
 from flask import Flask, render_template, send_from_directory, request, abort, g, redirect
 
 app = Flask(__name__)
@@ -168,6 +169,97 @@ def get_subfolders(folder_path, page, image_type):
 def extract_number(filename):
     match = re.match(r"(\d+)", filename)
     return int(match.group(1)) if match else float('inf')
+
+# JSONを基に、人物用のプロンプト情報を生成
+def create_human_prompt(json_file):
+    data = json.load(json_file) # jsonファイルを読み込む
+
+    place = translate_prompt("Place", ",".join(data['Place']))
+    pose = translate_prompt("pose", ",".join(data['pose']))
+    hair_color = translate_prompt("Hair Color", ",".join(data['Hair Color']))
+    hair_type = translate_prompt("Hair Type", ",".join(data['Hair Type']))
+    cloth = translate_prompt("Cloth", ",".join(data['Cloth']))
+    accesarry = translate_prompt("Accesarry", ",".join(data['Accesarry']))
+    age = translate_prompt("age", ",".join(data['age']))
+    face = translate_prompt("Face", ",".join(data['Face']))
+    type = translate_prompt("Women Type", ",".join(data['Women Type']))
+
+    prompt = ''
+    if place:
+        prompt += place + "にて、"
+    if pose:
+        prompt += pose
+    if hair_color:
+        prompt += hair_color
+    if hair_color and hair_type:
+        prompt += ","
+    if hair_type:
+        prompt += hair_type
+    if hair_color or hair_type:
+        prompt += "の"
+    if cloth:
+        prompt += cloth
+    if cloth and accesarry:
+        prompt += ","
+    if accesarry:
+        prompt += accesarry
+    if cloth or accesarry:
+        prompt += "を身に着けた、"
+    if age:
+        prompt += age + "歳程度の"
+    if face:
+        prompt += face
+    if type:
+        prompt += type
+
+    return prompt
+
+# プロンプトを日本語に変換
+def translate_prompt(json_name, prompt):
+    # まずすべて小文字に変換
+    prompt_lower = prompt.lower();
+
+    # 引数json_nameと同じ名を持つ翻訳対応表を呼び出す
+    translate_words = ''
+
+    # 引数json_nameと同じ名を持つ翻訳用JSONファイルの読み込み
+    json_file_path = os.path.join('static', 'translate_json', f'{json_name}.json')
+    # JSONがない場合はreturn
+    if not os.path.isfile(json_file_path):
+        return
+    # JSONがある
+    with open(json_file_path, 'r', encoding='utf-8') as json_file:
+        translate_words = json.load(json_file)
+
+    # 翻訳実行
+    result = translate_text(prompt_lower, translate_words)
+
+    # resultが空ならreturn
+    if not result:
+        return
+
+    return result
+
+# 翻訳処理
+# text: 翻訳対象の文字列
+# translation_dict: 翻訳対応表
+def translate_text(text, translation_dict):
+    translated_text = text
+
+    # 翻訳対応表のキーと照合
+    for target, translation_text in translation_dict.items():
+        count = len(translation_text)
+        # 翻訳対象が1文字以上なら
+        if count > 0:
+            # 対象を翻訳(日本語に置換)した上で前後に[]付与
+            translated_text = translated_text.replace(target, "["+translation_text+"]")
+
+    # []で囲まれた翻訳対象を抽出
+    extracted_texts = [text.replace('[', '').replace(']', '').strip() for text in translated_text.split() if text.startswith('[') and text.endswith(']')]
+    # 抽出結果を連結し文字列化
+    concatenated_string = ''.join(extracted_texts)
+
+    return concatenated_string
 
 @app.route('/')
 def index():
@@ -384,6 +476,15 @@ def subfolder_images_new(subfolder_name, gender=None, option=None, category=None
 
     base_folder = os.path.basename(base_folder)
 
+    # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
+    prompts = []
+    for f in os.scandir(subfolder_path):
+        if f.is_file() and f.name.lower().endswith(('.json')):
+            with open(f.path, 'r', encoding='utf-8') as json_file:
+                prompt = create_human_prompt(json_file)
+                if prompt:
+                    prompts.append(prompt);
+
     return render_template('subfolders.html',
                          subfolder_name=subfolder_name,
                          base_folder=base_folder,
@@ -396,7 +497,8 @@ def subfolder_images_new(subfolder_name, gender=None, option=None, category=None
                          is_transparent_background=is_transparent_background,
                          is_selfie=is_selfie,
                          is_background=is_background,
-                         is_rpgicon=is_rpgicon)
+                         is_rpgicon=is_rpgicon,
+                         prompts=prompts)
 
 @app.route('/user_policy/')
 def index_user_policy():

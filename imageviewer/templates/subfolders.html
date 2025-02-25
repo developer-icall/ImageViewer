@@ -30,7 +30,7 @@
 {% endif %}
 
 {% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" %}
-{% set unique_keyword = category ~ "," ~ options|join(',') %}
+{% set unique_keyword = category ~ "," ~ options|join(',') ~ "," ~ prompts|join(',') %}
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->
@@ -68,8 +68,9 @@
 <a class="history-back-button" href="{{ back_url.value }}{% if page %}?page={{ page }}{% endif %}">Back</a>
 
 <section class="container">
-    <div class="card w-75 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
+    <div class="card w-75 h-100 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
         {% set image_name = image_files[0] %}
+        {% set prompt = prompts[0] %}
         {% set category = namespace(value='') %}
         {% if is_background %}
             {% set category.value = 'background' %}
@@ -89,10 +90,11 @@
     </h2>
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
         {% for image_file in image_files %}
-            {% if loop.index > 1 %} {# 最初の画像をスキップ #}
+            {% if loop.index0 > 0 %} {# 最初の画像をスキップ #}
                 <div class="col">
-                    <div class="card overflow-hidden shadow-sm">
+                    <div class="card h-100 overflow-hidden shadow-sm">
                         {% set image_name = image_file %}
+                        {% set prompt = prompts[loop.index0] %}
                         {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
                         {% include 'parts/subfolder_image_download_form.html' %}
                     </div>
