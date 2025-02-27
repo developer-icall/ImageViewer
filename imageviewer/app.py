@@ -140,7 +140,7 @@ def extract_number(filename):
     match = re.match(r"(\d+)", filename)
     return int(match.group(1)) if match else float('inf')
 
-# JSONを基に、人物用のプロンプト情報を生成
+# JSONを基に、プロンプト情報を生成
 def create_prompt(json_file, properties):
     separator = g.prompt_separator
     data = json.load(json_file) # jsonファイルを読み込む
