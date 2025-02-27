@@ -69,6 +69,7 @@ class ImageType:
 def before_request():
     g.domain_name = DOMAIN_NAME  # ドメイン
     g.site_name = DOMAIN_NAME  # サイト名
+    g.prompt_separator = " / "  # プロンプトの区切り文字
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
@@ -172,13 +173,14 @@ def extract_number(filename):
 
 # JSONを基に、人物用のプロンプト情報を生成
 def create_prompt(json_file, properties):
+    separator = g.prompt_separator
     data = json.load(json_file) # jsonファイルを読み込む
     result = []
     for property in properties:
-        word = translate_prompt(property, ",".join(data[property]))
+        word = translate_prompt(property, separator.join(data[property]))
         if word:
             result.append(word)
-    return ",".join(result)
+    return separator.join(result)
 
 # プロンプトを日本語に変換
 def translate_prompt(json_name, prompt):
