@@ -30,7 +30,9 @@
 {% endif %}
 
 {% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" %}
-{% set unique_keyword = category ~ "," ~ options|join(',') ~ "," ~ prompts|join(',') %}
+{% set prompts_string = prompts|join(",") %}
+{% set prompts_string_unique = prompts_string.split(",")|unique|join(",") %}
+{% set unique_keyword = category ~ "," ~ options|join(",") ~ "," ~ prompts_string_unique %}
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->
