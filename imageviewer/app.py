@@ -171,51 +171,21 @@ def extract_number(filename):
     return int(match.group(1)) if match else float('inf')
 
 # JSONを基に、人物用のプロンプト情報を生成
-def create_human_prompt(json_file):
+def create_prompt(json_file, properties):
     data = json.load(json_file) # jsonファイルを読み込む
-
-    place = translate_prompt("Place", ",".join(data['Place']))
-    pose = translate_prompt("pose", ",".join(data['pose']))
-    hair_color = translate_prompt("Hair Color", ",".join(data['Hair Color']))
-    hair_type = translate_prompt("Hair Type", ",".join(data['Hair Type']))
-    cloth = translate_prompt("Cloth", ",".join(data['Cloth']))
-    accesarry = translate_prompt("Accesarry", ",".join(data['Accesarry']))
-    age = translate_prompt("age", ",".join(data['age']))
-    face = translate_prompt("Face", ",".join(data['Face']))
-    type = translate_prompt("Women Type", ",".join(data['Women Type']))
-
-    prompt = ''
-    if place:
-        prompt += place + "にて、"
-    if pose:
-        prompt += pose
-    if hair_color:
-        prompt += hair_color
-    if hair_color and hair_type:
-        prompt += ","
-    if hair_type:
-        prompt += hair_type
-    if hair_color or hair_type:
-        prompt += "の"
-    if cloth:
-        prompt += cloth
-    if cloth and accesarry:
-        prompt += ","
-    if accesarry:
-        prompt += accesarry
-    if cloth or accesarry:
-        prompt += "を身に着けた、"
-    if age:
-        prompt += age + "歳程度の"
-    if face:
-        prompt += face
-    if type:
-        prompt += type
-
-    return prompt
+    result = []
+    for property in properties:
+        word = translate_prompt(property, ",".join(data[property]))
+        if word:
+            result.append(word)
+    return ",".join(result)
 
 # プロンプトを日本語に変換
 def translate_prompt(json_name, prompt):
+    # promptが空ならreturn
+    if not prompt:
+        return
+
     # まずすべて小文字に変換
     prompt_lower = prompt.lower();
 
@@ -481,7 +451,7 @@ def subfolder_images_new(subfolder_name, gender=None, option=None, category=None
     for f in os.scandir(subfolder_path):
         if f.is_file() and f.name.lower().endswith(('.json')):
             with open(f.path, 'r', encoding='utf-8') as json_file:
-                prompt = create_human_prompt(json_file)
+                prompt = create_prompt(json_file, ["Place", "pose", "Hair Color", "Hair Type", "Cloth", "Accesarry", "age", "Face", "Women Type"])
                 if prompt:
                     prompts.append(prompt);
 
