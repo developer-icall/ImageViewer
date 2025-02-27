@@ -142,13 +142,14 @@ def extract_number(filename):
 
 # JSONを基に、人物用のプロンプト情報を生成
 def create_prompt(json_file, properties):
+    separator = g.prompt_separator
     data = json.load(json_file) # jsonファイルを読み込む
     result = []
     for property in properties:
-        word = translate_prompt(property, ",".join(data[property]))
+        word = translate_prompt(property, separator.join(data[property]))
         if word:
             result.append(word)
-    return ",".join(result)
+    return separator.join(result)
 
 # プロンプトを日本語に変換
 def translate_prompt(json_name, prompt):
@@ -314,6 +315,15 @@ def subfolder_images(subfolder_name):
     is_background_get_param = request.args.get('is_background', 'false')
     page = request.args.get('page', 1)
 
+    # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
+    prompts = []
+    for f in os.scandir(subfolder_path):
+        if f.is_file() and f.name.lower().endswith(('.json')):
+            with open(f.path, 'r', encoding='utf-8') as json_file:
+                prompt = create_prompt(json_file, ["Place", "pose", "Hair Color", "Hair Type", "Cloth", "Accesarry", "age", "Face", "Women Type"])
+                if prompt:
+                    prompts.append(prompt);
+
     # is_sampleパラメータが"false"の場合、Falseをセット
     if is_sample:
         subfolder_path = subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER
@@ -361,15 +371,6 @@ def subfolder_images(subfolder_name):
         for file in files:
             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 image_files.append(file)
-
-    # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
-    prompts = []
-    for f in os.scandir(subfolder_path):
-        if f.is_file() and f.name.lower().endswith(('.json')):
-            with open(f.path, 'r', encoding='utf-8') as json_file:
-                prompt = create_prompt(json_file, ["Place", "pose", "Hair Color", "Hair Type", "Cloth", "Accesarry", "age", "Face", "Women Type"])
-                if prompt:
-                    prompts.append(prompt);
 
     return render_template('subfolders.html', subfolder_name=subfolder_name, thumbnail_folder=thumbnail_folder, image_files=image_files, is_sample=is_sample, add_param=add_param, page=page, is_male=is_male, is_transparent_background=is_transparent_background, is_selfie=is_selfie, is_background=is_background, prompts=prompts)
 
