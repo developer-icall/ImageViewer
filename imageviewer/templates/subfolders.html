@@ -71,8 +71,8 @@
 
 <section class="container">
     <div class="card w-75 h-100 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
-        {% set image_name = image_files[0] %}
         {% set prompt = prompts[0] %}
+        {% set image_name = image_files[0] %}
         {% set category = namespace(value='') %}
         {% if is_background %}
             {% set category.value = 'background' %}
@@ -95,8 +95,8 @@
             {% if loop.index0 > 0 %} {# 最初の画像をスキップ #}
                 <div class="col">
                     <div class="card h-100 overflow-hidden shadow-sm">
-                        {% set image_name = image_file %}
                         {% set prompt = prompts[loop.index0] %}
+                        {% set image_name = image_file %}
                         {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
                         {% include 'parts/subfolder_image_download_form.html' %}
                     </div>
