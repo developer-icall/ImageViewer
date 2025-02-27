@@ -46,6 +46,7 @@ INDEX_PER_PAGE = 12
 def before_request():
     g.domain_name = DOMAIN_NAME  # ドメイン
     g.site_name = DOMAIN_NAME  # サイト名
+    g.prompt_separator = " / "  # プロンプトの区切り文字
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
