@@ -8,6 +8,11 @@ target="_blank"
     <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_name }}/{{ add_param }}" alt="{{ options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" }}" width="100%">
 </a>
 <div class="card-body">
+    {% if prompt %}
+        <span class="d-block mb-3">
+            {{ prompt }}
+        </span>
+    {% endif %}
     <a download 
     href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}/{{ add_param }}" 
     class="btn btn-dark d-block" 
