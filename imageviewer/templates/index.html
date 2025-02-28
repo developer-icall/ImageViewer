@@ -11,14 +11,25 @@
 
             <dl>
                 <dt>
+                    性別
+                </dt>
+                <dd>
+                    <a href="/brav/female/{% if is_transparent_background %}transparent/{% elif is_selfie %}selfie/{% endif %}" class="{% if not is_male %}selected{% endif %}">
+                        女性
+                    </a>
+                    <a href="/brav/male/{% if is_transparent_background %}transparent/{% elif is_selfie %}selfie/{% endif %}" class="{% if is_male %}selected{% endif %}">
+                        男性
+                    </a>
+                </dd>
+            </dl>
+
+            <dl>
+                <dt>
                     画像タイプ
                 </dt>
                 <dd>
-                    <a href="/brav/female/" class="{% if not is_background and not is_rpgicon and not is_male and not is_transparent_background and not is_selfie %}selected{% endif %}">
-                        女性
-                    </a>
-                    <a href="/brav/male/" class="{% if is_male and not is_transparent_background and not is_selfie %}selected{% endif %}">
-                        男性
+                    <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/" class="{% if not is_transparent_background and not is_selfie %}selected{% endif %}">
+                        通常
                     </a>
                     <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/transparent/" class="{% if is_transparent_background %}selected{% endif %}">
                         透明背景
@@ -26,31 +37,8 @@
                     <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/selfie/" class="{% if is_selfie %}selected{% endif %}">
                         セルフィー
                     </a>
-                    <a href="/rpgicon/" class="{% if is_rpgicon %}selected{% endif %}">
-                        RPGIcon
-                    </a>
-                    <a href="/background/" class="{% if is_background %}selected{% endif %}">
-                        背景
-                    </a>
                 </dd>
             </dl>
-
-            {# 人物画像の場合のみ追加オプションを表示 #}
-            {% if not is_background and not is_rpgicon and (not is_transparent_background and not is_selfie) %}
-                <dl>
-                    <dt>
-                        性別
-                    </dt>
-                    <dd>
-                        <a href="/brav/female/" class="{% if not is_male %}selected{% endif %}">
-                            女性
-                        </a>
-                        <a href="/brav/male/" class="{% if is_male %}selected{% endif %}">
-                            男性
-                        </a>
-                    </dd>
-                </dl>
-            {% endif %}
         </div>
     </div>
 </section>
