@@ -317,7 +317,7 @@ def subfolder_images(subfolder_name):
 
     # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
     prompts = []
-    for f in os.scandir(subfolder_path):
+    for f in sorted(os.scandir(subfolder_path), key=lambda x: x.name.lower()):
         if f.is_file() and f.name.lower().endswith(('.json')):
             with open(f.path, 'r', encoding='utf-8') as json_file:
                 prompt = create_prompt(json_file, ["Place", "pose", "Hair Color", "Hair Type", "Cloth", "Accesarry", "age", "Face", "Women Type"])
@@ -404,4 +404,9 @@ def index_bootstrap():
     return render_template('bootstrap.html')
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    # デバッグモードを有効にし、ホットリロードを有効化
+    app.run(debug=True, host='0.0.0.0', use_reloader=True)
+
+# 自動更新を有効にする設定を追加
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['TEMPLATES_AUTO_RELOAD'] = True
