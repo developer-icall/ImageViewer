@@ -28,6 +28,94 @@
     </div>
     {% endif %}
 
+    {# 背景透過 #}
+    {% if is_transparent_background %}
+        {% set options = options + ["背景透過"] %}
+    {% endif %}
+
+    {# セルフィー #}
+    {% if is_selfie %}
+        {% set options = options + ["セルフィー"] %}
+    {% endif %}
+{% endif %}
+
+{% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" %}
+{% set prompts_string = prompts|join(g.prompt_separator) %}
+{% set prompts_string_unique = prompts_string.split(g.prompt_separator)|unique|join(",") %}
+{% set unique_keyword = category ~ "," ~ options|join(",") ~ "," ~ prompts_string_unique %}
+{% include 'parts/header.html' %}
+
+<!-- 元のページに戻るリンク -->
+{% set back_url = namespace(value='') %}
+{% if is_background %}
+    {% set back_url.value = '/background/' %}
+{% elif is_rpgicon %}
+    {% set back_url.value = '/rpgicon/' %}
+{% else %}
+    {% set back_url.value = '/brav/' %}
+    {% if is_male %}
+        {% set back_url.value = back_url.value + 'male/' %}
+    {% else %}
+        {% set back_url.value = back_url.value + 'female/' %}
+    {% endif %}
+    {% if is_transparent_background %}
+        {% set back_url.value = back_url.value + 'transparent/' %}
+    {% elif is_selfie %}
+        {% set back_url.value = back_url.value + 'selfie/' %}
+    {% endif %}
+{% endif %}
+
+{# 戻るリンクのパラメータを設定 #}
+{% set back_params = add_param %}
+{% if is_rpgicon %}
+    {% if "is_rpgicon=true" not in back_params %}
+        {% if "?" in back_params %}
+            {% set back_params = back_params + "&is_rpgicon=true" %}
+        {% else %}
+            {% set back_params = "?is_rpgicon=true" %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+<a class="history-back-button" href="{{ back_url.value }}{% if page %}?page={{ page }}{% endif %}">Back</a>
+
+<section class="container">
+    <div class="card w-75 h-100 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
+        {% set prompt = prompts[0] %}
+        {% set image_name = image_files[0] %}
+        {% set category = namespace(value='') %}
+        {% if is_background %}
+            {% set category.value = 'background' %}
+        {% elif is_rpgicon %}
+            {% set category.value = 'rpgicon' %}
+        {% else %}
+            {% set category.value = 'brav' %}
+        {% endif %}
+        {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
+        {% include 'parts/subfolder_image_download_form.html' %}
+    </div>
+</section>
+
+<section class="container">
+    <h2>
+        似ている画像
+    </h2>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
+        {% for image_file in image_files %}
+            {% if loop.index0 > 0 %} {# 最初の画像をスキップ #}
+                <div class="col">
+                    <div class="card h-100 overflow-hidden shadow-sm">
+                        {% set prompt = prompts[loop.index0] %}
+                        {% set image_name = image_file %}
+                        {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
+                        {% include 'parts/subfolder_image_download_form.html' %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
     <!-- 画像一覧 -->
     {% if subfolder_images %}
     <div class="row mt-4">
