@@ -189,7 +189,7 @@ def translate_prompt(json_name, prompt):
         return
 
     # まずすべて小文字に変換
-    prompt_lower = prompt.lower();
+    prompt_lower = prompt.lower()
 
     # 引数json_nameと同じ名を持つ翻訳対応表を呼び出す
     translate_words = ''
@@ -450,12 +450,12 @@ def subfolder_images_new(subfolder_name, gender=None, option=None, category=None
 
     # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
     prompts = []
-    for f in os.scandir(subfolder_path):
+    for f in sorted(os.scandir(subfolder_path), key=lambda x: x.name.lower()):
         if f.is_file() and f.name.lower().endswith(('.json')):
             with open(f.path, 'r', encoding='utf-8') as json_file:
                 prompt = create_prompt(json_file, ["Place", "pose", "Hair Color", "Hair Type", "Cloth", "Accesarry", "age", "Face", "Women Type"])
                 if prompt:
-                    prompts.append(prompt);
+                    prompts.append(prompt)
 
     return render_template('subfolders.html',
                          subfolder_name=subfolder_name,
