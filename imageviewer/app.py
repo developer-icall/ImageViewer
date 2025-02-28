@@ -1,17 +1,87 @@
 import os
 import re
-from flask import Flask, render_template, send_from_directory, request, abort, g, redirect
+import logging
+from logging.handlers import RotatingFileHandler
+from datetime import datetime
+from flask import Flask, render_template, send_from_directory, request, abort, g, redirect, make_response, send_file
+import zipfile
+from io import BytesIO
+from flask_caching import Cache
 
 app = Flask(__name__)
+
+# キャッシュ設定
+cache = Cache(app, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': 'cache',
+    'CACHE_DEFAULT_TIMEOUT': 300,  # 5分
+    'CACHE_THRESHOLD': 1000  # キャッシュエントリの最大数
+})
+
+# キャッシュディレクトリの作成
+CACHE_DIR = 'cache'
+if not os.path.exists(CACHE_DIR):
+    os.makedirs(CACHE_DIR)
+
+# ログ設定
+LOG_DIR = 'logs'
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+# アクセスログの設定
+access_logger = logging.getLogger('access_logger')
+access_logger.setLevel(logging.INFO)
+access_handler = RotatingFileHandler(
+    os.path.join(LOG_DIR, 'access.log'),
+    maxBytes=1024 * 1024,  # 1MB
+    backupCount=10
+)
+access_handler.setFormatter(logging.Formatter(
+    '[%(asctime)s] %(remote_addr)s - "%(method)s %(url)s" %(status)s - %(response_time).2fms'
+))
+access_logger.addHandler(access_handler)
+
+# エラーログの設定
+error_logger = logging.getLogger('error_logger')
+error_logger.setLevel(logging.ERROR)
+error_handler = RotatingFileHandler(
+    os.path.join(LOG_DIR, 'error.log'),
+    maxBytes=1024 * 1024,  # 1MB
+    backupCount=10
+)
+error_handler.setFormatter(logging.Formatter(
+    '[%(asctime)s] %(levelname)s in %(module)s: %(message)s\n'
+    'Path: %(url)s\n'
+    'IP: %(remote_addr)s\n'
+    'User Agent: %(user_agent)s\n'
+    '%(traceback)s'
+))
+error_logger.addHandler(error_handler)
+
+# アクセスログを記録するミドルウェア
+@app.before_request
+def start_timer():
+    g.start = datetime.now()
+
+@app.after_request
+def log_request(response):
+    if hasattr(g, 'start'):
+        total_time = (datetime.now() - g.start).total_seconds() * 1000
+
+        access_logger.info('', extra={
+            'remote_addr': request.remote_addr,
+            'method': request.method,
+            'url': request.full_path,
+            'status': response.status_code,
+            'response_time': total_time
+        })
+    return response
 
 # ドメイン
 DOMAIN_NAME = 'ai-gazou.com'
 
 # 画像フォルダのパス
 IMAGE_FOLDER = './static/sync_images'
-BRAV_FOLDER = './static/sync_images/brav'
-RPGICON_FOLDER = './static/sync_images/RPGIcon'
-BACKGROUND_FOLDER = './static/sync_images/background'  # 背景画像用フォルダを追加
 
 # サムネイル用画像の保存先フォルダのパス
 THUMBNAIL_FOLDER = "/thumbnail"
@@ -44,24 +114,31 @@ SELFIE_FOLDER_PREFIX = "-selfie"
 # 1ページ当たりの表示件数
 INDEX_PER_PAGE = 12
 
+# 新しい画像フォルダのパス定義を追加
+STYLE_FOLDERS = {
+    'realistic': './static/sync_images/realistic',
+    'illustration': './static/sync_images/illustrationillustration'
+}
+
 # 画像タイプを定義するクラスを追加
 class ImageType:
-    def __init__(self, is_sample=True, is_male=False, is_transparent_background=False,
-                 is_selfie=False, is_background=False, is_rpgicon=False):
-        self.is_sample = is_sample
-        self.is_male = is_male
-        self.is_transparent_background = is_transparent_background
-        self.is_selfie = is_selfie
-        self.is_background = is_background
-        self.is_rpgicon = is_rpgicon
+    def __init__(self, style_type=None, category=None, subcategory=None):
+        self.style_type = style_type
+        self.category = category
+        self.subcategory = subcategory
 
     def get_folder_path(self):
-        if self.is_background:
-            return BACKGROUND_FOLDER  # 背景画像用フォルダを返すように変更
-        elif self.is_rpgicon:
-            return RPGICON_FOLDER
-        else:
-            return BRAV_FOLDER
+        base_path = STYLE_FOLDERS.get(self.style_type)
+        if not base_path:
+            return None
+
+        folder_path = base_path
+        if self.category:
+            folder_path = os.path.join(folder_path, self.category)
+        if self.subcategory:
+            folder_path = os.path.join(folder_path, self.subcategory)
+
+        return folder_path.replace("\\", "/")
 
 # テンプレートに渡す定数
 @app.before_request
@@ -80,89 +157,48 @@ def get_pagination_info(total_items, items_per_page):
         'has_next': page < total_pages
     }
 
-def get_first_image(subfolder_path, is_dig=False):
+def get_first_image(subfolder_path):
     for root, dirs, files in os.walk(subfolder_path):
-        files.sort()  # ファイル名順にソート
+        files.sort()
         for file in files:
             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                image_path = os.path.join(root, file).replace("\\", "/")
-
-                # フォルダ名を取得（例：20231124-17-1409855962）
-                folder_name = os.path.basename(os.path.dirname(os.path.dirname(image_path)))
-
-                # ベースフォルダを判定（brav, rpgicon, background）
-                if RPGICON_FOLDER in subfolder_path:
-                    base_folder = 'RPGIcon'
-                elif BACKGROUND_FOLDER in subfolder_path:
-                    base_folder = 'background'
-                else:
-                    base_folder = 'brav'
+                # フォルダ構造からスタイルタイプを抽出
+                path_parts = subfolder_path.split(os.sep)
+                style_type = path_parts[-4] if len(path_parts) >= 4 else ''
 
                 # 画像のURLパスを構築
-                return f"/images/{folder_name}/thumbnail/{file}"
+                folder_name = os.path.basename(os.path.dirname(os.path.dirname(subfolder_path)))
+                return f"/images/{style_type}/{folder_name}/thumbnail/{file}"
     return None
 
 def get_subfolders(folder_path, page, image_type):
-    # フォルダパスの決定
-    folder_path = image_type.get_folder_path()
+    if not os.path.exists(folder_path):
+        return [], 0
 
     subfolders = []
     start_index = (page - 1) * INDEX_PER_PAGE
     end_index = start_index + INDEX_PER_PAGE
-    print(f"start_index: {start_index}")
-    print(f"end_index: {end_index}")
     index = 0
-    total_count = 0
 
     for root, dirs, files in os.walk(folder_path):
-        dirs.sort()  # フォルダの一覧をABC順にソート
-        i = 0
+        dirs.sort()
         for dir in dirs:
             subfolder_path = os.path.join(root, dir).replace("\\", "/")
 
-            # ページ階層に合わせて、画像フォルダのパスを調整
-            is_dig = False
-            # /male が含まれている場合はもう1階層遡る（背景画像の場合は不要）
-            if image_type.is_male:
-                is_dig = True
-
-            # サブフォルダの文字列にsample, sample-thumbnail, thumbnail, half_resolution が含まれた場合は除外
-            if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER, HALF_RESOLUTION_FOLDER]):
+            # サムネイル関連のフォルダは除外
+            if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER,
+                                               WITH_SAMPLE_THUMBNAIL_FOLDER,
+                                               THUMBNAIL_FOLDER,
+                                               HALF_RESOLUTION_FOLDER]):
                 continue
 
-            # 背景画像の場合は他のフィルタリングをスキップ
-            if not image_type.is_background and not image_type.is_rpgicon:
-                # 男性画像を表示するか否かに応じてフォルダーをスキップ
-                if not image_type.is_male:
-                    if any(x in subfolder_path for x in [MALE_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_male and MALE_FOLDER_PREFIX not in subfolder_path:
-                    continue
+            first_image = get_first_image(subfolder_path +
+                         (WITH_SAMPLE_THUMBNAIL_FOLDER if SAMPLE_IMAGE_FLAG else THUMBNAIL_FOLDER))
 
-                if not image_type.is_transparent_background:
-                    if any(x in subfolder_path for x in [TRANSPARENT_BACKGROUND_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_transparent_background and TRANSPARENT_BACKGROUND_FOLDER_PREFIX not in subfolder_path:
-                    continue
+            if first_image and index >= start_index and index < end_index:
+                subfolders.append((dir, first_image))
+            index += 1
 
-                if not image_type.is_selfie:
-                    if any(x in subfolder_path for x in [SELFIE_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_selfie and SELFIE_FOLDER_PREFIX not in subfolder_path:
-                    continue
-
-            if image_type.is_sample:
-                first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER, is_dig)
-            else:
-                if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER]):
-                    continue
-                first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER, is_dig)
-            if first_image:
-                if index >= start_index and index < end_index:
-                    subfolders.append((dir, first_image))
-            else:
-                print(f"first image not found:{subfolder_path}")
-            index = index + 1
     return subfolders, index
 
 def extract_number(filename):
@@ -175,24 +211,24 @@ def index():
 
 @app.route('/brav/female/')
 def brav_female():
+    # 古いis_sampleパラメータは使用しない
     image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=False
+        style_type='realistic',
+        category='female'
     )
+
     page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
+    folder_path = image_type.get_folder_path()
+
+    subfolder_images, total_count = get_subfolders(folder_path, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
 
-    return render_template('index.html',
+    return render_template('subfolders.html',
+                         style_type='realistic',
+                         category='female',
+                         category_name='女性',
                          subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
+                         pagination_info=pagination_info)
 
 @app.route('/brav/female/transparent/')
 def brav_female_transparent():
@@ -402,48 +438,327 @@ def subfolder_images_new(subfolder_name, gender=None, option=None, category=None
 def index_user_policy():
     return render_template('user_policy.html')
 
-@app.route('/images/<path:image_file>')
-def get_image(image_file):
+@app.route('/images/<style_type>/<path:image_file>')
+@cache.cached(timeout=3600, key_prefix=lambda: f'view/images/{style_type}/{image_file}')
+def get_image(style_type, image_file):
     # 末尾のスラッシュを削除
     image_file = image_file.rstrip('/')
 
-    # パスの各部分を取得（例：20231124-17-1409855962/thumbnail/00000-1409855962-thumbnail.png）
+    # パスの各部分を取得
     path_parts = image_file.split('/')
-    folder_name = path_parts[0]  # 例：20231124-17-1409855962
+    folder_name = path_parts[0]
 
-    # thumbnailフォルダ以降のパスを結合して画像名を取得
+    # thumbnailフォルダ以降のパスを結合
     image_path = '/'.join(path_parts[2:]) if len(path_parts) > 2 else path_parts[-1]
 
-    # サムネイルフォルダの設定
-    thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER if SAMPLE_IMAGE_FLAG else THUMBNAIL_FOLDER
+    # スタイルタイプに応じたフォルダパスを構築
+    base_folder = STYLE_FOLDERS.get(style_type)
+    if not base_folder:
+        abort(404)
 
-    # まず、bravフォルダで探す
-    possible_paths = [
-        f"sync_images/brav/{folder_name}{thumbnail_folder}/{image_path}",
-        f"sync_images/RPGIcon/{folder_name}{thumbnail_folder}/{image_path}",
-        f"sync_images/background/{folder_name}{thumbnail_folder}/{image_path}"
-    ]
+    full_path = os.path.join(base_folder, folder_name,
+                            WITH_SAMPLE_THUMBNAIL_FOLDER if SAMPLE_IMAGE_FLAG else THUMBNAIL_FOLDER,
+                            image_path)
 
-    print(f"Looking for image in paths: {possible_paths}")  # デバッグ用
+    if os.path.exists(full_path):
+        return send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
 
-    # 存在するパスを探す
-    for full_path in possible_paths:
-        if os.path.exists(os.path.join('./static', full_path)):
-            print(f"Found image at: {full_path}")
-            return send_from_directory('./static', full_path)
-
-    # 画像が見つからない場合は404
     abort(404)
 
 @app.route('/sitemap.xml')
-def get_sitemap():
-    # サイトマップを表示
-    return send_from_directory('./', 'sitemap.xml')
+@cache.cached(timeout=3600)
+def sitemap():
+    """サイトマップを生成して返す"""
+    urls = generate_sitemap()
+
+    response = make_response(
+        render_template('sitemap.xml', urls=urls, domain_name=DOMAIN_NAME)
+    )
+    response.headers['Content-Type'] = 'application/xml'
+
+    return response
 
 @app.route('/bootstrap/')
 def index_bootstrap():
 
     return render_template('bootstrap.html')
+
+# スタイルタイプの定義
+STYLE_TYPES = {
+    'realistic': 'リアルテイスト画像',
+    'illustration': 'ゲーム、イラスト風画像'
+}
+
+# カテゴリーの定義
+CATEGORIES = {
+    'realistic': {
+        'female': '女性',
+        'male': '男性',
+        'animal': '動物'
+    },
+    'illustration': {
+        'female': '女性',
+        'male': '男性',
+        'animal': '動物',
+        'background': '背景',
+        'rpg_icon': 'RPGアイコン',
+        'vehicle': '乗り物',
+        'other': 'その他'
+    }
+}
+
+# サブカテゴリーの定義
+SUBCATEGORIES = {
+    'female': {
+        'normal': '通常画像',
+        'transparent': '透明背景画像',
+        'selfie': 'セルフィー画像'
+    },
+    'male': {
+        'normal': '通常画像',
+        'transparent': '透明背景画像',
+        'selfie': 'セルフィー画像'
+    },
+    'animal': {
+        'dog': '犬',
+        'cat': '猫',
+        'bird': '鳥',
+        'fish': '魚',
+        'other': 'その他'
+    },
+    'background': {
+        'nature': '自然',
+        'city': '都市',
+        'sea': '海',
+        'sky': '空',
+        'other': 'その他'
+    },
+    'rpg_icon': {
+        'weapon': '武器・防具',
+        'monster': 'モンスター',
+        'other': 'その他'
+    },
+    'vehicle': {
+        'car': '車',
+        'ship': '船',
+        'airplane': '飛行機',
+        'other': 'その他'
+    }
+}
+
+@app.route('/style/<style_type>')
+@cache.cached(timeout=300, key_prefix=lambda: f'view/style/{style_type}')
+def show_style(style_type):
+    if style_type not in STYLE_TYPES:
+        abort(404)
+
+    image_type = ImageType(style_type=style_type)
+    page = request.args.get('page', default=1, type=int)
+    folder_path = image_type.get_folder_path()
+
+    subfolder_images, total_count = get_subfolders(folder_path, page, image_type)
+    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
+
+    return render_template('index.html',
+                         style_type=style_type,
+                         style_name=STYLE_TYPES[style_type],
+                         categories=CATEGORIES[style_type],
+                         subfolder_images=subfolder_images,
+                         pagination_info=pagination_info)
+
+@app.route('/style/<style_type>/<category>')
+@cache.cached(timeout=300, key_prefix=lambda: f'view/style/{style_type}/{category}')
+def show_category(style_type, category):
+    if style_type not in STYLE_TYPES or category not in CATEGORIES[style_type]:
+        abort(404)
+
+    image_type = ImageType(style_type=style_type, category=category)
+    page = request.args.get('page', default=1, type=int)
+    folder_path = image_type.get_folder_path()
+
+    # カテゴリーに対応するサブカテゴリーを取得
+    subcategories = SUBCATEGORIES.get(category, {})
+
+    # カテゴリー配下の画像を取得
+    subfolder_images, total_count = get_subfolders(folder_path, page, image_type)
+    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
+
+    return render_template('subfolders.html',
+                         style_type=style_type,
+                         category=category,
+                         category_name=CATEGORIES[style_type][category],
+                         subcategories=subcategories,
+                         subfolder_images=subfolder_images,
+                         pagination_info=pagination_info)
+
+@app.route('/style/<style_type>/<category>/<subcategory>')
+@cache.cached(timeout=300, key_prefix=lambda: f'view/style/{style_type}/{category}/{subcategory}')
+def show_subcategory(style_type, category, subcategory):
+    if (style_type not in STYLE_TYPES or
+        category not in CATEGORIES[style_type] or
+        subcategory not in SUBCATEGORIES.get(category, {})):
+        abort(404)
+
+    image_type = ImageType(style_type=style_type,
+                          category=category,
+                          subcategory=subcategory)
+    page = request.args.get('page', default=1, type=int)
+    folder_path = image_type.get_folder_path()
+
+    # サブカテゴリー配下の画像を取得
+    subfolder_images, total_count = get_subfolders(folder_path, page, image_type)
+    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
+
+    return render_template('images.html',
+                         style_type=style_type,
+                         category=category,
+                         subcategory=subcategory,
+                         subcategory_name=SUBCATEGORIES[category][subcategory],
+                         subfolder_images=subfolder_images,
+                         pagination_info=pagination_info)
+
+def generate_sitemap():
+    """動的にサイトマップを生成する関数"""
+    urls = []
+
+    # スタイルページ
+    for style in STYLE_TYPES:
+        urls.append({
+            'loc': f'/style/{style}',
+            'changefreq': 'daily',
+            'priority': '0.8'
+        })
+
+        # カテゴリーページ
+        for category in CATEGORIES[style]:
+            urls.append({
+                'loc': f'/style/{style}/{category}',
+                'changefreq': 'daily',
+                'priority': '0.7'
+            })
+
+            # サブカテゴリーページ
+            if category in SUBCATEGORIES:
+                for subcategory in SUBCATEGORIES[category]:
+                    urls.append({
+                        'loc': f'/style/{style}/{category}/{subcategory}',
+                        'changefreq': 'daily',
+                        'priority': '0.6'
+                    })
+
+    return urls
+
+@app.route('/download/<style_type>/<category>/<subcategory>/<folder_name>')
+def download_images(style_type, category, subcategory, folder_name):
+    """画像をZIPファイルとしてダウンロードする"""
+    if (style_type not in STYLE_TYPES or
+        category not in CATEGORIES[style_type] or
+        subcategory not in SUBCATEGORIES.get(category, {})):
+        abort(404)
+
+    # フォルダパスの構築
+    base_folder = STYLE_FOLDERS.get(style_type)
+    if not base_folder:
+        abort(404)
+
+    folder_path = os.path.join(base_folder, folder_name)
+    if not os.path.exists(folder_path):
+        abort(404)
+
+    # ZIPファイルの作成
+    memory_file = BytesIO()
+    with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+        # 画像ファイルの追加
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                    # サムネイルやサンプル画像は除外
+                    if any(x in root for x in [THUMBNAIL_FOLDER,
+                                             WITH_SAMPLE_TEXT_FOLDER,
+                                             WITH_SAMPLE_THUMBNAIL_FOLDER]):
+                        continue
+
+                    file_path = os.path.join(root, file)
+                    arc_name = os.path.basename(file_path)
+                    zf.write(file_path, arc_name)
+
+    memory_file.seek(0)
+    return send_file(
+        memory_file,
+        mimetype='application/zip',
+        as_attachment=True,
+        download_name=f'{folder_name}.zip'
+    )
+
+# エラーハンドラ
+@app.errorhandler(404)
+def page_not_found(e):
+    error_logger.error('Page not found', extra={
+        'url': request.full_path,
+        'remote_addr': request.remote_addr,
+        'user_agent': request.user_agent.string,
+        'traceback': ''
+    })
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    import traceback
+    error_logger.error('Internal server error', extra={
+        'url': request.full_path,
+        'remote_addr': request.remote_addr,
+        'user_agent': request.user_agent.string,
+        'traceback': traceback.format_exc()
+    })
+    return render_template('errors/500.html'), 500
+
+# 既存のエラーハンドラに加えて、その他のエラーもキャッチ
+@app.errorhandler(Exception)
+def handle_exception(e):
+    import traceback
+    error_logger.error(str(e), extra={
+        'url': request.full_path,
+        'remote_addr': request.remote_addr,
+        'user_agent': request.user_agent.string,
+        'traceback': traceback.format_exc()
+    })
+    return render_template('errors/500.html'), 500
+
+# 開発環境でもエラーページを表示するための設定
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
+# キャッシュを手動でクリアするエンドポイント（管理者用）
+@app.route('/admin/clear-cache', methods=['POST'])
+def clear_cache():
+    try:
+        cache.clear()
+        return jsonify({'message': 'Cache cleared successfully'}), 200
+    except Exception as e:
+        error_logger.error('Cache clear error', extra={
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        })
+        return jsonify({'error': 'Failed to clear cache'}), 500
+
+# キャッシュ制御ミドルウェア
+@app.after_request
+def add_cache_headers(response):
+    # 静的ファイルのキャッシュ設定
+    if request.path.startswith('/static/'):
+        response.cache_control.public = True
+        response.cache_control.max_age = 86400  # 24時間
+
+    # 画像のキャッシュ設定
+    elif request.path.startswith('/images/'):
+        response.cache_control.public = True
+        response.cache_control.max_age = 3600  # 1時間
+
+    # 動的ページのキャッシュ設定
+    else:
+        response.cache_control.private = True
+        response.cache_control.max_age = 300  # 5分
+
+    return response
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')

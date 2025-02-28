@@ -1,145 +1,55 @@
-<!doctype html>
+{% extends "base.html" %}
 
-{% include 'parts/header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ style_name }}</h1>
 
-<section class="list-switcher">
-    <div class="container">
-        <div class="list" aria-label="AI生成画像素材のジャンル選択">
-            <div class="headline">
-                OPTION
+    <!-- カテゴリー一覧 -->
+    <div class="row mt-4">
+        {% for category_id, category_name in categories.items() %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ category_name }}</h5>
+                    <a href="{{ url_for('show_category', style_type=style_type, category=category_id) }}"
+                       class="btn btn-primary">表示</a>
+                </div>
             </div>
-
-            <dl>
-                <dt>
-                    画像タイプ
-                </dt>
-                <dd>
-                    <a href="/brav/female/" class="{% if not is_background and not is_rpgicon and not is_male and not is_transparent_background and not is_selfie %}selected{% endif %}">
-                        女性
-                    </a>
-                    <a href="/brav/male/" class="{% if is_male and not is_transparent_background and not is_selfie %}selected{% endif %}">
-                        男性
-                    </a>
-                    <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/transparent/" class="{% if is_transparent_background %}selected{% endif %}">
-                        透明背景
-                    </a>
-                    <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/selfie/" class="{% if is_selfie %}selected{% endif %}">
-                        セルフィー
-                    </a>
-                    <a href="/rpgicon/" class="{% if is_rpgicon %}selected{% endif %}">
-                        RPGIcon
-                    </a>
-                    <a href="/background/" class="{% if is_background %}selected{% endif %}">
-                        背景
-                    </a>
-                </dd>
-            </dl>
-
-            {# 人物画像の場合のみ追加オプションを表示 #}
-            {% if not is_background and not is_rpgicon and (not is_transparent_background and not is_selfie) %}
-                <dl>
-                    <dt>
-                        性別
-                    </dt>
-                    <dd>
-                        <a href="/brav/female/" class="{% if not is_male %}selected{% endif %}">
-                            女性
-                        </a>
-                        <a href="/brav/male/" class="{% if is_male %}selected{% endif %}">
-                            男性
-                        </a>
-                    </dd>
-                </dl>
-            {% endif %}
         </div>
-    </div>
-</section>
-
-<section class="container">
-    <p class="text-center mb-4">
-        AIで生成された画像素材を無料でダウンロードできます。<br>
-        ダウンロードしたい画像を選択してください。
-    </p>
-
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
-        {% for subfolder_name, first_image in subfolder_images %}
-            <div class="col">
-                {% set category = namespace(value='') %}
-                {% if is_background %}
-                    {% set category.value = 'background' %}
-                {% elif is_rpgicon %}
-                    {% set category.value = 'rpgicon' %}
-                {% else %}
-                    {% set category.value = 'brav/' %}
-                    {% if is_male %}
-                        {% set category.value = category.value + 'male' %}
-                    {% else %}
-                        {% set category.value = category.value + 'female' %}
-                    {% endif %}
-                    {% if is_transparent_background %}
-                        {% set category.value = category.value + '/transparent' %}
-                    {% elif is_selfie %}
-                        {% set category.value = category.value + '/selfie' %}
-                    {% endif %}
-                {% endif %}
-                <a class="d-block shadow-sm" href="/{{ category.value }}/subfolders/{{ subfolder_name }}/{% if pagination_info.page != 1 %}?page={{ pagination_info.page }}{% endif %}">
-                    <img src="{{ first_image }}" alt="{{ subfolder_name }}" width="100%">
-                </a>
-            </div>
         {% endfor %}
     </div>
 
-    <!-- ページネーションのリンク -->
-    <ul class="pagination">
-        {% if pagination_info.total_pages <= 5 %}
-            {% for page_num in range(1, pagination_info.total_pages + 1) %}
-                {% if page_num == pagination_info.page %}
-                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
-                {% endif %}
-            {% endfor %}
-        {% else %}
-            {% if pagination_info.page <= 3 %}
-                {% for page_num in range(1, 6) %}
-                    {% if page_num == pagination_info.page %}
-                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                {% if pagination_info.has_next %}
-                <li class="page-item"><a class="page-link next" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page + 1 }}"></a></li>
-                {% endif %}
-                <li class="page-item"><a class="page-link last" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.total_pages }}"></a></li>
-            {% elif pagination_info.page >= pagination_info.total_pages - 2 %}
-                <li class="page-item"><a class="page-link first" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page=1"></a></li>
-                <li class="page-item"><a class="page-link prev" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page - 1 }}"></a></li>
-                {% for page_num in range(pagination_info.total_pages - 4, pagination_info.total_pages + 1) %}
-                    {% if page_num == pagination_info.page %}
-                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                {% if pagination_info.has_next %}
-                <li class="page-item"><a class="page-link next" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page + 1 }}"></a></li>
-                {% endif %}
-            {% else %}
-                <li class="page-item"><a class="page-link first" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page=1"></a></li>
-                <li class="page-item"><a class="page-link prev" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page - 1 }}"></a></li>
-                {% for page_num in range(pagination_info.page - 2, pagination_info.page + 3) %}
-                    {% if page_num == pagination_info.page %}
-                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ page_num }}">{{ page_num }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                <li class="page-item"><a class="page-link next" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.page + 1 }}"></a></li>
-                <li class="page-item"><a class="page-link last" href="{{add_param}}{{is_transparent_background_set_param}}{{is_selfie_set_param}}&page={{ pagination_info.total_pages }}"></a></li>
-            {% endif %}
-        {% endif %}
-    </ul>
-</section>
+    <!-- 画像一覧（もし存在する場合） -->
+    {% if subfolder_images %}
+    <div class="row mt-4">
+        {% for folder_name, image_url in subfolder_images %}
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{{ image_url }}" class="card-img-top" alt="サムネイル">
+                <div class="card-body">
+                    <p class="card-text">{{ folder_name }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-{% include 'parts/footer.html' %}
+    <!-- ページネーション -->
+    {% if pagination_info.total_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if not pagination_info.has_prev %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ pagination_info.page - 1 }}">前へ</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">{{ pagination_info.page }} / {{ pagination_info.total_pages }}</span>
+            </li>
+            <li class="page-item {% if not pagination_info.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ pagination_info.page + 1 }}">次へ</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

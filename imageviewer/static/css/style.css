@@ -1,0 +1,111 @@
+/* 全体のスタイル */
+body {
+    background-color: #f8f9fa;
+}
+
+/* カード関連のスタイル */
+.card {
+    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    background-color: #f8f9fa;
+}
+
+/* パンくずリスト */
+.breadcrumb {
+    background-color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.breadcrumb-item a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+}
+
+/* モーダル関連のスタイル */
+.modal-dialog {
+    max-width: 800px;
+}
+
+.modal-body img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: contain;
+}
+
+/* ページネーション */
+.pagination {
+    margin-bottom: 2rem;
+}
+
+/* カテゴリーとサブカテゴリーのカード */
+.category-card, .subcategory-card {
+    height: 100%;
+    min-height: 120px;
+}
+
+.category-card .card-body, .subcategory-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .card-img-top {
+        height: 150px;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* エラーページのスタイル */
+.error-template {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+.error-template h1 {
+    color: #dc3545;
+    font-size: 8rem;
+    margin-bottom: 0;
+}
+
+.error-template h2 {
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+.error-details {
+    color: #6c757d;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.error-actions {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.error-actions .btn {
+    margin-right: 10px;
+    padding: 10px 20px;
+}

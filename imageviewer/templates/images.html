@@ -1,19 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ subfolder_name }} Images</title>
-</head>
-<body>
-    <h1>{{ subfolder_name }} Images</h1>
-    <ul>
-        {% for image_file in image_files %}
-            <li>
-                <a href="{{ url_for('get_image', image_file=image_file|urlencode) }}">
-                    <img src="{{ url_for('static', filename=image_file) }}" alt="{{ image_file }}">
-                </a>
-            </li>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('show_style', style_type=style_type) }}">{{ style_type }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('show_category', style_type=style_type, category=category) }}">{{ category }}</a></li>
+            <li class="breadcrumb-item active">{{ subcategory_name }}</li>
+        </ol>
+    </nav>
+
+    <h1>{{ subcategory_name }}</h1>
+
+    <!-- 画像一覧 -->
+    {% if subfolder_images %}
+    <div class="row mt-4">
+        {% for folder_name, image_url in subfolder_images %}
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{{ image_url }}" class="card-img-top" alt="サムネイル">
+                <div class="card-body">
+                    <p class="card-text">{{ folder_name }}</p>
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageModal-{{ loop.index }}">
+                            詳細を見る
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="imageModal-{{ loop.index }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ folder_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="{{ image_url }}" class="img-fluid" alt="拡大画像">
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{{ url_for('download_images', style_type=style_type, category=category, subcategory=subcategory, folder_name=folder_name) }}"
+                           class="btn btn-primary">
+                            <i class="fas fa-download"></i> ダウンロード
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
-</body>
-</html>
+    </div>
+
+    <!-- ページネーション -->
+    {% if pagination_info.total_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if not pagination_info.has_prev %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ pagination_info.page - 1 }}">前へ</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">{{ pagination_info.page }} / {{ pagination_info.total_pages }}</span>
+            </li>
+            <li class="page-item {% if not pagination_info.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ pagination_info.page + 1 }}">次へ</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info mt-4">
+        このカテゴリーには現在画像がありません。
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

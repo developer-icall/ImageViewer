@@ -1,0 +1,126 @@
+仕様変更があるので実装お願いします
+
+# 仕様
+- 画像タイプを指定するオプションの表示について以下仕様を変更
+    - 大項目として以下の2つを用意
+        - リアルテイスト画像
+        - ゲーム、イラスト風画像
+    - 各大項目の中には以下の中・小項目を用意
+        - リアルテイスト画像
+            - 女性
+                - 通常画像
+                - 透明背景画像
+                - セルフィー画像
+            - 男性
+                - 通常画像
+                - 透明背景画像
+                - セルフィー画像
+            - 動物
+                - 犬
+                - 猫
+                - 鳥
+                - 魚
+                - その他
+        - ゲーム、イラスト風画像
+            - 女性
+                - 通常画像
+                - 透明背景画像
+                - セルフィー画像
+            - 男性
+                - 通常画像
+                - 透明背景画像
+                - セルフィー画像
+            - 動物
+                - 犬
+                - 猫
+                - 鳥
+                - 魚
+                - その他
+            - 背景
+                - 自然
+                - 都市
+                - 海
+                - 空
+                - その他
+            - RPGアイコン
+                - 武器・防具
+                - モンスター
+                - その他
+            - 乗り物
+                - 車
+                - 船
+                - 飛行機
+                - その他
+            - その他
+- 大項目を選択すると、その大項目に中項目が表示される
+- 中項目を選択すると、その中項目に小項目が表示される
+- 小項目または選択すると、その項目の画像が表示される
+- 小項目がない中項目を選択すると、その中項目の画像が表示される
+- 大項目と中項目および小項目はパラメータではなく URL で判別できるようにする
+- 既存のURLの階層ではなく、新たにURLの階層を作成する
+    - 適した命名規則を考える
+
+# 関連ファイル
+@app.py @index.html @images.html @subfolders.html
+
+---
+以下のステップで進みたいです
+1. @app.py の @app.route を仕様に沿って適切に構築する
+2. 新たに追加した URL に沿って設定する
+3. @index.html @subfolders.html を仕様に沿って適切に構築する
+
+それではステップ1からお願いします
+
+# 画像フォルダ構造パターン
+
+## 大項目（スタイル）
+/static/sync_images/realistic      # リアルテイスト
+/static/sync_images/illustration   # イラストテイスト
+
+## 中項目（カテゴリー）
+/static/sync_images/<style>/female      # 女性
+/static/sync_images/<style>/male        # 男性
+/static/sync_images/<style>/animal      # 動物
+/static/sync_images/<style>/background  # 背景
+/static/sync_images/<style>/rpg_icon    # RPGアイコン
+/static/sync_images/<style>/vehicle     # 乗り物
+
+## 小項目（サブカテゴリー）
+### 人物（female, male）
+/static/sync_images/<style>/<category>/normal      # 通常
+/static/sync_images/<style>/<category>/transparent # 透過
+/static/sync_images/<style>/<category>/selfie      # セルフィー
+
+### 動物（animal）
+/static/sync_images/<style>/animal/dog    # 犬
+/static/sync_images/<style>/animal/cat    # 猫
+/static/sync_images/<style>/animal/bird   # 鳥
+/static/sync_images/<style>/animal/fish   # 魚
+/static/sync_images/<style>/animal/other  # その他
+
+### 背景（background）
+/static/sync_images/<style>/background/nature  # 自然
+/static/sync_images/<style>/background/city    # 都市
+/static/sync_images/<style>/background/sea     # 海
+/static/sync_images/<style>/background/sky     # 空
+/static/sync_images/<style>/background/other   # その他
+
+### RPGアイコン（rpg_icon）
+/static/sync_images/<style>/rpg_icon/weapon   # 武器・防具
+/static/sync_images/<style>/rpg_icon/monster  # モンスター
+/static/sync_images/<style>/rpg_icon/other    # その他
+
+### 乗り物（vehicle）
+/static/sync_images/<style>/vehicle/car       # 車
+/static/sync_images/<style>/vehicle/ship      # 船
+/static/sync_images/<style>/vehicle/airplane  # 飛行機
+/static/sync_images/<style>/vehicle/other     # その他
+
+## サムネイル・サンプル画像
+各フォルダ内に以下のサブフォルダを配置：
+/thumbnail           # サムネイル画像
+/sample             # サンプル画像（透かし入り）
+/sample-thumbnail   # サンプルサムネイル画像（透かし入り）
+/half-resolution    # 半分の解像度の画像
+
+注意：<style>には 'realistic' または 'illustration' が入ります

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    {% for url in urls %}
+    <url>
+        <loc>https://{{ domain_name }}{{ url.loc }}</loc>
+        <changefreq>{{ url.changefreq }}</changefreq>
+        <priority>{{ url.priority }}</priority>
+    </url>
+    {% endfor %}
+
+    <!-- 固定ページ -->
+    <url>
+        <loc>https://{{ domain_name }}/user_policy</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+    </url>
+</urlset>

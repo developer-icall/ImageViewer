@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.10"
 flask = "^3.0.0"
 jinja2 = "^3.1.2"
+flask-caching = "^2.1.0"
 
 [tool.poetry.scripts]
 my-script = "imageviewer:app"
