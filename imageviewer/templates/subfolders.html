@@ -55,18 +55,7 @@
     {% endif %}
 {% endif %}
 
-{# 戻るリンクのパラメータを設定 #}
-{% set back_params = add_param %}
-{% if is_rpgicon %}
-    {% if "is_rpgicon=true" not in back_params %}
-        {% if "?" in back_params %}
-            {% set back_params = back_params + "&is_rpgicon=true" %}
-        {% else %}
-            {% set back_params = "?is_rpgicon=true" %}
-        {% endif %}
-    {% endif %}
-{% endif %}
-
+{# 戻るリンク #}
 <a class="history-back-button" href="{{ back_url.value }}{% if page %}?page={{ page }}{% endif %}">Back</a>
 
 <section class="container">
