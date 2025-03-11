@@ -400,7 +400,8 @@ footer{
                 font-weight: inherit;
                 //SP
                 @media only screen and (max-width: $SP_WIDTH) {
-                    flex: 0.3;
+                    flex: 0.25;
+                    margin-right: 0;
                 }
             }
             dd{
@@ -408,7 +409,7 @@ footer{
                 align-items: center;
                 //SP
                 @media only screen and (max-width: $SP_WIDTH) {
-                    flex: 0.7;
+                    flex: 0.75;
                 }
 
                 >a{
@@ -419,7 +420,8 @@ footer{
                     background: #fafafa;
                     //SP
                     @media only screen and (max-width: $SP_WIDTH) {
-                        width: 50%;
+                        flex: 1;
+                        padding: 4px 2px;
                         text-align: center;
                     }
 
