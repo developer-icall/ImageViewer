@@ -485,17 +485,16 @@ def get_image(image_file):
     path_parts = image_file.split('/')
     folder_name = path_parts[0]  # 例：20231124-17-1409855962
 
-    # thumbnailフォルダ以降のパスを結合して画像名を取得
+    # サブフォルダ以降のパスを結合して画像名を取得
     image_path = '/'.join(path_parts[2:]) if len(path_parts) > 2 else path_parts[-1]
-
-    # サムネイルフォルダの設定
-    thumbnail_folder = WITH_SAMPLE_THUMBNAIL_FOLDER if SAMPLE_IMAGE_FLAG else THUMBNAIL_FOLDER
+    # サブフォルダを取得(パスのうち、最初のディレクトリと最後のファイル名の間を取得する。パスが最初のディレクトリ直下なら空文字を返す。)
+    subfolder_name = '/' + '/'.join(path_parts[1:-1]) if len(path_parts) > 2 else ''
 
     # まず、bravフォルダで探す
     possible_paths = [
-        f"sync_images/brav/{folder_name}{thumbnail_folder}/{image_path}",
-        f"sync_images/RPGIcon/{folder_name}{thumbnail_folder}/{image_path}",
-        f"sync_images/background/{folder_name}{thumbnail_folder}/{image_path}"
+        f"sync_images/brav/{folder_name}{subfolder_name}/{image_path}",
+        f"sync_images/RPGIcon/{folder_name}{subfolder_name}/{image_path}",
+        f"sync_images/background/{folder_name}{subfolder_name}/{image_path}"
     ]
 
     print(f"Looking for image in paths: {possible_paths}")  # デバッグ用
