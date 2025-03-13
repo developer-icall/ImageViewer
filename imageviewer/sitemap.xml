@@ -1,95 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <!-- スタイルページ -->
-    <url>
-        <loc>https://{{ g.domain_name }}/style/realistic</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-    <!-- リアルテイストのカテゴリー -->
-    <url>
-        <loc>https://{{ g.domain_name }}/style/realistic/female</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/realistic/male</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/realistic/animal</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-
-    <!-- イラストのカテゴリー -->
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration/female</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration/male</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration/animal</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration/background</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration/rpg_icon</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration/vehicle</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/illustration/other</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-    </url>
-
-    <!-- サブカテゴリー（一部抜粋） -->
-    <!-- 女性 -->
-    <url>
-        <loc>https://{{ g.domain_name }}/style/realistic/female/normal</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/realistic/female/transparent</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://{{ g.domain_name }}/style/realistic/female/selfie</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.6</priority>
-    </url>
-
-    <!-- その他のページ -->
-    <url>
-        <loc>https://{{ g.domain_name }}/user_policy</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
-    </url>
+<url>
+  <loc>https://ai-gazou.com/</loc>
+  <priority>1.0</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/brav/female/</loc>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/brav/male/</loc>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/brav/female/transparent/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/brav/male/transparent/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/brav/female/selfie/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/brav/male/selfie/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/user_policy</loc>
+  <priority>0.8</priority>
+</url>
 
 </urlset>
