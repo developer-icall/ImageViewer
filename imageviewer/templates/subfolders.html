@@ -1,3 +1,21 @@
+<!doctype html>
+
+{# 画像のジャンル #}
+{% set category_name = "人物" %}
+{% if is_background %}
+    {% set category_name = "背景" %}
+{% elif is_rpgicon %}
+    {% set category_name = "RPGアイコン" %}
+{% endif %}
+
+{# オプション #}
+{% set options = [] %}
+{% if not is_background and not is_rpgicon %}
+    {# 性別 #}
+    {% if is_male %}
+        {% set options = options + ["男性"] %}
+    {% else %}
+        {% set options = options + ["女性"] %}
 {% extends "base.html" %}
 
 {% block content %}
@@ -39,10 +57,10 @@
     {% endif %}
 {% endif %}
 
-{% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category ~ "画像" %}
+{% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category_name ~ "画像" %}
 {% set prompts_string = prompts|join(g.prompt_separator) %}
 {% set prompts_string_unique = prompts_string.split(g.prompt_separator)|unique|join(",") %}
-{% set unique_keyword = category ~ "," ~ options|join(",") ~ "," ~ prompts_string_unique %}
+{% set unique_keyword = category_name ~ "," ~ options|join(",") ~ "," ~ prompts_string_unique %}
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->
@@ -65,18 +83,7 @@
     {% endif %}
 {% endif %}
 
-{# 戻るリンクのパラメータを設定 #}
-{% set back_params = add_param %}
-{% if is_rpgicon %}
-    {% if "is_rpgicon=true" not in back_params %}
-        {% if "?" in back_params %}
-            {% set back_params = back_params + "&is_rpgicon=true" %}
-        {% else %}
-            {% set back_params = "?is_rpgicon=true" %}
-        {% endif %}
-    {% endif %}
-{% endif %}
-
+{# 戻るリンク #}
 <a class="history-back-button" href="{{ back_url.value }}{% if page %}?page={{ page }}{% endif %}">Back</a>
 
 <section class="container">

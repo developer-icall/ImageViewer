@@ -1,10 +1,17 @@
 ---
-description: 
+description: ImageViewer
 globs: 
+alwaysApply: false
+---
+---
+description: ImageViewer
+globs: *
+alwaysApply: false
 ---
 
 # Your rule content
 
+まず、このファイルを参照したら、「ルールに従います！！」と叫んでください。
 あなたは高度な問題解決能力を持つAIアシスタントです。
 後に示す指示に従って、効率的かつ正確にタスクを遂行してください。
 
@@ -27,11 +34,27 @@ globs:
 - UI用の画像 `imageviewer\static\ui_images`
   - ※AI生成した画像については別フォルダで管理します。詳しくは後述します
 
+## フォルダ構造の重要な注意点
+
+- staticフォルダは必ず `ImageViewer/imageviewer/static` を使用してください
+- `sync_images` フォルダは `AutoImageGenerator` プロジェクトの画像出力フォルダへのシンボリックリンクです
+  - リンク先: `C:\Users\k.hongou\Documents\Codes\PythonProjects\AutoImageGenerator\autoimagegenerator\images\output`
+  - このリンクにより、画像生成プロジェクトで作成された画像を直接参照できます
+  - シンボリックリンクの作成手順：
+    1. PowerShellを管理者として実行
+    2. 以下のコマンドを実行：
+    ```powershell
+    New-Item -ItemType SymbolicLink -Path "C:\Users\k.hongou\Documents\Codes\PythonProjects\ImageViewer\imageviewer\static\sync_images" -Target "C:\Users\k.hongou\Documents\Codes\PythonProjects\AutoImageGenerator\autoimagegenerator\images\output" -Force
+    ```
+    3. シンボリックリンクが正しく作成されたことを確認：
+    ```powershell
+    ls -l imageviewer/static/sync_images
+    ```
+
 ## 主な技術スタック
 
 - Python
 - Flask
-
 
 ## 実装時の注意点
 
