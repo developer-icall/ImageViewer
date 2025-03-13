@@ -6,7 +6,6 @@
 ## 機能
 - 指定フォルダ(static/sync_images)以下にあるフォルダ内を検索し、1件目の画像サムネイル(sample-thumbnail内)を一覧表示します
 - 画像サムネイルをクリックすると、対象人物の別ポーズ・衣装の画像一覧へ遷移します
-- URLのパラメータに`hidden_secret_param_is_sample=False`を追加すると画像サムネイルから Sample の文字が消えます　※20250121 デフォルトで追加されるよう設定済
 
 ## 各種ファイル
 - アプリ設定・定数などがまとまった根幹となるファイル `imageviewer\app.py`
@@ -63,5 +62,5 @@
     - 当該フォルダは、実際のサイト上ではシンボリックリンクとして扱われています
         - AutoImageGenerator で画像生成を行っている PC と ImageViewer が同じ PC の場合は、PowerShell(管理者で実行)にて以下のようなコマンド(環境によって変更)でシンボリックリンクを作成できます
             ```
-            New-Item -ItemType SymbolicLink -Path "C:\Users\k.hongou\Documents\Codes\PythonProjects\ImageViewer\imageviewer\static\sync_images" -Target "C:\Users\k.hongou\Documents\Codes\PythonProjects\AutoImageGenerator\images\output"
+            New-Item -ItemType SymbolicLink -Path "C:\Users\k.hongou\Documents\Codes\PythonProjects\ImageViewer\imageviewer\static\sync_images" -Target "C:\Users\k.hongou\Documents\Codes\PythonProjects\AutoImageGenerator\autoimagegenerator\images\output"
             ```
