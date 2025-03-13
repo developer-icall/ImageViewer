@@ -37,7 +37,31 @@
 
 <!-- 元のページに戻るリンク -->
 {% set back_url = namespace(value='') %}
-{% if is_background %}
+{% if image_pattern_category is defined %}
+    {% if image_pattern_subcategory == 'background' %}
+        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/background/' ~ image_pattern_type ~ '/' %}
+    {% elif image_pattern_subcategory == 'rpgicon' %}
+        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/rpgicon/' ~ image_pattern_type ~ '/' %}
+    {% elif image_pattern_subcategory == 'animal' %}
+        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/animal/' ~ image_pattern_type ~ '/' %}
+    {% elif image_pattern_subcategory == 'vehicle' %}
+        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/vehicle/' ~ image_pattern_type ~ '/' %}
+    {% elif image_pattern_subcategory == 'other' %}
+        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/other/' %}
+    {% else %}
+        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/' %}
+        {% if image_pattern_subcategory %}
+            {% set back_url.value = back_url.value ~ image_pattern_subcategory ~ '/' %}
+        {% else %}
+            {% set back_url.value = back_url.value ~ 'female/' %}
+        {% endif %}
+        {% if image_pattern_type %}
+            {% set back_url.value = back_url.value ~ image_pattern_type ~ '/' %}
+        {% else %}
+            {% set back_url.value = back_url.value ~ 'normal/' %}
+        {% endif %}
+    {% endif %}
+{% elif is_background %}
     {% set back_url.value = '/background/' %}
 {% elif is_rpgicon %}
     {% set back_url.value = '/rpgicon/' %}

@@ -9,6 +9,235 @@
                 OPTION
             </div>
 
+            {% if image_pattern_category is defined %}
+            <!-- 新しい画像パターン用のオプション -->
+            <dl>
+                <dt>
+                    画像テイスト
+                </dt>
+                <dd>
+                    <a href="/image_pattern/realistic/{% if image_pattern_subcategory %}{{ image_pattern_subcategory }}/{% else %}female/{% endif %}{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}normal/{% endif %}" class="{% if image_pattern_category == 'realistic' %}selected{% endif %}">
+                        リアルテイスト画像
+                    </a>
+                    <a href="/image_pattern/illustration/{% if image_pattern_subcategory %}{{ image_pattern_subcategory }}/{% else %}female/{% endif %}{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}normal/{% endif %}" class="{% if image_pattern_category == 'illustration' %}selected{% endif %}">
+                        ゲーム、イラスト風画像
+                    </a>
+                </dd>
+            </dl>
+
+            {% if image_pattern_category == 'realistic' %}
+            <!-- リアルテイスト画像のサブカテゴリ -->
+            <dl>
+                <dt>
+                    カテゴリ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/realistic/female/{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}normal/{% endif %}" class="{% if image_pattern_subcategory == 'female' %}selected{% endif %}">
+                        女性
+                    </a>
+                    <a href="/image_pattern/realistic/male/{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}normal/{% endif %}" class="{% if image_pattern_subcategory == 'male' %}selected{% endif %}">
+                        男性
+                    </a>
+                    <a href="/image_pattern/realistic/animal/dog/" class="{% if image_pattern_subcategory == 'animal' %}selected{% endif %}">
+                        動物
+                    </a>
+                </dd>
+            </dl>
+
+            {% if image_pattern_subcategory == 'female' or image_pattern_subcategory == 'male' %}
+            <!-- 人物画像のタイプ -->
+            <dl>
+                <dt>
+                    画像タイプ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/realistic/{{ image_pattern_subcategory }}/normal/" class="{% if image_pattern_type == 'normal' %}selected{% endif %}">
+                        通常画像
+                    </a>
+                    <a href="/image_pattern/realistic/{{ image_pattern_subcategory }}/transparent/" class="{% if image_pattern_type == 'transparent' %}selected{% endif %}">
+                        透明背景画像
+                    </a>
+                    <a href="/image_pattern/realistic/{{ image_pattern_subcategory }}/selfie/" class="{% if image_pattern_type == 'selfie' %}selected{% endif %}">
+                        セルフィー画像
+                    </a>
+                </dd>
+            </dl>
+            {% endif %}
+
+            {% if image_pattern_subcategory == 'animal' %}
+            <!-- 動物画像のタイプ -->
+            <dl>
+                <dt>
+                    動物タイプ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/realistic/animal/dog/" class="{% if image_pattern_type == 'dog' %}selected{% endif %}">
+                        犬
+                    </a>
+                    <a href="/image_pattern/realistic/animal/cat/" class="{% if image_pattern_type == 'cat' %}selected{% endif %}">
+                        猫
+                    </a>
+                    <a href="/image_pattern/realistic/animal/bird/" class="{% if image_pattern_type == 'bird' %}selected{% endif %}">
+                        鳥
+                    </a>
+                    <a href="/image_pattern/realistic/animal/fish/" class="{% if image_pattern_type == 'fish' %}selected{% endif %}">
+                        魚
+                    </a>
+                    <a href="/image_pattern/realistic/animal/other/" class="{% if image_pattern_type == 'other' %}selected{% endif %}">
+                        その他
+                    </a>
+                </dd>
+            </dl>
+            {% endif %}
+
+            {% elif image_pattern_category == 'illustration' %}
+            <!-- イラスト風画像のサブカテゴリ -->
+            <dl>
+                <dt>
+                    カテゴリ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/illustration/female/{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}normal/{% endif %}" class="{% if image_pattern_subcategory == 'female' %}selected{% endif %}">
+                        女性
+                    </a>
+                    <a href="/image_pattern/illustration/male/{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}normal/{% endif %}" class="{% if image_pattern_subcategory == 'male' %}selected{% endif %}">
+                        男性
+                    </a>
+                    <a href="/image_pattern/illustration/animal/dog/" class="{% if image_pattern_subcategory == 'animal' %}selected{% endif %}">
+                        動物
+                    </a>
+                    <a href="/image_pattern/illustration/background/nature/" class="{% if image_pattern_subcategory == 'background' %}selected{% endif %}">
+                        背景
+                    </a>
+                    <a href="/image_pattern/illustration/rpgicon/weapon/" class="{% if image_pattern_subcategory == 'rpgicon' %}selected{% endif %}">
+                        RPGアイコン
+                    </a>
+                    <a href="/image_pattern/illustration/vehicle/car/" class="{% if image_pattern_subcategory == 'vehicle' %}selected{% endif %}">
+                        乗り物
+                    </a>
+                    <a href="/image_pattern/illustration/other/" class="{% if image_pattern_subcategory == 'other' %}selected{% endif %}">
+                        その他
+                    </a>
+                </dd>
+            </dl>
+
+            {% if image_pattern_subcategory == 'female' or image_pattern_subcategory == 'male' %}
+            <!-- 人物画像のタイプ -->
+            <dl>
+                <dt>
+                    画像タイプ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/illustration/{{ image_pattern_subcategory }}/normal/" class="{% if image_pattern_type == 'normal' %}selected{% endif %}">
+                        通常画像
+                    </a>
+                    <a href="/image_pattern/illustration/{{ image_pattern_subcategory }}/transparent/" class="{% if image_pattern_type == 'transparent' %}selected{% endif %}">
+                        透明背景画像
+                    </a>
+                    <a href="/image_pattern/illustration/{{ image_pattern_subcategory }}/selfie/" class="{% if image_pattern_type == 'selfie' %}selected{% endif %}">
+                        セルフィー画像
+                    </a>
+                </dd>
+            </dl>
+            {% endif %}
+
+            {% if image_pattern_subcategory == 'animal' %}
+            <!-- 動物画像のタイプ -->
+            <dl>
+                <dt>
+                    動物タイプ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/illustration/animal/dog/" class="{% if image_pattern_type == 'dog' %}selected{% endif %}">
+                        犬
+                    </a>
+                    <a href="/image_pattern/illustration/animal/cat/" class="{% if image_pattern_type == 'cat' %}selected{% endif %}">
+                        猫
+                    </a>
+                    <a href="/image_pattern/illustration/animal/bird/" class="{% if image_pattern_type == 'bird' %}selected{% endif %}">
+                        鳥
+                    </a>
+                    <a href="/image_pattern/illustration/animal/fish/" class="{% if image_pattern_type == 'fish' %}selected{% endif %}">
+                        魚
+                    </a>
+                    <a href="/image_pattern/illustration/animal/other/" class="{% if image_pattern_type == 'other' %}selected{% endif %}">
+                        その他
+                    </a>
+                </dd>
+            </dl>
+            {% endif %}
+
+            {% if image_pattern_subcategory == 'background' %}
+            <!-- 背景画像のタイプ -->
+            <dl>
+                <dt>
+                    背景タイプ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/illustration/background/nature/" class="{% if image_pattern_type == 'nature' %}selected{% endif %}">
+                        自然
+                    </a>
+                    <a href="/image_pattern/illustration/background/city/" class="{% if image_pattern_type == 'city' %}selected{% endif %}">
+                        都市
+                    </a>
+                    <a href="/image_pattern/illustration/background/sea/" class="{% if image_pattern_type == 'sea' %}selected{% endif %}">
+                        海
+                    </a>
+                    <a href="/image_pattern/illustration/background/sky/" class="{% if image_pattern_type == 'sky' %}selected{% endif %}">
+                        空
+                    </a>
+                    <a href="/image_pattern/illustration/background/other/" class="{% if image_pattern_type == 'other' %}selected{% endif %}">
+                        その他
+                    </a>
+                </dd>
+            </dl>
+            {% endif %}
+
+            {% if image_pattern_subcategory == 'rpgicon' %}
+            <!-- RPGアイコンのタイプ -->
+            <dl>
+                <dt>
+                    RPGアイコンタイプ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/illustration/rpgicon/weapon/" class="{% if image_pattern_type == 'weapon' %}selected{% endif %}">
+                        武器・防具
+                    </a>
+                    <a href="/image_pattern/illustration/rpgicon/monster/" class="{% if image_pattern_type == 'monster' %}selected{% endif %}">
+                        モンスター
+                    </a>
+                    <a href="/image_pattern/illustration/rpgicon/other/" class="{% if image_pattern_type == 'other' %}selected{% endif %}">
+                        その他
+                    </a>
+                </dd>
+            </dl>
+            {% endif %}
+
+            {% if image_pattern_subcategory == 'vehicle' %}
+            <!-- 乗り物のタイプ -->
+            <dl>
+                <dt>
+                    乗り物タイプ
+                </dt>
+                <dd>
+                    <a href="/image_pattern/illustration/vehicle/car/" class="{% if image_pattern_type == 'car' %}selected{% endif %}">
+                        車
+                    </a>
+                    <a href="/image_pattern/illustration/vehicle/ship/" class="{% if image_pattern_type == 'ship' %}selected{% endif %}">
+                        船
+                    </a>
+                    <a href="/image_pattern/illustration/vehicle/airplane/" class="{% if image_pattern_type == 'airplane' %}selected{% endif %}">
+                        飛行機
+                    </a>
+                    <a href="/image_pattern/illustration/vehicle/other/" class="{% if image_pattern_type == 'other' %}selected{% endif %}">
+                        その他
+                    </a>
+                </dd>
+            </dl>
+            {% endif %}
+            {% endif %}
+            {% else %}
+            <!-- 既存のオプション -->
             <dl>
                 <dt>
                     性別
@@ -39,6 +268,7 @@
                     </a>
                 </dd>
             </dl>
+            {% endif %}
         </div>
     </div>
 </section>
