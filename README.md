@@ -6,6 +6,7 @@
 ## 機能
 - 指定フォルダ(static/sync_images)以下にあるフォルダ内を検索し、1件目の画像サムネイル(sample-thumbnail内)を一覧表示します
 - 画像サムネイルをクリックすると、対象人物の別ポーズ・衣装の画像一覧へ遷移します
+- 画像生成時の英語プロンプトを日本語に翻訳して表示します
 
 ## プロジェクト構造
 ```
@@ -14,6 +15,7 @@ ImageViewer/
 │   ├── static/            # フロントエンド用ファイル（ブラウザに送るファイル）
 │   │   ├── sync_images/   # AI生成画像フォルダ
 │   │   ├── css/           # スタイルシート
+│   │   ├── translate_json/ # プロンプト翻訳用JSONファイル
 │   │   └── ui_images/     # UI用の画像
 │   ├── templates/         # テンプレートファイル
 │   ├── tests/             # テスト関連ファイル
@@ -22,7 +24,8 @@ ImageViewer/
 │   ├── app.py             # メインアプリケーションファイル
 │   └── __init__.py        # パッケージ初期化ファイル
 ├── docs/                  # ドキュメント
-│   └── folder_structure.md # フォルダ構造の詳細説明
+│   ├── folder_structure.md # フォルダ構造の詳細説明
+│   └── translate_json_spec.md # translate_json フォルダの仕様
 ├── tests/                 # プロジェクトレベルのテスト
 ├── logs/                  # プロジェクトレベルのログ
 ├── cache/                 # キャッシュファイル
@@ -33,6 +36,7 @@ ImageViewer/
 ```
 
 詳細なフォルダ構造については `docs/folder_structure.md` を参照してください。
+translate_json フォルダの仕様については `docs/translate_json_spec.md` を参照してください。
 
 ## 各種ファイル
 - アプリ設定・定数などがまとまった根幹となるファイル `imageviewer\app.py`
@@ -40,6 +44,8 @@ ImageViewer/
 - scss `imageviewer\static\css\customize.scss`
 - UI用の画像 `imageviewer\static\ui_images`
   - ※AI生成した画像については別フォルダで管理します。詳しくは後述します
+- プロンプト翻訳用JSONファイル `imageviewer\static\translate_json`
+  - 画像生成時の英語プロンプトを日本語に翻訳するための対応表が格納されています
 
 ## 使用方法
 1. 下記 インストール手順 に従って諸々セットアップする
@@ -76,7 +82,7 @@ ImageViewer/
         ```
         .\.venv\Scripts\activate
         # 以下のように表示されていればOK
-        (venv) PS C:\Users\k.hongou\Documents\Codes\PythonProjects\ImageViewer>
+        (.venv) PS C:\Users\k.hongou\Documents\Codes\PythonProjects\ImageViewer>
         ```
         - ※エラーが出るようであれば管理者権限で PowerShell を起動し、上記コマンドを実行することで解消される可能性があります
 4. 仮想環境にて以下のコマンドでライブラリをインストールする
@@ -85,7 +91,7 @@ ImageViewer/
     python -m pip install --upgrade pip
 
     # 必要なモジュールをインストール
-    pip install Flask
+    poetry install
     ```
 5. imageviewer/static/sync_images フォルダを作成し、 AIで生成された画像フォルダを任意に配置してください
     - 女性、男性(-men)、セルフィー写真(-selfie)、透過写真(-transparent)、背景(-background)などの種類がフォルダ名で分かれています
