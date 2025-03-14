@@ -48,7 +48,8 @@ INDEX_PER_PAGE = 12
 # 画像タイプを定義するクラスを追加
 class ImageType:
     def __init__(self, is_sample=True, is_male=False, is_transparent_background=False,
-                 is_selfie=False, is_background=False, is_rpgicon=False):
+                 is_selfie=False, is_background=False, is_rpgicon=False,
+                 style=None, category=None, subcategory=None):
         self.is_sample = is_sample
         self.is_male = is_male
         self.is_transparent_background = is_transparent_background
@@ -56,9 +57,24 @@ class ImageType:
         self.is_background = is_background
         self.is_rpgicon = is_rpgicon
 
+        # 新しいフォルダ構造用のパラメータ
+        self.style = style  # realistic または illustration
+        self.category = category  # female, male, animal, background, rpgicon, vehicle, other
+        self.subcategory = subcategory  # normal, transparent, selfie, dog, cat, etc.
+
     def get_folder_path(self):
+        # 新しいフォルダ構造が指定されている場合
+        if self.style and self.category:
+            base_path = os.path.join(IMAGE_FOLDER, self.style, self.category)
+
+            # サブカテゴリが指定されている場合は追加
+            if self.subcategory:
+                return os.path.join(base_path, self.subcategory)
+            return base_path
+
+        # 従来の構造の場合（後方互換性のため）
         if self.is_background:
-            return BACKGROUND_FOLDER  # 背景画像用フォルダを返すように変更
+            return BACKGROUND_FOLDER
         elif self.is_rpgicon:
             return RPGICON_FOLDER
         else:
@@ -92,14 +108,6 @@ def get_first_image(subfolder_path, is_dig=False):
                 # フォルダ名を取得（例：20231124-17-1409855962）
                 folder_name = os.path.basename(os.path.dirname(os.path.dirname(image_path)))
 
-                # ベースフォルダを判定（brav, rpgicon, background）
-                if RPGICON_FOLDER in subfolder_path:
-                    base_folder = 'RPGIcon'
-                elif BACKGROUND_FOLDER in subfolder_path:
-                    base_folder = 'background'
-                else:
-                    base_folder = 'brav'
-
                 # 画像のURLパスを構築
                 return f"/images/{folder_name}/thumbnail/{file}"
     return None
@@ -107,6 +115,9 @@ def get_first_image(subfolder_path, is_dig=False):
 def get_subfolders(folder_path, page, image_type):
     # フォルダパスの決定
     folder_path = image_type.get_folder_path()
+
+    # debug
+    print(f"folder_path: {folder_path}")
 
     subfolders = []
     start_index = (page - 1) * INDEX_PER_PAGE
@@ -122,15 +133,34 @@ def get_subfolders(folder_path, page, image_type):
         for dir in dirs:
             subfolder_path = os.path.join(root, dir).replace("\\", "/")
 
+            # サブフォルダの文字列にsample, sample-thumbnail, thumbnail, half_resolution が含まれた場合は除外
+            if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER, HALF_RESOLUTION_FOLDER]):
+                continue
+
+            # 新しいフォルダ構造の場合は、従来のフィルタリングをスキップ
+            if image_type.style and image_type.category:
+                # サムネイル画像の取得
+                if image_type.is_sample:
+                    first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER, False)
+                else:
+                    if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER]):
+                        continue
+                    first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER, False)
+
+                if first_image:
+                    if index >= start_index and index < end_index:
+                        subfolders.append((dir, first_image))
+                else:
+                    print(f"first image not found:{subfolder_path}")
+                index = index + 1
+                continue
+
+            # 従来の構造の場合（後方互換性のため）
             # ページ階層に合わせて、画像フォルダのパスを調整
             is_dig = False
             # /male が含まれている場合はもう1階層遡る（背景画像の場合は不要）
             if image_type.is_male:
                 is_dig = True
-
-            # サブフォルダの文字列にsample, sample-thumbnail, thumbnail, half_resolution が含まれた場合は除外
-            if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER, HALF_RESOLUTION_FOLDER]):
-                continue
 
             # 背景画像の場合は他のフィルタリングをスキップ
             if not image_type.is_background and not image_type.is_rpgicon:
@@ -298,7 +328,10 @@ def brav_female_selfie():
                          is_transparent_background=False,
                          is_selfie=True,
                          is_rpgicon=False,
-                         is_background=False)
+                         is_background=False,
+                         image_pattern_category="realistic",
+                         image_pattern_subcategory="male",
+                         image_pattern_type="selfie")
 
 @app.route('/brav/male/')
 def brav_male():
@@ -361,7 +394,10 @@ def brav_male_selfie():
                          is_transparent_background=False,
                          is_selfie=True,
                          is_rpgicon=False,
-                         is_background=False)
+                         is_background=False,
+                         image_pattern_category="realistic",
+                         image_pattern_subcategory="male",
+                         image_pattern_type="selfie")
 
 @app.route('/rpgicon/')
 def rpgicon():
@@ -531,7 +567,10 @@ def image_pattern_realistic_female_normal():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=False,
         is_transparent_background=False,
-        is_selfie=False
+        is_selfie=False,
+        style="realistic",
+        category="female",
+        subcategory="normal"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -555,7 +594,10 @@ def image_pattern_realistic_female_transparent():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=False,
         is_transparent_background=True,
-        is_selfie=False
+        is_selfie=False,
+        style="realistic",
+        category="female",
+        subcategory="transparent"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -579,7 +621,10 @@ def image_pattern_realistic_female_selfie():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=False,
         is_transparent_background=False,
-        is_selfie=True
+        is_selfie=True,
+        style="realistic",
+        category="female",
+        subcategory="selfie"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -603,7 +648,10 @@ def image_pattern_realistic_male_normal():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=True,
         is_transparent_background=False,
-        is_selfie=False
+        is_selfie=False,
+        style="realistic",
+        category="male",
+        subcategory="normal"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -627,7 +675,10 @@ def image_pattern_realistic_male_transparent():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=True,
         is_transparent_background=True,
-        is_selfie=False
+        is_selfie=False,
+        style="realistic",
+        category="male",
+        subcategory="transparent"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -643,7 +694,7 @@ def image_pattern_realistic_male_transparent():
                          is_background=False,
                          image_pattern_category="realistic",
                          image_pattern_subcategory="male",
-                         image_pattern_type="normal")
+                         image_pattern_type="transparent")
 
 @app.route('/image_pattern/realistic/male/selfie/')
 def image_pattern_realistic_male_selfie():
@@ -651,7 +702,10 @@ def image_pattern_realistic_male_selfie():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=True,
         is_transparent_background=False,
-        is_selfie=True
+        is_selfie=True,
+        style="realistic",
+        category="male",
+        subcategory="selfie"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -672,9 +726,11 @@ def image_pattern_realistic_male_selfie():
 @app.route('/image_pattern/realistic/animal/<animal_type>/')
 def image_pattern_realistic_animal(animal_type):
     # 動物タイプに応じた処理を追加
-    # 現在は既存の画像を表示
     image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG
+        is_sample=SAMPLE_IMAGE_FLAG,
+        style="realistic",
+        category="animal",
+        subcategory=animal_type
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -699,7 +755,10 @@ def image_pattern_illustration_female_normal():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=False,
         is_transparent_background=False,
-        is_selfie=False
+        is_selfie=False,
+        style="illustration",
+        category="female",
+        subcategory="normal"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -723,7 +782,10 @@ def image_pattern_illustration_female_transparent():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=False,
         is_transparent_background=True,
-        is_selfie=False
+        is_selfie=False,
+        style="illustration",
+        category="female",
+        subcategory="transparent"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -747,7 +809,10 @@ def image_pattern_illustration_female_selfie():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=False,
         is_transparent_background=False,
-        is_selfie=True
+        is_selfie=True,
+        style="illustration",
+        category="female",
+        subcategory="selfie"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -771,7 +836,10 @@ def image_pattern_illustration_male_normal():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=True,
         is_transparent_background=False,
-        is_selfie=False
+        is_selfie=False,
+        style="illustration",
+        category="male",
+        subcategory="normal"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -795,7 +863,10 @@ def image_pattern_illustration_male_transparent():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=True,
         is_transparent_background=True,
-        is_selfie=False
+        is_selfie=False,
+        style="illustration",
+        category="male",
+        subcategory="transparent"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -819,7 +890,10 @@ def image_pattern_illustration_male_selfie():
         is_sample=SAMPLE_IMAGE_FLAG,
         is_male=True,
         is_transparent_background=False,
-        is_selfie=True
+        is_selfie=True,
+        style="illustration",
+        category="male",
+        subcategory="selfie"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -841,7 +915,10 @@ def image_pattern_illustration_male_selfie():
 def image_pattern_illustration_animal(animal_type):
     # 動物タイプに応じた処理を追加
     image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG
+        is_sample=SAMPLE_IMAGE_FLAG,
+        style="illustration",
+        category="animal",
+        subcategory=animal_type
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -864,7 +941,10 @@ def image_pattern_illustration_background(background_type):
     # 背景タイプに応じた処理を追加
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
-        is_background=True
+        is_background=True,
+        style="illustration",
+        category="background",
+        subcategory=background_type
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -887,7 +967,10 @@ def image_pattern_illustration_rpgicon(rpgicon_type):
     # RPGアイコンタイプに応じた処理を追加
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
-        is_rpgicon=True
+        is_rpgicon=True,
+        style="illustration",
+        category="rpgicon",
+        subcategory=rpgicon_type
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -909,7 +992,10 @@ def image_pattern_illustration_rpgicon(rpgicon_type):
 def image_pattern_illustration_vehicle(vehicle_type):
     # 乗り物タイプに応じた処理を追加
     image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG
+        is_sample=SAMPLE_IMAGE_FLAG,
+        style="illustration",
+        category="vehicle",
+        subcategory=vehicle_type
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -931,7 +1017,9 @@ def image_pattern_illustration_vehicle(vehicle_type):
 def image_pattern_illustration_other():
     # その他のイラスト画像
     image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG
+        is_sample=SAMPLE_IMAGE_FLAG,
+        style="illustration",
+        category="other"
     )
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -967,7 +1055,10 @@ def image_pattern_subfolder_images(category, subcategory, subfolder_name, type=N
         is_transparent_background=is_transparent_background,
         is_selfie=is_selfie,
         is_rpgicon=is_rpgicon,
-        is_background=is_background
+        is_background=is_background,
+        style=category,
+        category=subcategory,
+        subcategory=type
     )
 
     # サブフォルダのパスを決定
