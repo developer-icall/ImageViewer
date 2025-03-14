@@ -19,11 +19,11 @@
 2. `.\ImageViewer\imageviewer` ディレクトリにて `poetry run python app.py` でファイルを実行する
 3. ブラウザで http://{ローカルIP}:5000/ へアクセスする
 4. 【! gitには反映しないでください !】ホットリロード有効化のため、app.py末尾を以下のように書き換える
-    ```  
+    ```
     if __name__ == '__main__':
         # デバッグモードを有効にし、ホットリロードを有効化
         app.run(debug=True, host='0.0.0.0', use_reloader=True)
-    
+
     # 自動更新を有効にする設定を追加
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
     app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -43,7 +43,7 @@
 3. Python 仮想環境の作成
     1. カレントディレクトリにて以下を実行
         ```
-        python -m venv venv
+        python -m venv .venv
         ```
     2. 仮想環境を開始
         ```
