@@ -7,6 +7,33 @@
 - 指定フォルダ(static/sync_images)以下にあるフォルダ内を検索し、1件目の画像サムネイル(sample-thumbnail内)を一覧表示します
 - 画像サムネイルをクリックすると、対象人物の別ポーズ・衣装の画像一覧へ遷移します
 
+## プロジェクト構造
+```
+ImageViewer/
+├── imageviewer/           # メインアプリケーションディレクトリ
+│   ├── static/            # フロントエンド用ファイル（ブラウザに送るファイル）
+│   │   ├── sync_images/   # AI生成画像フォルダ
+│   │   ├── css/           # スタイルシート
+│   │   └── ui_images/     # UI用の画像
+│   ├── templates/         # テンプレートファイル
+│   ├── tests/             # テスト関連ファイル
+│   ├── logs/              # ログファイル
+│   ├── config/            # 設定ファイルと関連プログラム
+│   ├── app.py             # メインアプリケーションファイル
+│   └── __init__.py        # パッケージ初期化ファイル
+├── docs/                  # ドキュメント
+│   └── folder_structure.md # フォルダ構造の詳細説明
+├── tests/                 # プロジェクトレベルのテスト
+├── logs/                  # プロジェクトレベルのログ
+├── cache/                 # キャッシュファイル
+├── feature/               # 機能関連ファイル
+├── pyproject.toml         # Poetry設定ファイル
+├── poetry.lock            # Poetryロックファイル
+└── poetry.toml            # Poetry追加設定
+```
+
+詳細なフォルダ構造については `docs/folder_structure.md` を参照してください。
+
 ## 各種ファイル
 - アプリ設定・定数などがまとまった根幹となるファイル `imageviewer\app.py`
 - テンプレート `imageviewer\templates`

@@ -1,126 +1,102 @@
-# 生成画像フォルダ仕様
+# プロジェクトフォルダ構成
 
-このドキュメントでは、生成された画像のフォルダ構造について説明します。
+## 基本構造
 
-## 生成時に動的に作成されるフォルダ
-
-画像生成時には大項目・中項目・小項目に応じたフォルダの下に、作成日時と生成された画像の Seed 値を含むフォルダが作成されています。
-それらのフォルダ構成に基づいて ImageViewer にて画像を一覧表示します
-
-例）
 ```
-imageviewer/static/sync_images/realistic/female/normal/20250221-12-2934224203/
+ImageViewer/
+├── imageviewer/           # メインアプリケーションディレクトリ
+│   ├── static/            # フロントエンド用ファイル（ブラウザに送るファイル）
+│   ├── tests/             # テスト関連ファイル
+│   ├── logs/              # ログファイル
+│   ├── config/            # 設定ファイルと関連プログラム
+│   ├── templates/         # テンプレートファイル
+│   ├── app.py             # メインアプリケーションファイル
+│   ├── sitemap.xml        # サイトマップ
+│   └── __init__.py        # パッケージ初期化ファイル
+├── docs/                  # ドキュメント
+├── tests/                 # プロジェクトレベルのテスト
+├── logs/                  # プロジェクトレベルのログ
+├── cache/                 # キャッシュファイル
+├── feature/               # 機能関連ファイル
+├── pyproject.toml         # Poetry設定ファイル
+├── poetry.lock            # Poetryロックファイル
+├── poetry.toml            # Poetry追加設定
+└── README.md              # プロジェクト説明
 ```
 
-フォルダ名の形式は以下の通りです：
+## 生成画像フォルダ構造
+
+生成された画像は以下の構造で保存されます：
+
+```
+imageviewer/static/sync_images/
+├── realistic/                                # リアルテイスト（大項目）
+│   ├── female/                               # 女性（中項目）
+│   │   ├── normal/                           # 通常（小項目）
+│   │   │   ├── YYYYMMDD-HH-SEEDVALUE/        # 生成日時とSeed値
+│   │   │   │   ├── 00001.png                 # 元画像
+│   │   │   │   ├── thumbnail/                # サムネイル画像
+│   │   │   │   │   └── 00001.png
+│   │   │   │   ├── sample/                   # サンプル画像（透かし入り）
+│   │   │   │   │   └── 00001.png
+│   │   │   │   ├── sample-thumbnail/         # サンプルサムネイル画像
+│   │   │   │   │   └── 00001.png
+│   │   │   │   └── half-resolution/          # 半分の解像度の画像
+│   │   │   │       └── 00001.png
+│   │   │   └── ...
+│   │   ├── transparent/                      # 透過
+│   │   │   └── ...
+│   │   └── selfie/                           # セルフィー
+│   │       └── ...
+│   ├── male/                                 # 男性
+│   │   ├── normal/
+│   │   ├── transparent/
+│   │   └── selfie/
+│   ├── animal/                               # 動物
+│   │   ├── dog/                              # 犬
+│   │   ├── cat/                              # 猫
+│   │   ├── bird/                             # 鳥
+│   │   ├── fish/                             # 魚
+│   │   └── other/                            # その他
+│   ├── background/                           # 背景
+│   │   ├── nature/                           # 自然
+│   │   ├── city/                             # 都市
+│   │   ├── sea/                              # 海
+│   │   ├── sky/                              # 空
+│   │   └── other/                            # その他
+│   ├── rpg_icon/                             # RPGアイコン
+│   │   ├── weapon/                           # 武器・防具
+│   │   ├── monster/                          # モンスター
+│   │   └── other/                            # その他
+│   └── vehicle/                              # 乗り物
+│       ├── car/                              # 車
+│       ├── ship/                             # 船
+│       ├── airplane/                         # 飛行機
+│       └── other/                            # その他
+└── illustration/                             # イラストテイスト（大項目）
+    ├── female/
+    ├── male/
+    ├── animal/
+    ├── background/
+    ├── rpg_icon/
+    └── vehicle/
+```
+
+## フォルダ名の形式
+
+生成時に動的に作成されるフォルダ名の形式は以下の通りです：
 - `YYYYMMDD-HH-SEEDVALUE`
   - `YYYYMMDD`: 年月日
   - `HH`: 時間
   - `SEEDVALUE`: 生成に使用されたSeed値
 
-# 画像フォルダ構造パターン
+例：`20250221-12-2934224203`
 
-- 基本構造は以下
-    - imageviewer/static/sync_images/<style>/<category>/<subcategory>
+## サブフォルダの役割
 
-# 具体的なフォルダ構造イメージ
-
-## 大項目（スタイル）
-/static/sync_images/realistic      # リアルテイスト
-/static/sync_images/illustration   # イラストテイスト
-
-## 中項目（カテゴリー）
-/static/sync_images/<style>/female      # 女性
-/static/sync_images/<style>/male        # 男性
-/static/sync_images/<style>/animal      # 動物
-/static/sync_images/<style>/background  # 背景
-/static/sync_images/<style>/rpg_icon    # RPGアイコン
-/static/sync_images/<style>/vehicle     # 乗り物
-
-## 小項目（サブカテゴリー）
-### 人物（female, male）
-/static/sync_images/<style>/<category>/normal      # 通常
-/static/sync_images/<style>/<category>/transparent # 透過
-/static/sync_images/<style>/<category>/selfie      # セルフィー
-
-### 動物（animal）
-/static/sync_images/<style>/animal/dog    # 犬
-/static/sync_images/<style>/animal/cat    # 猫
-/static/sync_images/<style>/animal/bird   # 鳥
-/static/sync_images/<style>/animal/fish   # 魚
-/static/sync_images/<style>/animal/other  # その他
-
-### 背景（background）
-/static/sync_images/<style>/background/nature  # 自然
-/static/sync_images/<style>/background/city    # 都市
-/static/sync_images/<style>/background/sea     # 海
-/static/sync_images/<style>/background/sky     # 空
-/static/sync_images/<style>/background/other   # その他
-
-### RPGアイコン（rpg_icon）
-/static/sync_images/<style>/rpg_icon/weapon   # 武器・防具
-/static/sync_images/<style>/rpg_icon/monster  # モンスター
-/static/sync_images/<style>/rpg_icon/other    # その他
-
-### 乗り物（vehicle）
-/static/sync_images/<style>/vehicle/car       # 車
-/static/sync_images/<style>/vehicle/ship      # 船
-/static/sync_images/<style>/vehicle/airplane  # 飛行機
-/static/sync_images/<style>/vehicle/other     # その他
-
-## サムネイル・サンプル画像
-各フォルダ内に以下のサブフォルダを配置：
-/thumbnail           # サムネイル画像
-/sample             # サンプル画像（透かし入り）
-/sample-thumbnail   # サンプルサムネイル画像（透かし入り）
-/half-resolution    # 半分の解像度の画像
-
-
-## サブフォルダ構造
-
-生成時に動的に作成されるフォルダ内には以下のサブフォルダが作成され、それぞれの仕様に応じた画像が保存されます。
-
-```
-/thumbnail          # サムネイル画像
-/sample             # サンプル画像（透かし入り）
-/sample-thumbnail   # サンプルサムネイル画像（透かし入り）
-/half-resolution    # 半分の解像度の画像
-```
-
-### サブフォルダの役割
+各生成画像フォルダ内には以下のサブフォルダが作成されます：
 
 - **thumbnail**: 元画像のサムネイル版（小さいサイズ）
 - **sample**: 透かし入りのサンプル画像（配布用）
 - **sample-thumbnail**: 透かし入りのサンプル画像のサムネイル版
 - **half-resolution**: 元画像の半分の解像度の画像（軽量版）
-
-## 出力ディレクトリ構造の例
-
-以下は、実際の出力ディレクトリ構造の例です：
-
-```
-imageviewer/static/sync_images/
-├── realistic/
-│   ├── female/
-│   │   ├── normal/
-│   │   │   ├── 20250221-12-2934224203/
-│   │   │   │   ├── 00001.png                # 元画像
-│   │   │   │   ├── thumbnail/
-│   │   │   │   │   └── 00001.png            # サムネイル画像
-│   │   │   │   ├── sample/
-│   │   │   │   │   └── 00001.png            # サンプル画像（透かし入り）
-│   │   │   │   ├── sample-thumbnail/
-│   │   │   │   │   └── 00001.png            # サンプルサムネイル画像
-│   │   │   │   └── half-resolution/
-│   │   │   │       └── 00001.png            # 半分の解像度の画像
-│   │   │   └── 20250221-13-3847583921/
-│   │   │       └── ...
-│   │   ├── selfie/
-│   │   │   └── ...
-│   │   └── transparent/
-│   │       └── ...
-│   └── male/
-│       └── ...
-└── illustration/
-    └── ...
-```
