@@ -1,0 +1,217 @@
+{
+  "styles": [
+    {
+      "id": "realistic",
+      "name": "リアルテイスト画像",
+      "display_order": 1,
+      "visible": true
+    },
+    {
+      "id": "illustration",
+      "name": "ゲーム、イラスト風画像",
+      "display_order": 2,
+      "visible": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "female",
+      "name": "女性",
+      "display_order": 1,
+      "visible": true,
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "male",
+      "name": "男性",
+      "display_order": 2,
+      "visible": true,
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "animal",
+      "name": "動物",
+      "display_order": 3,
+      "visible": false,
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "background",
+      "name": "背景",
+      "display_order": 4,
+      "visible": false,
+      "styles": ["illustration"]
+    },
+    {
+      "id": "rpg_icon",
+      "name": "RPGアイコン",
+      "display_order": 5,
+      "visible": true,
+      "styles": ["illustration"]
+    },
+    {
+      "id": "vehicle",
+      "name": "乗り物",
+      "display_order": 6,
+      "visible": false,
+      "styles": ["illustration"]
+    },
+    {
+      "id": "other",
+      "name": "その他",
+      "display_order": 7,
+      "visible": false,
+      "styles": ["illustration"]
+    }
+  ],
+  "subcategories": [
+    {
+      "id": "normal",
+      "name": "通常画像",
+      "display_order": 1,
+      "visible": true,
+      "categories": ["female", "male"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "transparent",
+      "name": "透明背景画像",
+      "display_order": 2,
+      "visible": true,
+      "categories": ["female", "male"],
+      "styles": ["realistic", "illustration"],
+      "excluded_combinations": [
+        {
+          "style": "illustration",
+          "category": "male"
+        }
+      ]
+    },
+    {
+      "id": "selfie",
+      "name": "セルフィー画像",
+      "display_order": 3,
+      "visible": true,
+      "categories": ["female", "male"],
+      "styles": ["realistic", "illustration"],
+      "excluded_combinations": [
+        {
+          "style": "realistic",
+          "category": "male"
+        }
+      ]
+    },
+    {
+      "id": "dog",
+      "name": "犬",
+      "display_order": 1,
+      "visible": true,
+      "categories": ["animal"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "cat",
+      "name": "猫",
+      "display_order": 2,
+      "visible": true,
+      "categories": ["animal"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "bird",
+      "name": "鳥",
+      "display_order": 3,
+      "visible": false,
+      "categories": ["animal"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "fish",
+      "name": "魚",
+      "display_order": 4,
+      "visible": true,
+      "categories": ["animal"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "other",
+      "name": "その他",
+      "display_order": 5,
+      "visible": true,
+      "categories": ["animal", "rpg_icon", "background", "vehicle"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
+      "id": "nature",
+      "name": "自然",
+      "display_order": 1,
+      "visible": true,
+      "categories": ["background"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "city",
+      "name": "都市",
+      "display_order": 2,
+      "visible": false,
+      "categories": ["background"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "sea",
+      "name": "海",
+      "display_order": 3,
+      "visible": true,
+      "categories": ["background"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "sky",
+      "name": "空",
+      "display_order": 4,
+      "visible": true,
+      "categories": ["background"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "weapon",
+      "name": "武器・防具",
+      "display_order": 1,
+      "visible": true,
+      "categories": ["rpg_icon"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "monster",
+      "name": "モンスター",
+      "display_order": 2,
+      "visible": false,
+      "categories": ["rpg_icon"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "car",
+      "name": "車",
+      "display_order": 1,
+      "visible": true,
+      "categories": ["vehicle"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "ship",
+      "name": "船",
+      "display_order": 2,
+      "visible": false,
+      "categories": ["vehicle"],
+      "styles": ["illustration"]
+    },
+    {
+      "id": "airplane",
+      "name": "飛行機",
+      "display_order": 3,
+      "visible": true,
+      "categories": ["vehicle"],
+      "styles": ["illustration"]
+    }
+  ]
+}

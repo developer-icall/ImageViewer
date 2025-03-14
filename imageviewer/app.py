@@ -1,7 +1,17 @@
 import os
 import re
 import json
+import sys
 from flask import Flask, render_template, send_from_directory, request, abort, g, redirect
+
+# 絶対パスを使用してインポート
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(current_dir))
+from imageviewer.config.config_utils import (
+    load_config, get_styles, get_categories, get_subcategories,
+    get_first_visible_style, get_first_visible_category, get_first_visible_subcategory,
+    has_visible_subcategories, are_all_subcategories_hidden, is_subcategory_visible_for_style_category
+)
 
 app = Flask(__name__)
 
@@ -55,6 +65,8 @@ def before_request():
     g.domain_name = DOMAIN_NAME  # ドメイン
     g.site_name = DOMAIN_NAME  # サイト名
     g.prompt_separator = " / "  # プロンプトの区切り文字
+    # 設定ファイルを読み込み、グローバル変数に設定
+    g.config = load_config()
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
@@ -132,9 +144,11 @@ def create_prompt(json_file, properties):
     data = json.load(json_file) # jsonファイルを読み込む
     result = []
     for property in properties:
-        word = translate_prompt(property, separator.join(data[property]))
-        if word:
-            result.append(word)
+        # プロパティが存在する場合のみ処理を行う
+        if property in data:
+            word = translate_prompt(property, separator.join(data[property]))
+            if word:
+                result.append(word)
     return separator.join(result)
 
 # プロンプトを日本語に変換
@@ -190,26 +204,70 @@ def translate_text(text, translation_dict):
 
 @app.route('/')
 def index():
-    return redirect('/image_pattern/realistic/female/normal/')
+    # 設定ファイルから表示順が最初のスタイル、カテゴリ、サブカテゴリを取得
+    config = g.config
+    first_style = get_first_visible_style(config)
+    if not first_style:
+        return "No visible styles found", 404
+
+    first_category = get_first_visible_category(first_style["id"], config)
+    if not first_category:
+        return "No visible categories found for style", 404
+
+    first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
+    if not first_subcategory:
+        # サブカテゴリがない場合はカテゴリページにリダイレクト
+        return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/')
+
+    # 最初の表示可能なスタイル、カテゴリ、サブカテゴリにリダイレクト
+    return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{first_subcategory["id"]}/')
 
 # 新しい汎用的なルート設定
 @app.route('/image_pattern/<style>/<category>/')
 @app.route('/image_pattern/<style>/<category>/<subcategory>/')
 def image_pattern_route(style, category, subcategory=None):
-    # デフォルトのサブカテゴリを設定
+    # 設定ファイルを取得
+    config = g.config
+
+    # スタイルが存在するか確認
+    if not get_style_by_id(style, config):
+        # 存在しない場合は最初の表示可能なスタイルにリダイレクト
+        first_style = get_first_visible_style(config)
+        if not first_style:
+            return "No visible styles found", 404
+        return redirect(f'/image_pattern/{first_style["id"]}/')
+
+    # カテゴリが存在するか確認
+    if not get_category_by_id(category, config) or category not in [c["id"] for c in get_categories(style, config)]:
+        # 存在しない場合は指定されたスタイルの最初の表示可能なカテゴリにリダイレクト
+        first_category = get_first_visible_category(style, config)
+        if not first_category:
+            return "No visible categories found for style", 404
+        return redirect(f'/image_pattern/{style}/{first_category["id"]}/')
+
+    # サブカテゴリが指定されていない場合
     if subcategory is None:
-        if category in ['female', 'male']:
-            subcategory = 'normal'
-        elif category == 'animal':
-            subcategory = 'dog'
-        elif category == 'background':
-            subcategory = 'nature'
-        elif category == 'rpg_icon':
-            subcategory = 'weapon'
-        elif category == 'vehicle':
-            subcategory = 'car'
+        # 指定されたスタイルとカテゴリの最初の表示可能なサブカテゴリにリダイレクト
+        first_subcategory = get_first_visible_subcategory(style, category, config)
+        if first_subcategory:
+            return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
+        # サブカテゴリがない場合はそのまま表示
+    else:
+        # サブカテゴリが存在するか確認
+        subcategories = get_subcategories(style, category, config)
+        if not subcategories or subcategory not in [s["id"] for s in subcategories]:
+            # 存在しない場合は指定されたスタイルとカテゴリの最初の表示可能なサブカテゴリにリダイレクト
+            first_subcategory = get_first_visible_subcategory(style, category, config)
+            if first_subcategory:
+                return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
         else:
-            subcategory = ''
+            # サブカテゴリが存在する場合でも、excluded_combinationsで非表示に設定されているか確認
+            subcategory_obj = next((s for s in config.get("subcategories", []) if s.get("id") == subcategory), None)
+            if subcategory_obj and not is_subcategory_visible_for_style_category(subcategory_obj, style, category):
+                # 非表示の場合は最初の表示可能なサブカテゴリにリダイレクト
+                first_subcategory = get_first_visible_subcategory(style, category, config)
+                if first_subcategory:
+                    return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
 
     # 画像タイプの設定
     image_type = ImageType(
@@ -223,22 +281,60 @@ def image_pattern_route(style, category, subcategory=None):
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
 
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         image_pattern_category=style,
-                         image_pattern_subcategory=category,
-                         image_pattern_type=subcategory)
+    # 選択された大項目および中項目に対する小項目がすべて非表示かどうかを確認
+    all_subcategories_hidden = are_all_subcategories_hidden(style, category, config)
+
+    # テンプレートに渡すデータを設定
+    template_data = {
+        'subfolder_images': subfolder_images,
+        'pagination_info': pagination_info,
+        'image_pattern_category': style,
+        'image_pattern_subcategory': category,
+        'image_pattern_type': subcategory,
+        # 設定ファイルから取得したデータを追加
+        'styles': get_styles(config),
+        'categories': get_categories(style, config),
+        'subcategories': get_subcategories(style, category, config) if not all_subcategories_hidden else [],
+        'has_subcategories': not all_subcategories_hidden
+    }
+
+    return render_template('index.html', **template_data)
 
 # 新しい画像パターンのルーティング
 @app.route('/image_pattern/')
 def image_pattern_root():
-    # デフォルトでリアルテイスト画像の女性通常画像にリダイレクト
-    return redirect('/image_pattern/realistic/female/normal/')
+    # 設定ファイルから表示順が最初のスタイル、カテゴリ、サブカテゴリを取得
+    config = g.config
+    first_style = get_first_visible_style(config)
+    if not first_style:
+        return "No visible styles found", 404
+
+    first_category = get_first_visible_category(first_style["id"], config)
+    if not first_category:
+        return "No visible categories found for style", 404
+
+    first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
+    if not first_subcategory:
+        # サブカテゴリがない場合はカテゴリページにリダイレクト
+        return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/')
+
+    # 最初の表示可能なスタイル、カテゴリ、サブカテゴリにリダイレクト
+    return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{first_subcategory["id"]}/')
 
 # 新しい画像パターンのサブフォルダ表示用ルーティング
 @app.route('/image_pattern/<style>/<category>/<subcategory>/subfolders/<subfolder_name>/')
 def image_pattern_subfolder_images(style, category, subcategory, subfolder_name):
+    # 設定ファイルを取得
+    config = g.config
+
+    # サブカテゴリが存在する場合でも、excluded_combinationsで非表示に設定されているか確認
+    subcategory_obj = next((s for s in config.get("subcategories", []) if s.get("id") == subcategory), None)
+    if subcategory_obj and not is_subcategory_visible_for_style_category(subcategory_obj, style, category):
+        # 非表示の場合は最初の表示可能なサブカテゴリにリダイレクト
+        first_subcategory = get_first_visible_subcategory(style, category, config)
+        if first_subcategory:
+            return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
+
     # 画像タイプの設定
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
@@ -283,18 +379,33 @@ def image_pattern_subfolder_images(style, category, subcategory, subfolder_name)
                 if prompt:
                     prompts.append(prompt)
 
-    return render_template('subfolders.html',
-                         subfolder_name=subfolder_name,
-                         base_folder=base_folder,
-                         thumbnail_folder=thumbnail_folder,
-                         image_files=image_files,
-                         image_name=image_files[0],
-                         is_sample=image_type.is_sample,
-                         page=page,
-                         prompts=prompts,
-                         image_pattern_category=style,
-                         image_pattern_subcategory=category,
-                         image_pattern_type=subcategory)
+    # 設定ファイルを取得
+    config = g.config
+
+    # 選択された大項目および中項目に対する小項目がすべて非表示かどうかを確認
+    all_subcategories_hidden = are_all_subcategories_hidden(style, category, config)
+
+    # テンプレートに渡すデータを設定
+    template_data = {
+        'subfolder_name': subfolder_name,
+        'base_folder': base_folder,
+        'thumbnail_folder': thumbnail_folder,
+        'image_files': image_files,
+        'image_name': image_files[0],
+        'is_sample': image_type.is_sample,
+        'page': page,
+        'prompts': prompts,
+        'image_pattern_category': style,
+        'image_pattern_subcategory': category,
+        'image_pattern_type': subcategory,
+        # 設定ファイルから取得したデータを追加
+        'styles': get_styles(config),
+        'categories': get_categories(style, config),
+        'subcategories': get_subcategories(style, category, config) if not all_subcategories_hidden else [],
+        'has_subcategories': not all_subcategories_hidden
+    }
+
+    return render_template('subfolders.html', **template_data)
 
 @app.route('/user_policy/')
 def index_user_policy():
@@ -317,16 +428,25 @@ def get_image(image_file):
     # 新しいフォルダ構造で画像を探す
     possible_paths = []
 
-    # スタイルとカテゴリの組み合わせを試す
-    styles = ['realistic', 'illustration']
-    categories = ['female', 'male', 'animal', 'background', 'rpg_icon', 'vehicle', 'other']
-    subcategories = ['normal', 'transparent', 'selfie', 'dog', 'cat', 'bird', 'fish', 'other',
-                     'nature', 'city', 'sea', 'sky', 'weapon', 'monster', 'car', 'ship', 'airplane']
+    # 設定ファイルから表示可能なスタイル、カテゴリ、サブカテゴリを取得
+    config = g.config
+    styles = [style["id"] for style in get_styles(config)]
 
+    # 各スタイルに対して表示可能なカテゴリを取得
     for style in styles:
+        categories = [category["id"] for category in get_categories(style, config)]
+
+        # 各カテゴリに対して表示可能なサブカテゴリを取得
         for category in categories:
-            for subcategory in subcategories:
-                possible_paths.append(f"sync_images/{style}/{category}/{subcategory}/{folder_name}{subfolder_name}/{image_path}")
+            subcategories = [subcategory["id"] for subcategory in get_subcategories(style, category, config)]
+
+            # サブカテゴリがない場合はカテゴリのみのパスを追加
+            if not subcategories:
+                possible_paths.append(f"sync_images/{style}/{category}/{folder_name}{subfolder_name}/{image_path}")
+            else:
+                # 各サブカテゴリに対してパスを追加
+                for subcategory in subcategories:
+                    possible_paths.append(f"sync_images/{style}/{category}/{subcategory}/{folder_name}{subfolder_name}/{image_path}")
 
     print(f"Looking for image in paths: {possible_paths}")  # デバッグ用
 
@@ -347,6 +467,118 @@ def get_sitemap():
 @app.route('/bootstrap/')
 def index_bootstrap():
     return render_template('bootstrap.html')
+
+# 表示順テスト用のルート
+@app.route('/test_display_order/')
+@app.route('/test_display_order/<style_id>/')
+@app.route('/test_display_order/<style_id>/<category_id>/')
+def test_display_order(style_id=None, category_id=None):
+    """表示順の制御機能をテストするためのルート"""
+    config = g.config
+
+    # すべてのスタイル（表示順でソート済み）
+    styles = get_styles(config)
+
+    # 選択されたスタイル
+    selected_style = None
+    if style_id:
+        selected_style = get_style_by_id(style_id, config)
+
+    # 選択されたカテゴリ
+    selected_category = None
+    if selected_style and category_id:
+        selected_category = get_category_by_id(category_id, config)
+
+    # カテゴリとサブカテゴリの取得
+    categories = []
+    subcategories = []
+
+    if selected_style:
+        categories = get_categories(selected_style["id"], config)
+
+        if selected_category:
+            subcategories = get_subcategories(selected_style["id"], selected_category["id"], config)
+
+    # 最初の表示可能なアイテム
+    first_style = get_first_visible_style(config)
+    first_category = None
+    first_subcategory = None
+
+    if first_style:
+        first_category = get_first_visible_category(first_style["id"], config)
+
+        if first_category:
+            first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
+
+    return render_template('test_display_order.html',
+                          styles=styles,
+                          selected_style=selected_style,
+                          selected_category=selected_category,
+                          categories=categories,
+                          subcategories=subcategories,
+                          first_style=first_style,
+                          first_category=first_category,
+                          first_subcategory=first_subcategory)
+
+# 設定ファイルからスタイル情報を取得する関数
+def get_style_by_id(style_id, config=None):
+    """
+    指定されたIDのスタイルを取得する関数
+
+    Args:
+        style_id (str): スタイルID
+        config (dict, optional): 設定情報。Noneの場合はg.configを使用。
+
+    Returns:
+        dict or None: スタイル情報。見つからない場合はNone。
+    """
+    if config is None:
+        config = g.config
+
+    for style in config.get("styles", []):
+        if style.get("id") == style_id and style.get("visible", True):
+            return style
+    return None
+
+# 設定ファイルからカテゴリ情報を取得する関数
+def get_category_by_id(category_id, config=None):
+    """
+    指定されたIDのカテゴリを取得する関数
+
+    Args:
+        category_id (str): カテゴリID
+        config (dict, optional): 設定情報。Noneの場合はg.configを使用。
+
+    Returns:
+        dict or None: カテゴリ情報。見つからない場合はNone。
+    """
+    if config is None:
+        config = g.config
+
+    for category in config.get("categories", []):
+        if category.get("id") == category_id and category.get("visible", True):
+            return category
+    return None
+
+# 設定ファイルからサブカテゴリ情報を取得する関数
+def get_subcategory_by_id(subcategory_id, config=None):
+    """
+    指定されたIDのサブカテゴリを取得する関数
+
+    Args:
+        subcategory_id (str): サブカテゴリID
+        config (dict, optional): 設定情報。Noneの場合はg.configを使用。
+
+    Returns:
+        dict or None: サブカテゴリ情報。見つからない場合はNone。
+    """
+    if config is None:
+        config = g.config
+
+    for subcategory in config.get("subcategories", []):
+        if subcategory.get("id") == subcategory_id and subcategory.get("visible", True):
+            return subcategory
+    return None
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
