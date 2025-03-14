@@ -10,9 +10,6 @@ DOMAIN_NAME = 'ai-gazou.com'
 
 # 画像フォルダのパス
 IMAGE_FOLDER = './static/sync_images'
-BRAV_FOLDER = './static/sync_images/brav'
-RPGICON_FOLDER = './static/sync_images/RPGIcon'
-BACKGROUND_FOLDER = './static/sync_images/background'  # 背景画像用フォルダを追加
 
 # サムネイル用画像の保存先フォルダのパス
 THUMBNAIL_FOLDER = "/thumbnail"
@@ -30,55 +27,27 @@ WITH_SAMPLE_THUMBNAIL_FOLDER = "/sample-thumbnail"
 # 半分の解像度の画像保存先フォルダパス
 HALF_RESOLUTION_FOLDER = "/half-resolution"
 
-# 背景画像保存先フォルダパスの prefix
-BACKGROUND_FOLDER_PREFIX = "-background"
-
-# 男性画像保存先フォルダパスの prefix
-MALE_FOLDER_PREFIX = "-men"
-
-# 背景透過画像保存先のフォルダパスの prefix
-TRANSPARENT_BACKGROUND_FOLDER_PREFIX = "-transparent"
-
-# セルフィー画像保存先のフォルダパスの prefix
-SELFIE_FOLDER_PREFIX = "-selfie"
-
 # 1ページ当たりの表示件数
 INDEX_PER_PAGE = 12
 
 # 画像タイプを定義するクラスを追加
 class ImageType:
-    def __init__(self, is_sample=True, is_male=False, is_transparent_background=False,
-                 is_selfie=False, is_background=False, is_rpgicon=False,
-                 style=None, category=None, subcategory=None):
+    def __init__(self, is_sample=True, style=None, category=None, subcategory=None):
         self.is_sample = is_sample
-        self.is_male = is_male
-        self.is_transparent_background = is_transparent_background
-        self.is_selfie = is_selfie
-        self.is_background = is_background
-        self.is_rpgicon = is_rpgicon
 
         # 新しいフォルダ構造用のパラメータ
         self.style = style  # realistic または illustration
-        self.category = category  # female, male, animal, background, rpgicon, vehicle, other
+        self.category = category  # female, male, animal, background, rpg_icon, vehicle, other
         self.subcategory = subcategory  # normal, transparent, selfie, dog, cat, etc.
 
     def get_folder_path(self):
-        # 新しいフォルダ構造が指定されている場合
-        if self.style and self.category:
-            base_path = os.path.join(IMAGE_FOLDER, self.style, self.category)
+        # 新しいフォルダ構造
+        base_path = os.path.join(IMAGE_FOLDER, self.style, self.category)
 
-            # サブカテゴリが指定されている場合は追加
-            if self.subcategory:
-                return os.path.join(base_path, self.subcategory)
-            return base_path
-
-        # 従来の構造の場合（後方互換性のため）
-        if self.is_background:
-            return BACKGROUND_FOLDER
-        elif self.is_rpgicon:
-            return RPGICON_FOLDER
-        else:
-            return BRAV_FOLDER
+        # サブカテゴリが指定されている場合は追加
+        if self.subcategory:
+            return os.path.join(base_path, self.subcategory)
+        return base_path
 
 # テンプレートに渡す定数
 @app.before_request
@@ -98,7 +67,7 @@ def get_pagination_info(total_items, items_per_page):
         'has_next': page < total_pages
     }
 
-def get_first_image(subfolder_path, is_dig=False):
+def get_first_image(subfolder_path):
     for root, dirs, files in os.walk(subfolder_path):
         files.sort()  # ファイル名順にソート
         for file in files:
@@ -137,58 +106,14 @@ def get_subfolders(folder_path, page, image_type):
             if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER, HALF_RESOLUTION_FOLDER]):
                 continue
 
-            # 新しいフォルダ構造の場合は、従来のフィルタリングをスキップ
-            if image_type.style and image_type.category:
-                # サムネイル画像の取得
-                if image_type.is_sample:
-                    first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER, False)
-                else:
-                    if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER]):
-                        continue
-                    first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER, False)
-
-                if first_image:
-                    if index >= start_index and index < end_index:
-                        subfolders.append((dir, first_image))
-                else:
-                    print(f"first image not found:{subfolder_path}")
-                index = index + 1
-                continue
-
-            # 従来の構造の場合（後方互換性のため）
-            # ページ階層に合わせて、画像フォルダのパスを調整
-            is_dig = False
-            # /male が含まれている場合はもう1階層遡る（背景画像の場合は不要）
-            if image_type.is_male:
-                is_dig = True
-
-            # 背景画像の場合は他のフィルタリングをスキップ
-            if not image_type.is_background and not image_type.is_rpgicon:
-                # 男性画像を表示するか否かに応じてフォルダーをスキップ
-                if not image_type.is_male:
-                    if any(x in subfolder_path for x in [MALE_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_male and MALE_FOLDER_PREFIX not in subfolder_path:
-                    continue
-
-                if not image_type.is_transparent_background:
-                    if any(x in subfolder_path for x in [TRANSPARENT_BACKGROUND_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_transparent_background and TRANSPARENT_BACKGROUND_FOLDER_PREFIX not in subfolder_path:
-                    continue
-
-                if not image_type.is_selfie:
-                    if any(x in subfolder_path for x in [SELFIE_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_selfie and SELFIE_FOLDER_PREFIX not in subfolder_path:
-                    continue
-
+            # サムネイル画像の取得
             if image_type.is_sample:
-                first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER, is_dig)
+                first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER)
             else:
                 if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER]):
                     continue
-                first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER, is_dig)
+                first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER)
+
             if first_image:
                 if index >= start_index and index < end_index:
                     subfolders.append((dir, first_image))
@@ -267,14 +192,33 @@ def translate_text(text, translation_dict):
 def index():
     return redirect('/image_pattern/realistic/female/normal/')
 
-@app.route('/brav/female/')
-def brav_female():
+# 新しい汎用的なルート設定
+@app.route('/image_pattern/<style>/<category>/')
+@app.route('/image_pattern/<style>/<category>/<subcategory>/')
+def image_pattern_route(style, category, subcategory=None):
+    # デフォルトのサブカテゴリを設定
+    if subcategory is None:
+        if category in ['female', 'male']:
+            subcategory = 'normal'
+        elif category == 'animal':
+            subcategory = 'dog'
+        elif category == 'background':
+            subcategory = 'nature'
+        elif category == 'rpg_icon':
+            subcategory = 'weapon'
+        elif category == 'vehicle':
+            subcategory = 'car'
+        else:
+            subcategory = ''
+
+    # 画像タイプの設定
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=False
+        style=style,
+        category=category,
+        subcategory=subcategory
     )
+
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
@@ -282,182 +226,28 @@ def brav_female():
     return render_template('index.html',
                          subfolder_images=subfolder_images,
                          pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
+                         image_pattern_category=style,
+                         image_pattern_subcategory=category,
+                         image_pattern_type=subcategory)
 
-@app.route('/brav/female/transparent/')
-def brav_female_transparent():
+# 新しい画像パターンのルーティング
+@app.route('/image_pattern/')
+def image_pattern_root():
+    # デフォルトでリアルテイスト画像の女性通常画像にリダイレクト
+    return redirect('/image_pattern/realistic/female/normal/')
+
+# 新しい画像パターンのサブフォルダ表示用ルーティング
+@app.route('/image_pattern/<style>/<category>/<subcategory>/subfolders/<subfolder_name>/')
+def image_pattern_subfolder_images(style, category, subcategory, subfolder_name):
+    # 画像タイプの設定
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=True,
-        is_selfie=False
+        style=style,
+        category=category,
+        subcategory=subcategory
     )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
 
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/brav/female/selfie/')
-def brav_female_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="selfie")
-
-@app.route('/brav/male/')
-def brav_male():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=False
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/brav/male/transparent/')
-def brav_male_transparent():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=True,
-        is_selfie=False
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/brav/male/selfie/')
-def brav_male_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="selfie")
-
-@app.route('/rpgicon/')
-def rpgicon():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_rpgicon=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=True,
-                         is_background=False)
-
-@app.route('/background/')
-def background():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_background=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=True)
-
-@app.route('/brav/<gender>/subfolders/<subfolder_name>/')
-@app.route('/brav/<gender>/<option>/subfolders/<subfolder_name>/')
-@app.route('/<category>/subfolders/<subfolder_name>/')
-def subfolder_images_new(subfolder_name, gender=None, option=None, category=None):
-    # カテゴリーからパラメータを解析
-    is_male = gender == 'male' if gender else False
-    is_transparent_background = option == 'transparent' if option else False
-    is_selfie = option == 'selfie' if option else False
-    is_background = category == 'background' if category else False
-    is_rpgicon = category == 'rpgicon' if category else False
-
-    page = request.args.get('page', 1)
-
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=is_male,
-        is_transparent_background=is_transparent_background,
-        is_selfie=is_selfie,
-        is_background=is_background,
-        is_rpgicon=is_rpgicon
-    )
+    page = request.args.get('page', 1, type=int)
 
     # ベースフォルダパスの決定
     base_folder = image_type.get_folder_path()
@@ -501,12 +291,10 @@ def subfolder_images_new(subfolder_name, gender=None, option=None, category=None
                          image_name=image_files[0],
                          is_sample=image_type.is_sample,
                          page=page,
-                         is_male=is_male,
-                         is_transparent_background=is_transparent_background,
-                         is_selfie=is_selfie,
-                         is_background=is_background,
-                         is_rpgicon=is_rpgicon,
-                         prompts=prompts)
+                         prompts=prompts,
+                         image_pattern_category=style,
+                         image_pattern_subcategory=category,
+                         image_pattern_type=subcategory)
 
 @app.route('/user_policy/')
 def index_user_policy():
@@ -526,12 +314,19 @@ def get_image(image_file):
     # サブフォルダを取得(パスのうち、最初のディレクトリと最後のファイル名の間を取得する。パスが最初のディレクトリ直下なら空文字を返す。)
     subfolder_name = '/' + '/'.join(path_parts[1:-1]) if len(path_parts) > 2 else ''
 
-    # まず、bravフォルダで探す
-    possible_paths = [
-        f"sync_images/brav/{folder_name}{subfolder_name}/{image_path}",
-        f"sync_images/RPGIcon/{folder_name}{subfolder_name}/{image_path}",
-        f"sync_images/background/{folder_name}{subfolder_name}/{image_path}"
-    ]
+    # 新しいフォルダ構造で画像を探す
+    possible_paths = []
+
+    # スタイルとカテゴリの組み合わせを試す
+    styles = ['realistic', 'illustration']
+    categories = ['female', 'male', 'animal', 'background', 'rpg_icon', 'vehicle', 'other']
+    subcategories = ['normal', 'transparent', 'selfie', 'dog', 'cat', 'bird', 'fish', 'other',
+                     'nature', 'city', 'sea', 'sky', 'weapon', 'monster', 'car', 'ship', 'airplane']
+
+    for style in styles:
+        for category in categories:
+            for subcategory in subcategories:
+                possible_paths.append(f"sync_images/{style}/{category}/{subcategory}/{folder_name}{subfolder_name}/{image_path}")
 
     print(f"Looking for image in paths: {possible_paths}")  # デバッグ用
 
@@ -551,554 +346,7 @@ def get_sitemap():
 
 @app.route('/bootstrap/')
 def index_bootstrap():
-
     return render_template('bootstrap.html')
-
-# 新しい画像パターンのルーティング
-@app.route('/image_pattern/')
-def image_pattern_root():
-    # デフォルトでリアルテイスト画像の女性通常画像にリダイレクト
-    return redirect('/image_pattern/realistic/female/normal/')
-
-# リアルテイスト画像
-@app.route('/image_pattern/realistic/female/normal/')
-def image_pattern_realistic_female_normal():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=False,
-        style="realistic",
-        category="female",
-        subcategory="normal"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="female",
-                         image_pattern_type="normal")
-
-@app.route('/image_pattern/realistic/female/transparent/')
-def image_pattern_realistic_female_transparent():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=True,
-        is_selfie=False,
-        style="realistic",
-        category="female",
-        subcategory="transparent"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="female",
-                         image_pattern_type="transparent")
-
-@app.route('/image_pattern/realistic/female/selfie/')
-def image_pattern_realistic_female_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=True,
-        style="realistic",
-        category="female",
-        subcategory="selfie"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="female",
-                         image_pattern_type="selfie")
-
-@app.route('/image_pattern/realistic/male/normal/')
-def image_pattern_realistic_male_normal():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=False,
-        style="realistic",
-        category="male",
-        subcategory="normal"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="normal")
-
-@app.route('/image_pattern/realistic/male/transparent/')
-def image_pattern_realistic_male_transparent():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=True,
-        is_selfie=False,
-        style="realistic",
-        category="male",
-        subcategory="transparent"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="transparent")
-
-@app.route('/image_pattern/realistic/male/selfie/')
-def image_pattern_realistic_male_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=True,
-        style="realistic",
-        category="male",
-        subcategory="selfie"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="selfie")
-
-@app.route('/image_pattern/realistic/animal/<animal_type>/')
-def image_pattern_realistic_animal(animal_type):
-    # 動物タイプに応じた処理を追加
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        style="realistic",
-        category="animal",
-        subcategory=animal_type
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="realistic",
-                         image_pattern_subcategory="animal",
-                         image_pattern_type=animal_type)
-
-# ゲーム、イラスト風画像
-@app.route('/image_pattern/illustration/female/normal/')
-def image_pattern_illustration_female_normal():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=False,
-        style="illustration",
-        category="female",
-        subcategory="normal"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="female",
-                         image_pattern_type="normal")
-
-@app.route('/image_pattern/illustration/female/transparent/')
-def image_pattern_illustration_female_transparent():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=True,
-        is_selfie=False,
-        style="illustration",
-        category="female",
-        subcategory="transparent"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="female",
-                         image_pattern_type="transparent")
-
-@app.route('/image_pattern/illustration/female/selfie/')
-def image_pattern_illustration_female_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=True,
-        style="illustration",
-        category="female",
-        subcategory="selfie"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="female",
-                         image_pattern_type="selfie")
-
-@app.route('/image_pattern/illustration/male/normal/')
-def image_pattern_illustration_male_normal():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=False,
-        style="illustration",
-        category="male",
-        subcategory="normal"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="normal")
-
-@app.route('/image_pattern/illustration/male/transparent/')
-def image_pattern_illustration_male_transparent():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=True,
-        is_selfie=False,
-        style="illustration",
-        category="male",
-        subcategory="transparent"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="transparent")
-
-@app.route('/image_pattern/illustration/male/selfie/')
-def image_pattern_illustration_male_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=True,
-        style="illustration",
-        category="male",
-        subcategory="selfie"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="male",
-                         image_pattern_type="selfie")
-
-@app.route('/image_pattern/illustration/animal/<animal_type>/')
-def image_pattern_illustration_animal(animal_type):
-    # 動物タイプに応じた処理を追加
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        style="illustration",
-        category="animal",
-        subcategory=animal_type
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="animal",
-                         image_pattern_type=animal_type)
-
-@app.route('/image_pattern/illustration/background/<background_type>/')
-def image_pattern_illustration_background(background_type):
-    # 背景タイプに応じた処理を追加
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_background=True,
-        style="illustration",
-        category="background",
-        subcategory=background_type
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=True,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="background",
-                         image_pattern_type=background_type)
-
-@app.route('/image_pattern/illustration/rpgicon/<rpgicon_type>/')
-def image_pattern_illustration_rpgicon(rpgicon_type):
-    # RPGアイコンタイプに応じた処理を追加
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_rpgicon=True,
-        style="illustration",
-        category="rpgicon",
-        subcategory=rpgicon_type
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=True,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="rpgicon",
-                         image_pattern_type=rpgicon_type)
-
-@app.route('/image_pattern/illustration/vehicle/<vehicle_type>/')
-def image_pattern_illustration_vehicle(vehicle_type):
-    # 乗り物タイプに応じた処理を追加
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        style="illustration",
-        category="vehicle",
-        subcategory=vehicle_type
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="vehicle",
-                         image_pattern_type=vehicle_type)
-
-@app.route('/image_pattern/illustration/other/')
-def image_pattern_illustration_other():
-    # その他のイラスト画像
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        style="illustration",
-        category="other"
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False,
-                         image_pattern_category="illustration",
-                         image_pattern_subcategory="other",
-                         image_pattern_type="")
-
-# 新しい画像パターンのサブフォルダ表示用ルーティング
-@app.route('/image_pattern/<category>/<subcategory>/<type>/subfolders/<subfolder_name>/')
-@app.route('/image_pattern/<category>/<subcategory>/subfolders/<subfolder_name>/')
-def image_pattern_subfolder_images(category, subcategory, subfolder_name, type=None):
-    # パラメータの解析
-    is_male = subcategory == 'male'
-    is_transparent_background = type == 'transparent' if type else False
-    is_selfie = type == 'selfie' if type else False
-    is_rpgicon = subcategory == 'rpgicon'
-    is_background = subcategory == 'background'
-
-    # 画像タイプの設定
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=is_male,
-        is_transparent_background=is_transparent_background,
-        is_selfie=is_selfie,
-        is_rpgicon=is_rpgicon,
-        is_background=is_background,
-        style=category,
-        category=subcategory,
-        subcategory=type
-    )
-
-    # サブフォルダのパスを決定
-    subfolder_path = os.path.join(IMAGE_FOLDER, subfolder_name)
-
-    # 画像ファイルの取得
-    image_files = []
-    prompts = []
-
-    if os.path.exists(subfolder_path):
-        for file in os.listdir(subfolder_path):
-            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                # 画像ファイルのパスを追加
-                image_path = os.path.join(subfolder_name, file)
-                image_files.append(image_path)
-
-                # プロンプト情報の取得
-                json_file = os.path.join(subfolder_path, file.rsplit('.', 1)[0] + '.json')
-                if os.path.exists(json_file):
-                    with open(json_file, 'r', encoding='utf-8') as f:
-                        try:
-                            json_data = json.load(f)
-                            prompt = json_data.get('prompt', '')
-                            prompts.append(prompt)
-                        except json.JSONDecodeError:
-                            pass
-
-    # 画像ファイルを表示
-    return render_template('subfolders.html',
-                         subfolder_name=subfolder_name,
-                         image_files=image_files,
-                         prompts=prompts,
-                         is_male=is_male,
-                         is_transparent_background=is_transparent_background,
-                         is_selfie=is_selfie,
-                         is_rpgicon=is_rpgicon,
-                         is_background=is_background,
-                         image_pattern_category=category,
-                         image_pattern_subcategory=subcategory,
-                         image_pattern_type=type)
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')

@@ -9,7 +9,6 @@
                 OPTION
             </div>
 
-            {% if image_pattern_category is defined %}
             <!-- 新しい画像パターン用のオプション -->
             <dl>
                 <dt>
@@ -109,7 +108,7 @@
                     <a href="/image_pattern/illustration/background/nature/" class="{% if image_pattern_subcategory == 'background' %}selected{% endif %}">
                         背景
                     </a>
-                    <a href="/image_pattern/illustration/rpgicon/weapon/" class="{% if image_pattern_subcategory == 'rpgicon' %}selected{% endif %}">
+                    <a href="/image_pattern/illustration/rpg_icon/weapon/" class="{% if image_pattern_subcategory == 'rpg_icon' %}selected{% endif %}">
                         RPGアイコン
                     </a>
                     <a href="/image_pattern/illustration/vehicle/car/" class="{% if image_pattern_subcategory == 'vehicle' %}selected{% endif %}">
@@ -193,20 +192,20 @@
             </dl>
             {% endif %}
 
-            {% if image_pattern_subcategory == 'rpgicon' %}
+            {% if image_pattern_subcategory == 'rpg_icon' %}
             <!-- RPGアイコンのタイプ -->
             <dl>
                 <dt>
                     RPGアイコンタイプ
                 </dt>
                 <dd>
-                    <a href="/image_pattern/illustration/rpgicon/weapon/" class="{% if image_pattern_type == 'weapon' %}selected{% endif %}">
+                    <a href="/image_pattern/illustration/rpg_icon/weapon/" class="{% if image_pattern_type == 'weapon' %}selected{% endif %}">
                         武器・防具
                     </a>
-                    <a href="/image_pattern/illustration/rpgicon/monster/" class="{% if image_pattern_type == 'monster' %}selected{% endif %}">
+                    <a href="/image_pattern/illustration/rpg_icon/monster/" class="{% if image_pattern_type == 'monster' %}selected{% endif %}">
                         モンスター
                     </a>
-                    <a href="/image_pattern/illustration/rpgicon/other/" class="{% if image_pattern_type == 'other' %}selected{% endif %}">
+                    <a href="/image_pattern/illustration/rpg_icon/other/" class="{% if image_pattern_type == 'other' %}selected{% endif %}">
                         その他
                     </a>
                 </dd>
@@ -236,39 +235,6 @@
             </dl>
             {% endif %}
             {% endif %}
-            {% else %}
-            <!-- 既存のオプション -->
-            <dl>
-                <dt>
-                    性別
-                </dt>
-                <dd>
-                    <a href="/brav/female/{% if is_transparent_background %}transparent/{% elif is_selfie %}selfie/{% endif %}" class="{% if not is_male %}selected{% endif %}">
-                        女性
-                    </a>
-                    <a href="/brav/male/{% if is_transparent_background %}transparent/{% elif is_selfie %}selfie/{% endif %}" class="{% if is_male %}selected{% endif %}">
-                        男性
-                    </a>
-                </dd>
-            </dl>
-
-            <dl>
-                <dt>
-                    画像タイプ
-                </dt>
-                <dd>
-                    <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/" class="{% if not is_transparent_background and not is_selfie %}selected{% endif %}">
-                        通常
-                    </a>
-                    <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/transparent/" class="{% if is_transparent_background %}selected{% endif %}">
-                        背景透過
-                    </a>
-                    <a href="/brav/{% if is_male %}male{% else %}female{% endif %}/selfie/" class="{% if is_selfie %}selected{% endif %}">
-                        セルフィー
-                    </a>
-                </dd>
-            </dl>
-            {% endif %}
         </div>
     </div>
 </section>
@@ -282,25 +248,8 @@
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
         {% for subfolder_name, first_image in subfolder_images %}
             <div class="col">
-                {% set category = namespace(value='') %}
-                {% if is_background %}
-                    {% set category.value = 'background' %}
-                {% elif is_rpgicon %}
-                    {% set category.value = 'rpgicon' %}
-                {% else %}
-                    {% set category.value = 'brav/' %}
-                    {% if is_male %}
-                        {% set category.value = category.value + 'male' %}
-                    {% else %}
-                        {% set category.value = category.value + 'female' %}
-                    {% endif %}
-                    {% if is_transparent_background %}
-                        {% set category.value = category.value + '/transparent' %}
-                    {% elif is_selfie %}
-                        {% set category.value = category.value + '/selfie' %}
-                    {% endif %}
-                {% endif %}
-                <a class="d-block shadow-sm" href="/{{ category.value }}/subfolders/{{ subfolder_name }}/{% if pagination_info.page != 1 %}?page={{ pagination_info.page }}{% endif %}">
+                {% set category_path = '/image_pattern/' ~ image_pattern_category ~ '/' ~ image_pattern_subcategory ~ '/' ~ image_pattern_type %}
+                <a class="d-block shadow-sm" href="{{ category_path }}/subfolders/{{ subfolder_name }}/{% if pagination_info.page != 1 %}?page={{ pagination_info.page }}{% endif %}">
                     <img src="{{ first_image }}" alt="{{ subfolder_name }}" width="100%">
                 </a>
             </div>

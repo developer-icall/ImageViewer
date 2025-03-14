@@ -2,29 +2,29 @@
 
 {# 画像のジャンル #}
 {% set category_name = "人物" %}
-{% if is_background %}
+{% if image_pattern_subcategory == 'background' %}
     {% set category_name = "背景" %}
-{% elif is_rpgicon %}
+{% elif image_pattern_subcategory == 'rpg_icon' %}
     {% set category_name = "RPGアイコン" %}
 {% endif %}
 
 {# オプション #}
 {% set options = [] %}
-{% if not is_background and not is_rpgicon %}
+{% if image_pattern_subcategory != 'background' and image_pattern_subcategory != 'rpg_icon' %}
     {# 性別 #}
-    {% if is_male %}
+    {% if image_pattern_subcategory == 'male' %}
         {% set options = options + ["男性"] %}
     {% else %}
         {% set options = options + ["女性"] %}
     {% endif %}
 
     {# 背景透過 #}
-    {% if is_transparent_background %}
+    {% if image_pattern_type == 'transparent' %}
         {% set options = options + ["背景透過"] %}
     {% endif %}
 
     {# セルフィー #}
-    {% if is_selfie %}
+    {% if image_pattern_type == 'selfie' %}
         {% set options = options + ["セルフィー"] %}
     {% endif %}
 {% endif %}
@@ -36,65 +36,16 @@
 {% include 'parts/header.html' %}
 
 <!-- 元のページに戻るリンク -->
-{% set back_url = namespace(value='') %}
-{% if image_pattern_category is defined %}
-    {% if image_pattern_subcategory == 'background' %}
-        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/background/' ~ image_pattern_type ~ '/' %}
-    {% elif image_pattern_subcategory == 'rpgicon' %}
-        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/rpgicon/' ~ image_pattern_type ~ '/' %}
-    {% elif image_pattern_subcategory == 'animal' %}
-        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/animal/' ~ image_pattern_type ~ '/' %}
-    {% elif image_pattern_subcategory == 'vehicle' %}
-        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/vehicle/' ~ image_pattern_type ~ '/' %}
-    {% elif image_pattern_subcategory == 'other' %}
-        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/other/' %}
-    {% else %}
-        {% set back_url.value = '/image_pattern/' ~ image_pattern_category ~ '/' %}
-        {% if image_pattern_subcategory %}
-            {% set back_url.value = back_url.value ~ image_pattern_subcategory ~ '/' %}
-        {% else %}
-            {% set back_url.value = back_url.value ~ 'female/' %}
-        {% endif %}
-        {% if image_pattern_type %}
-            {% set back_url.value = back_url.value ~ image_pattern_type ~ '/' %}
-        {% else %}
-            {% set back_url.value = back_url.value ~ 'normal/' %}
-        {% endif %}
-    {% endif %}
-{% elif is_background %}
-    {% set back_url.value = '/background/' %}
-{% elif is_rpgicon %}
-    {% set back_url.value = '/rpgicon/' %}
-{% else %}
-    {% set back_url.value = '/brav/' %}
-    {% if is_male %}
-        {% set back_url.value = back_url.value + 'male/' %}
-    {% else %}
-        {% set back_url.value = back_url.value + 'female/' %}
-    {% endif %}
-    {% if is_transparent_background %}
-        {% set back_url.value = back_url.value + 'transparent/' %}
-    {% elif is_selfie %}
-        {% set back_url.value = back_url.value + 'selfie/' %}
-    {% endif %}
-{% endif %}
+{% set back_url = '/image_pattern/' ~ image_pattern_category ~ '/' ~ image_pattern_subcategory ~ '/' ~ image_pattern_type ~ '/' %}
 
 {# 戻るリンク #}
-<a class="history-back-button" href="{{ back_url.value }}{% if page %}?page={{ page }}{% endif %}">Back</a>
+<a class="history-back-button" href="{{ back_url }}{% if page %}?page={{ page }}{% endif %}">Back</a>
 
 <section class="container">
     <div class="card w-75 h-100 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
         {% set prompt = prompts[0] %}
         {% set image_name = image_files[0] %}
-        {% set category = namespace(value='') %}
-        {% if is_background %}
-            {% set category.value = 'background' %}
-        {% elif is_rpgicon %}
-            {% set category.value = 'rpgicon' %}
-        {% else %}
-            {% set category.value = 'brav' %}
-        {% endif %}
-        {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
+        {% set image_path = '/images/' ~ subfolder_name ~ '/' ~ image_name %}
         {% include 'parts/subfolder_image_download_form.html' %}
     </div>
 </section>
@@ -110,7 +61,7 @@
                     <div class="card h-100 overflow-hidden shadow-sm">
                         {% set prompt = prompts[loop.index0] %}
                         {% set image_name = image_file %}
-                        {% set image_path = '/images/' + category.value + '/' + subfolder_name + '/' + image_name %}
+                        {% set image_path = '/images/' ~ subfolder_name ~ '/' ~ image_name %}
                         {% include 'parts/subfolder_image_download_form.html' %}
                     </div>
                 </div>
