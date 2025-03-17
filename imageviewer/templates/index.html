@@ -72,8 +72,13 @@
 
 <section class="container">
     <p class="text-center mb-4">
+        {% if subfolder_images %}
         AIで生成された画像素材を無料でダウンロードできます。<br>
         ダウンロードしたい画像を選択してください。
+        {% else %}
+        現在、この条件に一致する画像がありません。<br>
+        別のカテゴリやタイプを選択してみてください。
+        {% endif %}
     </p>
 
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
@@ -88,6 +93,7 @@
     </div>
 
     <!-- ページネーションのリンク -->
+    {% if subfolder_images %}
     <ul class="pagination">
         {% if pagination_info.total_pages <= 5 %}
             {% for page_num in range(1, pagination_info.total_pages + 1) %}
@@ -135,6 +141,7 @@
             {% endif %}
         {% endif %}
     </ul>
+    {% endif %}
 </section>
 
 {% include 'parts/footer.html' %}

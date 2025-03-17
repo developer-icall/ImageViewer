@@ -108,9 +108,11 @@ def get_subfolders(folder_path, page, image_type):
     index = 0
     total_count = 0
 
+    # 全てのサブフォルダを収集
+    all_valid_subfolders = []
+
     for root, dirs, files in os.walk(folder_path):
         dirs.sort()  # フォルダの一覧をABC順にソート
-        i = 0
         for dir in dirs:
             subfolder_path = os.path.join(root, dir).replace("\\", "/")
 
@@ -127,12 +129,18 @@ def get_subfolders(folder_path, page, image_type):
                 first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER)
 
             if first_image:
-                if index >= start_index and index < end_index:
-                    subfolders.append((dir, first_image))
+                all_valid_subfolders.append((dir, first_image))
             else:
                 print(f"first image not found:{subfolder_path}")
-            index = index + 1
-    return subfolders, index
+
+    # 総数を記録
+    total_count = len(all_valid_subfolders)
+
+    # ページネーションに基づいて必要な部分だけを抽出
+    if start_index < total_count:
+        subfolders = all_valid_subfolders[start_index:min(end_index, total_count)]
+
+    return subfolders, total_count
 
 def extract_number(filename):
     match = re.match(r"(\d+)", filename)
@@ -372,10 +380,20 @@ def image_pattern_subfolder_images(style, category, subcategory, subfolder_name)
 
     # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
     prompts = []
+
+    # 翻訳対象のカテゴリを動的に取得
+    translate_categories = []
+    translate_json_dir = os.path.join('static', 'translate_json')
+    if os.path.exists(translate_json_dir):
+        for file in os.listdir(translate_json_dir):
+            if file.endswith('.json'):
+                category_name = os.path.splitext(file)[0]
+                translate_categories.append(category_name)
+
     for f in sorted(os.scandir(subfolder_path), key=lambda x: x.name.lower()):
         if f.is_file() and f.name.lower().endswith(('.json')):
             with open(f.path, 'r', encoding='utf-8') as json_file:
-                prompt = create_prompt(json_file, ["Place", "pose", "Hair Color", "Hair Type", "Cloth", "Accesarry", "age", "Face", "Women Type"])
+                prompt = create_prompt(json_file, translate_categories)
                 if prompt:
                     prompts.append(prompt)
 

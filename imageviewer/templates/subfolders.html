@@ -51,6 +51,7 @@
 </section>
 
 <section class="container">
+    {% if image_files|length > 1 %}
     <h2>
         似ている画像
     </h2>
@@ -68,6 +69,7 @@
             {% endif %}
         {% endfor %}
     </div>
+    {% endif %}
 </section>
 
 {% include 'parts/footer.html' %}
