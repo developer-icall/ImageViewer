@@ -1,0 +1,23 @@
+{
+  "black fur": "黒い毛皮",
+  "white fur": "白い毛皮",
+  "brown fur": "茶色の毛皮",
+  "golden fur": "金色の毛皮",
+  "tan fur": "淡褐色の毛皮",
+  "cream fur": "クリーム色の毛皮",
+  "gray fur": "灰色の毛皮",
+  "red fur": "赤い毛皮",
+  "blue-gray fur": "青灰色の毛皮",
+  "silver fur": "銀色の毛皮",
+  "chocolate fur": "チョコレート色の毛皮",
+  "fawn fur": "薄茶色の毛皮",
+  "brindle pattern": "虎毛模様",
+  "spotted pattern": "斑点模様",
+  "merle pattern": "マール模様",
+  "bicolor pattern": "バイカラー模様",
+  "tricolor pattern": "トライカラー模様",
+  "sable pattern": "セーブル模様",
+  "black and tan pattern": "ブラックアンドタン模様",
+  "black and white pattern": "白黒模様",
+  "brown and white pattern": "茶白模様"
+}

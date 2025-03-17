@@ -96,8 +96,6 @@
       "styles": ["realistic", "illustration"],
       "excluded_combinations": [
         {
-          "style": "realistic",
-          "category": "male"
         }
       ]
     },
@@ -137,7 +135,7 @@
       "id": "other",
       "name": "その他",
       "display_order": 5,
-      "visible": true,
+      "visible": false,
       "categories": ["animal", "rpg_icon", "background", "vehicle"],
       "styles": ["realistic", "illustration"]
     },
@@ -185,7 +183,7 @@
       "id": "monster",
       "name": "モンスター",
       "display_order": 2,
-      "visible": false,
+      "visible": true,
       "categories": ["rpg_icon"],
       "styles": ["illustration"]
     },

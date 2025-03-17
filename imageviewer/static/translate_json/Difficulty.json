@@ -1,0 +1,10 @@
+{
+  "common enemy": "一般敵",
+  "elite enemy": "エリート敵",
+  "mini-boss": "ミニボス",
+  "boss": "ボス",
+  "raid boss": "レイドボス",
+  "world boss": "ワールドボス",
+  "secret boss": "隠しボス",
+  "final boss": "ラスボス"
+}
