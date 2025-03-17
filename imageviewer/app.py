@@ -1,7 +1,17 @@
 import os
 import re
 import json
+import sys
 from flask import Flask, render_template, send_from_directory, request, abort, g, redirect
+
+# 絶対パスを使用してインポート
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(current_dir))
+from imageviewer.config.config_utils import (
+    load_config, get_styles, get_categories, get_subcategories,
+    get_first_visible_style, get_first_visible_category, get_first_visible_subcategory,
+    has_visible_subcategories, are_all_subcategories_hidden, is_subcategory_visible_for_style_category
+)
 
 app = Flask(__name__)
 
@@ -10,9 +20,6 @@ DOMAIN_NAME = 'ai-gazou.com'
 
 # 画像フォルダのパス
 IMAGE_FOLDER = './static/sync_images'
-BRAV_FOLDER = './static/sync_images/brav'
-RPGICON_FOLDER = './static/sync_images/RPGIcon'
-BACKGROUND_FOLDER = './static/sync_images/background'  # 背景画像用フォルダを追加
 
 # サムネイル用画像の保存先フォルダのパス
 THUMBNAIL_FOLDER = "/thumbnail"
@@ -30,39 +37,27 @@ WITH_SAMPLE_THUMBNAIL_FOLDER = "/sample-thumbnail"
 # 半分の解像度の画像保存先フォルダパス
 HALF_RESOLUTION_FOLDER = "/half-resolution"
 
-# 背景画像保存先フォルダパスの prefix
-BACKGROUND_FOLDER_PREFIX = "-background"
-
-# 男性画像保存先フォルダパスの prefix
-MALE_FOLDER_PREFIX = "-men"
-
-# 背景透過画像保存先のフォルダパスの prefix
-TRANSPARENT_BACKGROUND_FOLDER_PREFIX = "-transparent"
-
-# セルフィー画像保存先のフォルダパスの prefix
-SELFIE_FOLDER_PREFIX = "-selfie"
-
 # 1ページ当たりの表示件数
 INDEX_PER_PAGE = 12
 
 # 画像タイプを定義するクラスを追加
 class ImageType:
-    def __init__(self, is_sample=True, is_male=False, is_transparent_background=False,
-                 is_selfie=False, is_background=False, is_rpgicon=False):
+    def __init__(self, is_sample=True, style=None, category=None, subcategory=None):
         self.is_sample = is_sample
-        self.is_male = is_male
-        self.is_transparent_background = is_transparent_background
-        self.is_selfie = is_selfie
-        self.is_background = is_background
-        self.is_rpgicon = is_rpgicon
+
+        # 新しいフォルダ構造用のパラメータ
+        self.style = style  # realistic または illustration
+        self.category = category  # female, male, animal, background, rpg_icon, vehicle, other
+        self.subcategory = subcategory  # normal, transparent, selfie, dog, cat, etc.
 
     def get_folder_path(self):
-        if self.is_background:
-            return BACKGROUND_FOLDER  # 背景画像用フォルダを返すように変更
-        elif self.is_rpgicon:
-            return RPGICON_FOLDER
-        else:
-            return BRAV_FOLDER
+        # 新しいフォルダ構造
+        base_path = os.path.join(IMAGE_FOLDER, self.style, self.category)
+
+        # サブカテゴリが指定されている場合は追加
+        if self.subcategory:
+            return os.path.join(base_path, self.subcategory)
+        return base_path
 
 # テンプレートに渡す定数
 @app.before_request
@@ -70,6 +65,8 @@ def before_request():
     g.domain_name = DOMAIN_NAME  # ドメイン
     g.site_name = DOMAIN_NAME  # サイト名
     g.prompt_separator = " / "  # プロンプトの区切り文字
+    # 設定ファイルを読み込み、グローバル変数に設定
+    g.config = load_config()
 
 # サーバーサイドでページネーション情報を計算
 def get_pagination_info(total_items, items_per_page):
@@ -82,7 +79,7 @@ def get_pagination_info(total_items, items_per_page):
         'has_next': page < total_pages
     }
 
-def get_first_image(subfolder_path, is_dig=False):
+def get_first_image(subfolder_path):
     for root, dirs, files in os.walk(subfolder_path):
         files.sort()  # ファイル名順にソート
         for file in files:
@@ -92,14 +89,6 @@ def get_first_image(subfolder_path, is_dig=False):
                 # フォルダ名を取得（例：20231124-17-1409855962）
                 folder_name = os.path.basename(os.path.dirname(os.path.dirname(image_path)))
 
-                # ベースフォルダを判定（brav, rpgicon, background）
-                if RPGICON_FOLDER in subfolder_path:
-                    base_folder = 'RPGIcon'
-                elif BACKGROUND_FOLDER in subfolder_path:
-                    base_folder = 'background'
-                else:
-                    base_folder = 'brav'
-
                 # 画像のURLパスを構築
                 return f"/images/{folder_name}/thumbnail/{file}"
     return None
@@ -107,6 +96,9 @@ def get_first_image(subfolder_path, is_dig=False):
 def get_subfolders(folder_path, page, image_type):
     # フォルダパスの決定
     folder_path = image_type.get_folder_path()
+
+    # debug
+    print(f"folder_path: {folder_path}")
 
     subfolders = []
     start_index = (page - 1) * INDEX_PER_PAGE
@@ -116,56 +108,39 @@ def get_subfolders(folder_path, page, image_type):
     index = 0
     total_count = 0
 
+    # 全てのサブフォルダを収集
+    all_valid_subfolders = []
+
     for root, dirs, files in os.walk(folder_path):
         dirs.sort()  # フォルダの一覧をABC順にソート
-        i = 0
         for dir in dirs:
             subfolder_path = os.path.join(root, dir).replace("\\", "/")
-
-            # ページ階層に合わせて、画像フォルダのパスを調整
-            is_dig = False
-            # /male が含まれている場合はもう1階層遡る（背景画像の場合は不要）
-            if image_type.is_male:
-                is_dig = True
 
             # サブフォルダの文字列にsample, sample-thumbnail, thumbnail, half_resolution が含まれた場合は除外
             if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER, HALF_RESOLUTION_FOLDER]):
                 continue
 
-            # 背景画像の場合は他のフィルタリングをスキップ
-            if not image_type.is_background and not image_type.is_rpgicon:
-                # 男性画像を表示するか否かに応じてフォルダーをスキップ
-                if not image_type.is_male:
-                    if any(x in subfolder_path for x in [MALE_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_male and MALE_FOLDER_PREFIX not in subfolder_path:
-                    continue
-
-                if not image_type.is_transparent_background:
-                    if any(x in subfolder_path for x in [TRANSPARENT_BACKGROUND_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_transparent_background and TRANSPARENT_BACKGROUND_FOLDER_PREFIX not in subfolder_path:
-                    continue
-
-                if not image_type.is_selfie:
-                    if any(x in subfolder_path for x in [SELFIE_FOLDER_PREFIX]):
-                        continue
-                if image_type.is_selfie and SELFIE_FOLDER_PREFIX not in subfolder_path:
-                    continue
-
+            # サムネイル画像の取得
             if image_type.is_sample:
-                first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER, is_dig)
+                first_image = get_first_image(subfolder_path + WITH_SAMPLE_THUMBNAIL_FOLDER)
             else:
                 if any(x in subfolder_path for x in [WITH_SAMPLE_TEXT_FOLDER, WITH_SAMPLE_THUMBNAIL_FOLDER, THUMBNAIL_FOLDER]):
                     continue
-                first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER, is_dig)
+                first_image = get_first_image(subfolder_path + THUMBNAIL_FOLDER)
+
             if first_image:
-                if index >= start_index and index < end_index:
-                    subfolders.append((dir, first_image))
+                all_valid_subfolders.append((dir, first_image))
             else:
                 print(f"first image not found:{subfolder_path}")
-            index = index + 1
-    return subfolders, index
+
+    # 総数を記録
+    total_count = len(all_valid_subfolders)
+
+    # ページネーションに基づいて必要な部分だけを抽出
+    if start_index < total_count:
+        subfolders = all_valid_subfolders[start_index:min(end_index, total_count)]
+
+    return subfolders, total_count
 
 def extract_number(filename):
     match = re.match(r"(\d+)", filename)
@@ -177,9 +152,11 @@ def create_prompt(json_file, properties):
     data = json.load(json_file) # jsonファイルを読み込む
     result = []
     for property in properties:
-        word = translate_prompt(property, separator.join(data[property]))
-        if word:
-            result.append(word)
+        # プロパティが存在する場合のみ処理を行う
+        if property in data:
+            word = translate_prompt(property, separator.join(data[property]))
+            if word:
+                result.append(word)
     return separator.join(result)
 
 # プロンプトを日本語に変換
@@ -235,193 +212,146 @@ def translate_text(text, translation_dict):
 
 @app.route('/')
 def index():
-    return redirect('/brav/female/')
+    # 設定ファイルから表示順が最初のスタイル、カテゴリ、サブカテゴリを取得
+    config = g.config
+    first_style = get_first_visible_style(config)
+    if not first_style:
+        return "No visible styles found", 404
 
-@app.route('/brav/female/')
-def brav_female():
+    first_category = get_first_visible_category(first_style["id"], config)
+    if not first_category:
+        return "No visible categories found for style", 404
+
+    first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
+    if not first_subcategory:
+        # サブカテゴリがない場合はカテゴリページにリダイレクト
+        return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/')
+
+    # 最初の表示可能なスタイル、カテゴリ、サブカテゴリにリダイレクト
+    return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{first_subcategory["id"]}/')
+
+# 新しい汎用的なルート設定
+@app.route('/image_pattern/<style>/<category>/')
+@app.route('/image_pattern/<style>/<category>/<subcategory>/')
+def image_pattern_route(style, category, subcategory=None):
+    # 設定ファイルを取得
+    config = g.config
+
+    # スタイルが存在するか確認
+    if not get_style_by_id(style, config):
+        # 存在しない場合は最初の表示可能なスタイルにリダイレクト
+        first_style = get_first_visible_style(config)
+        if not first_style:
+            return "No visible styles found", 404
+        return redirect(f'/image_pattern/{first_style["id"]}/')
+
+    # カテゴリが存在するか確認
+    if not get_category_by_id(category, config) or category not in [c["id"] for c in get_categories(style, config)]:
+        # 存在しない場合は指定されたスタイルの最初の表示可能なカテゴリにリダイレクト
+        first_category = get_first_visible_category(style, config)
+        if not first_category:
+            return "No visible categories found for style", 404
+        return redirect(f'/image_pattern/{style}/{first_category["id"]}/')
+
+    # サブカテゴリが指定されていない場合
+    if subcategory is None:
+        # 指定されたスタイルとカテゴリの最初の表示可能なサブカテゴリにリダイレクト
+        first_subcategory = get_first_visible_subcategory(style, category, config)
+        if first_subcategory:
+            return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
+        # サブカテゴリがない場合はそのまま表示
+    else:
+        # サブカテゴリが存在するか確認
+        subcategories = get_subcategories(style, category, config)
+        if not subcategories or subcategory not in [s["id"] for s in subcategories]:
+            # 存在しない場合は指定されたスタイルとカテゴリの最初の表示可能なサブカテゴリにリダイレクト
+            first_subcategory = get_first_visible_subcategory(style, category, config)
+            if first_subcategory:
+                return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
+        else:
+            # サブカテゴリが存在する場合でも、excluded_combinationsで非表示に設定されているか確認
+            subcategory_obj = next((s for s in config.get("subcategories", []) if s.get("id") == subcategory), None)
+            if subcategory_obj and not is_subcategory_visible_for_style_category(subcategory_obj, style, category):
+                # 非表示の場合は最初の表示可能なサブカテゴリにリダイレクト
+                first_subcategory = get_first_visible_subcategory(style, category, config)
+                if first_subcategory:
+                    return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
+
+    # 画像タイプの設定
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=False
+        style=style,
+        category=category,
+        subcategory=subcategory
     )
+
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
 
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
+    # 選択された大項目および中項目に対する小項目がすべて非表示かどうかを確認
+    all_subcategories_hidden = are_all_subcategories_hidden(style, category, config)
 
-@app.route('/brav/female/transparent/')
-def brav_female_transparent():
+    # テンプレートに渡すデータを設定
+    template_data = {
+        'subfolder_images': subfolder_images,
+        'pagination_info': pagination_info,
+        'image_pattern_category': style,
+        'image_pattern_subcategory': category,
+        'image_pattern_type': subcategory,
+        # 設定ファイルから取得したデータを追加
+        'styles': get_styles(config),
+        'categories': get_categories(style, config),
+        'subcategories': get_subcategories(style, category, config) if not all_subcategories_hidden else [],
+        'has_subcategories': not all_subcategories_hidden
+    }
+
+    return render_template('index.html', **template_data)
+
+# 新しい画像パターンのルーティング
+@app.route('/image_pattern/')
+def image_pattern_root():
+    # 設定ファイルから表示順が最初のスタイル、カテゴリ、サブカテゴリを取得
+    config = g.config
+    first_style = get_first_visible_style(config)
+    if not first_style:
+        return "No visible styles found", 404
+
+    first_category = get_first_visible_category(first_style["id"], config)
+    if not first_category:
+        return "No visible categories found for style", 404
+
+    first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
+    if not first_subcategory:
+        # サブカテゴリがない場合はカテゴリページにリダイレクト
+        return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/')
+
+    # 最初の表示可能なスタイル、カテゴリ、サブカテゴリにリダイレクト
+    return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{first_subcategory["id"]}/')
+
+# 新しい画像パターンのサブフォルダ表示用ルーティング
+@app.route('/image_pattern/<style>/<category>/<subcategory>/subfolders/<subfolder_name>/')
+def image_pattern_subfolder_images(style, category, subcategory, subfolder_name):
+    # 設定ファイルを取得
+    config = g.config
+
+    # サブカテゴリが存在する場合でも、excluded_combinationsで非表示に設定されているか確認
+    subcategory_obj = next((s for s in config.get("subcategories", []) if s.get("id") == subcategory), None)
+    if subcategory_obj and not is_subcategory_visible_for_style_category(subcategory_obj, style, category):
+        # 非表示の場合は最初の表示可能なサブカテゴリにリダイレクト
+        first_subcategory = get_first_visible_subcategory(style, category, config)
+        if first_subcategory:
+            return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/')
+
+    # 画像タイプの設定
     image_type = ImageType(
         is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=True,
-        is_selfie=False
+        style=style,
+        category=category,
+        subcategory=subcategory
     )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
 
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/brav/female/selfie/')
-def brav_female_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=False,
-        is_transparent_background=False,
-        is_selfie=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/brav/male/')
-def brav_male():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=False
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/brav/male/transparent/')
-def brav_male_transparent():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=True,
-        is_selfie=False
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=True,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/brav/male/selfie/')
-def brav_male_selfie():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=True,
-        is_transparent_background=False,
-        is_selfie=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=True,
-                         is_transparent_background=False,
-                         is_selfie=True,
-                         is_rpgicon=False,
-                         is_background=False)
-
-@app.route('/rpgicon/')
-def rpgicon():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_rpgicon=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=True,
-                         is_background=False)
-
-@app.route('/background/')
-def background():
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_background=True
-    )
-    page = request.args.get('page', default=1, type=int)
-    subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
-    pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
-
-    return render_template('index.html',
-                         subfolder_images=subfolder_images,
-                         pagination_info=pagination_info,
-                         is_male=False,
-                         is_transparent_background=False,
-                         is_selfie=False,
-                         is_rpgicon=False,
-                         is_background=True)
-
-@app.route('/brav/<gender>/subfolders/<subfolder_name>/')
-@app.route('/brav/<gender>/<option>/subfolders/<subfolder_name>/')
-@app.route('/<category>/subfolders/<subfolder_name>/')
-def subfolder_images_new(subfolder_name, gender=None, option=None, category=None):
-    # カテゴリーからパラメータを解析
-    is_male = gender == 'male' if gender else False
-    is_transparent_background = option == 'transparent' if option else False
-    is_selfie = option == 'selfie' if option else False
-    is_background = category == 'background' if category else False
-    is_rpgicon = category == 'rpgicon' if category else False
-
-    page = request.args.get('page', 1)
-
-    image_type = ImageType(
-        is_sample=SAMPLE_IMAGE_FLAG,
-        is_male=is_male,
-        is_transparent_background=is_transparent_background,
-        is_selfie=is_selfie,
-        is_background=is_background,
-        is_rpgicon=is_rpgicon
-    )
+    page = request.args.get('page', 1, type=int)
 
     # ベースフォルダパスの決定
     base_folder = image_type.get_folder_path()
@@ -450,27 +380,50 @@ def subfolder_images_new(subfolder_name, gender=None, option=None, category=None
 
     # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
     prompts = []
+
+    # 翻訳対象のカテゴリを動的に取得
+    translate_categories = []
+    translate_json_dir = os.path.join('static', 'translate_json')
+    if os.path.exists(translate_json_dir):
+        for file in os.listdir(translate_json_dir):
+            if file.endswith('.json'):
+                category_name = os.path.splitext(file)[0]
+                translate_categories.append(category_name)
+
     for f in sorted(os.scandir(subfolder_path), key=lambda x: x.name.lower()):
         if f.is_file() and f.name.lower().endswith(('.json')):
             with open(f.path, 'r', encoding='utf-8') as json_file:
-                prompt = create_prompt(json_file, ["Place", "pose", "Hair Color", "Hair Type", "Cloth", "Accesarry", "age", "Face", "Women Type"])
+                prompt = create_prompt(json_file, translate_categories)
                 if prompt:
                     prompts.append(prompt)
 
-    return render_template('subfolders.html',
-                         subfolder_name=subfolder_name,
-                         base_folder=base_folder,
-                         thumbnail_folder=thumbnail_folder,
-                         image_files=image_files,
-                         image_name=image_files[0],
-                         is_sample=image_type.is_sample,
-                         page=page,
-                         is_male=is_male,
-                         is_transparent_background=is_transparent_background,
-                         is_selfie=is_selfie,
-                         is_background=is_background,
-                         is_rpgicon=is_rpgicon,
-                         prompts=prompts)
+    # 設定ファイルを取得
+    config = g.config
+
+    # 選択された大項目および中項目に対する小項目がすべて非表示かどうかを確認
+    all_subcategories_hidden = are_all_subcategories_hidden(style, category, config)
+
+    # テンプレートに渡すデータを設定
+    template_data = {
+        'subfolder_name': subfolder_name,
+        'base_folder': base_folder,
+        'thumbnail_folder': thumbnail_folder,
+        'image_files': image_files,
+        'image_name': image_files[0],
+        'is_sample': image_type.is_sample,
+        'page': page,
+        'prompts': prompts,
+        'image_pattern_category': style,
+        'image_pattern_subcategory': category,
+        'image_pattern_type': subcategory,
+        # 設定ファイルから取得したデータを追加
+        'styles': get_styles(config),
+        'categories': get_categories(style, config),
+        'subcategories': get_subcategories(style, category, config) if not all_subcategories_hidden else [],
+        'has_subcategories': not all_subcategories_hidden
+    }
+
+    return render_template('subfolders.html', **template_data)
 
 @app.route('/user_policy/')
 def index_user_policy():
@@ -490,12 +443,28 @@ def get_image(image_file):
     # サブフォルダを取得(パスのうち、最初のディレクトリと最後のファイル名の間を取得する。パスが最初のディレクトリ直下なら空文字を返す。)
     subfolder_name = '/' + '/'.join(path_parts[1:-1]) if len(path_parts) > 2 else ''
 
-    # まず、bravフォルダで探す
-    possible_paths = [
-        f"sync_images/brav/{folder_name}{subfolder_name}/{image_path}",
-        f"sync_images/RPGIcon/{folder_name}{subfolder_name}/{image_path}",
-        f"sync_images/background/{folder_name}{subfolder_name}/{image_path}"
-    ]
+    # 新しいフォルダ構造で画像を探す
+    possible_paths = []
+
+    # 設定ファイルから表示可能なスタイル、カテゴリ、サブカテゴリを取得
+    config = g.config
+    styles = [style["id"] for style in get_styles(config)]
+
+    # 各スタイルに対して表示可能なカテゴリを取得
+    for style in styles:
+        categories = [category["id"] for category in get_categories(style, config)]
+
+        # 各カテゴリに対して表示可能なサブカテゴリを取得
+        for category in categories:
+            subcategories = [subcategory["id"] for subcategory in get_subcategories(style, category, config)]
+
+            # サブカテゴリがない場合はカテゴリのみのパスを追加
+            if not subcategories:
+                possible_paths.append(f"sync_images/{style}/{category}/{folder_name}{subfolder_name}/{image_path}")
+            else:
+                # 各サブカテゴリに対してパスを追加
+                for subcategory in subcategories:
+                    possible_paths.append(f"sync_images/{style}/{category}/{subcategory}/{folder_name}{subfolder_name}/{image_path}")
 
     print(f"Looking for image in paths: {possible_paths}")  # デバッグ用
 
@@ -515,8 +484,119 @@ def get_sitemap():
 
 @app.route('/bootstrap/')
 def index_bootstrap():
-
     return render_template('bootstrap.html')
+
+# 表示順テスト用のルート
+@app.route('/test_display_order/')
+@app.route('/test_display_order/<style_id>/')
+@app.route('/test_display_order/<style_id>/<category_id>/')
+def test_display_order(style_id=None, category_id=None):
+    """表示順の制御機能をテストするためのルート"""
+    config = g.config
+
+    # すべてのスタイル（表示順でソート済み）
+    styles = get_styles(config)
+
+    # 選択されたスタイル
+    selected_style = None
+    if style_id:
+        selected_style = get_style_by_id(style_id, config)
+
+    # 選択されたカテゴリ
+    selected_category = None
+    if selected_style and category_id:
+        selected_category = get_category_by_id(category_id, config)
+
+    # カテゴリとサブカテゴリの取得
+    categories = []
+    subcategories = []
+
+    if selected_style:
+        categories = get_categories(selected_style["id"], config)
+
+        if selected_category:
+            subcategories = get_subcategories(selected_style["id"], selected_category["id"], config)
+
+    # 最初の表示可能なアイテム
+    first_style = get_first_visible_style(config)
+    first_category = None
+    first_subcategory = None
+
+    if first_style:
+        first_category = get_first_visible_category(first_style["id"], config)
+
+        if first_category:
+            first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
+
+    return render_template('test_display_order.html',
+                          styles=styles,
+                          selected_style=selected_style,
+                          selected_category=selected_category,
+                          categories=categories,
+                          subcategories=subcategories,
+                          first_style=first_style,
+                          first_category=first_category,
+                          first_subcategory=first_subcategory)
+
+# 設定ファイルからスタイル情報を取得する関数
+def get_style_by_id(style_id, config=None):
+    """
+    指定されたIDのスタイルを取得する関数
+
+    Args:
+        style_id (str): スタイルID
+        config (dict, optional): 設定情報。Noneの場合はg.configを使用。
+
+    Returns:
+        dict or None: スタイル情報。見つからない場合はNone。
+    """
+    if config is None:
+        config = g.config
+
+    for style in config.get("styles", []):
+        if style.get("id") == style_id and style.get("visible", True):
+            return style
+    return None
+
+# 設定ファイルからカテゴリ情報を取得する関数
+def get_category_by_id(category_id, config=None):
+    """
+    指定されたIDのカテゴリを取得する関数
+
+    Args:
+        category_id (str): カテゴリID
+        config (dict, optional): 設定情報。Noneの場合はg.configを使用。
+
+    Returns:
+        dict or None: カテゴリ情報。見つからない場合はNone。
+    """
+    if config is None:
+        config = g.config
+
+    for category in config.get("categories", []):
+        if category.get("id") == category_id and category.get("visible", True):
+            return category
+    return None
+
+# 設定ファイルからサブカテゴリ情報を取得する関数
+def get_subcategory_by_id(subcategory_id, config=None):
+    """
+    指定されたIDのサブカテゴリを取得する関数
+
+    Args:
+        subcategory_id (str): サブカテゴリID
+        config (dict, optional): 設定情報。Noneの場合はg.configを使用。
+
+    Returns:
+        dict or None: サブカテゴリ情報。見つからない場合はNone。
+    """
+    if config is None:
+        config = g.config
+
+    for subcategory in config.get("subcategories", []):
+        if subcategory.get("id") == subcategory_id and subcategory.get("visible", True):
+            return subcategory
+    return None
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
