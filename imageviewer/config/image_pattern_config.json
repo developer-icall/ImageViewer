@@ -39,8 +39,8 @@
       "id": "background",
       "name": "背景",
       "display_order": 4,
-      "visible": false,
-      "styles": ["illustration"]
+      "visible": true,
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "rpg_icon",
@@ -145,15 +145,15 @@
       "display_order": 1,
       "visible": true,
       "categories": ["background"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "city",
       "name": "都市",
       "display_order": 2,
-      "visible": false,
+      "visible": true,
       "categories": ["background"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "sea",
@@ -169,7 +169,7 @@
       "display_order": 4,
       "visible": true,
       "categories": ["background"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "weapon",
