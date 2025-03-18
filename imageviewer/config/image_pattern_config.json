@@ -161,7 +161,7 @@
       "display_order": 3,
       "visible": true,
       "categories": ["background"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "sky",
