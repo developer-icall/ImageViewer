@@ -172,6 +172,14 @@
       "styles": ["realistic", "illustration"]
     },
     {
+      "id": "house",
+      "name": "家",
+      "display_order": 5,
+      "visible": true,
+      "categories": ["background"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
       "id": "weapon",
       "name": "武器・防具",
       "display_order": 1,
