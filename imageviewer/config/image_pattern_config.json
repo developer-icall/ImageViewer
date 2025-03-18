@@ -32,15 +32,15 @@
       "id": "animal",
       "name": "動物",
       "display_order": 3,
-      "visible": false,
+      "visible": true,
       "styles": ["realistic", "illustration"]
     },
     {
       "id": "background",
       "name": "背景",
       "display_order": 4,
-      "visible": false,
-      "styles": ["illustration"]
+      "visible": true,
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "rpg_icon",
@@ -53,8 +53,8 @@
       "id": "vehicle",
       "name": "乗り物",
       "display_order": 6,
-      "visible": false,
-      "styles": ["illustration"]
+      "visible": true,
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "other",
@@ -127,7 +127,7 @@
       "id": "fish",
       "name": "魚",
       "display_order": 4,
-      "visible": true,
+      "visible": false,
       "categories": ["animal"],
       "styles": ["realistic", "illustration"]
     },
@@ -145,15 +145,15 @@
       "display_order": 1,
       "visible": true,
       "categories": ["background"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "city",
       "name": "都市",
       "display_order": 2,
-      "visible": false,
+      "visible": true,
       "categories": ["background"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "sea",
@@ -169,7 +169,7 @@
       "display_order": 4,
       "visible": true,
       "categories": ["background"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "weapon",
@@ -193,7 +193,7 @@
       "display_order": 1,
       "visible": true,
       "categories": ["vehicle"],
-      "styles": ["illustration"]
+      "styles": ["realistic", "illustration"]
     },
     {
       "id": "ship",
@@ -207,7 +207,7 @@
       "id": "airplane",
       "name": "飛行機",
       "display_order": 3,
-      "visible": true,
+      "visible": false,
       "categories": ["vehicle"],
       "styles": ["illustration"]
     }
