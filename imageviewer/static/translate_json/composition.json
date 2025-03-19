@@ -21,8 +21,12 @@
     "silhouette": "シルエット",
     "motion blur": "モーションブラー",
     "freeze frame": "フリーズフレーム",
-    "rule of thirds composition": "三分割構図",
+    "rule of thirds": "三分割法",
     "centered composition": "中央構図",
     "dynamic composition": "ダイナミックな構図",
-    "symmetrical composition": "対称的な構図"
+    "symmetrical composition": "対称的な構図",
+    "dramatic perspective": "ドラマチックな遠近法",
+    "wide shot": "ワイドショット",
+    "detail shot": "ディテールショット",
+    "panoramic view": "パノラマビュー"
 }

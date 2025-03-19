@@ -1,4 +1,6 @@
 {
+    "natural lighting": "自然光",
+    "studio lighting": "スタジオ照明",
     "Sunlight": "太陽光",
     "soft lighting": "柔らかい照明",
     "dramatic lighting": "ドラマチックな照明",
@@ -14,5 +16,8 @@
     "low key lighting": "ローキー照明",
     "high key lighting": "ハイキー照明",
     "warm lighting": "暖かい照明",
-    "cool lighting": "涼しい照明"
+    "cool lighting": "涼しい照明",
+    "natural lighting": "自然光",
+    "neon lighting": "ネオン照明",
+    "spotlights": "スポットライト"
 }
