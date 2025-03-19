@@ -204,9 +204,17 @@
       "styles": ["realistic", "illustration"]
     },
     {
+      "id": "motorcycle",
+      "name": "バイク",
+      "display_order": 2,
+      "visible": true,
+      "categories": ["vehicle"],
+      "styles": ["realistic", "illustration"]
+    },
+    {
       "id": "ship",
       "name": "船",
-      "display_order": 2,
+      "display_order": 3,
       "visible": false,
       "categories": ["vehicle"],
       "styles": ["illustration"]
@@ -214,7 +222,7 @@
     {
       "id": "airplane",
       "name": "飛行機",
-      "display_order": 3,
+      "display_order": 4,
       "visible": false,
       "categories": ["vehicle"],
       "styles": ["illustration"]
