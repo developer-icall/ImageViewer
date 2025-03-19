@@ -3,6 +3,7 @@ import re
 import json
 import sys
 from flask import Flask, render_template, send_from_directory, request, abort, g, redirect
+from typing import Dict, List, Any, Optional
 
 # 絶対パスを使用してインポート
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -10,7 +11,8 @@ sys.path.insert(0, os.path.dirname(current_dir))
 from imageviewer.config.config_utils import (
     load_config, get_styles, get_categories, get_subcategories,
     get_first_visible_style, get_first_visible_category, get_first_visible_subcategory,
-    has_visible_subcategories, are_all_subcategories_hidden, is_subcategory_visible_for_style_category
+    has_visible_subcategories, are_all_subcategories_hidden, is_subcategory_visible_for_style_category,
+    get_model_credit_info
 )
 
 app = Flask(__name__)
@@ -145,6 +147,27 @@ def get_subfolders(folder_path, page, image_type):
 def extract_number(filename):
     match = re.match(r"(\d+)", filename)
     return int(match.group(1)) if match else float('inf')
+
+# JSONファイルからモデル情報を取得する関数
+def get_model_info_from_json(json_file_path: str) -> Optional[str]:
+    """
+    JSONファイルからモデル情報を取得する関数
+
+    Args:
+        json_file_path (str): JSONファイルのパス
+
+    Returns:
+        Optional[str]: モデル名。情報がない場合はNone
+    """
+    try:
+        with open(json_file_path, 'r', encoding='utf-8') as json_file:
+            data = json.load(json_file)
+            # モデル情報が含まれているかチェック
+            if "sd_model" in data:
+                return data["sd_model"]
+    except Exception as e:
+        print(f"JSONファイルの読み込みエラー: {e}")
+    return None
 
 # JSONを基に、プロンプト情報を生成
 def create_prompt(json_file, properties):
@@ -330,8 +353,8 @@ def image_pattern_root():
     return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{first_subcategory["id"]}/')
 
 # 新しい画像パターンのサブフォルダ表示用ルーティング
-@app.route('/image_pattern/<style>/<category>/<subcategory>/subfolders/<subfolder_name>/')
-def image_pattern_subfolder_images(style, category, subcategory, subfolder_name):
+@app.route('/image_pattern/<style>/<category>/<subcategory>/subfolders/<subfolder_name>/', methods=['GET'])
+def subfolders(style, category, subcategory, subfolder_name):
     # 設定ファイルを取得
     config = g.config
 
@@ -351,6 +374,7 @@ def image_pattern_subfolder_images(style, category, subcategory, subfolder_name)
         subcategory=subcategory
     )
 
+    # ページネーションパラメータを取得（デフォルトは1ページ目）
     page = request.args.get('page', 1, type=int)
 
     # ベースフォルダパスの決定
@@ -380,6 +404,7 @@ def image_pattern_subfolder_images(style, category, subcategory, subfolder_name)
 
     # サブフォルダ内のjsonファイル（画像生成時のプロンプト）の内容を取得
     prompts = []
+    json_files = []  # JSONファイルのパスを保存するリスト
 
     # 翻訳対象のカテゴリを動的に取得
     translate_categories = []
@@ -392,13 +417,22 @@ def image_pattern_subfolder_images(style, category, subcategory, subfolder_name)
 
     for f in sorted(os.scandir(subfolder_path), key=lambda x: x.name.lower()):
         if f.is_file() and f.name.lower().endswith(('.json')):
+            json_files.append(f.path)  # JSONファイルのパスを保存
             with open(f.path, 'r', encoding='utf-8') as json_file:
                 prompt = create_prompt(json_file, translate_categories)
                 if prompt:
                     prompts.append(prompt)
 
-    # 設定ファイルを取得
-    config = g.config
+    # モデル情報の取得
+    model_name = None
+    model_credit = None
+
+    # JSONファイルが存在する場合、最初のファイルからモデル情報を取得
+    if json_files:
+        model_name = get_model_info_from_json(json_files[0])
+        if model_name:
+            # モデル名に対応するクレジット情報を取得
+            model_credit = get_model_credit_info(model_name)
 
     # 選択された大項目および中項目に対する小項目がすべて非表示かどうかを確認
     all_subcategories_hidden = are_all_subcategories_hidden(style, category, config)
@@ -416,6 +450,9 @@ def image_pattern_subfolder_images(style, category, subcategory, subfolder_name)
         'image_pattern_category': style,
         'image_pattern_subcategory': category,
         'image_pattern_type': subcategory,
+        # モデル情報を追加
+        'model_name': model_name,
+        'model_credit': model_credit,
         # 設定ファイルから取得したデータを追加
         'styles': get_styles(config),
         'categories': get_categories(style, config),

@@ -4,6 +4,8 @@ from typing import Dict, List, Any, Optional
 
 # 設定ファイルのパス
 CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), 'image_pattern_config.json')
+# モデルクレジット設定ファイルのパス
+MODEL_CREDIT_CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), 'model_credit_config.json')
 
 def load_config() -> Dict[str, Any]:
     """
@@ -22,6 +24,23 @@ def load_config() -> Dict[str, Any]:
             "styles": [],
             "categories": [],
             "subcategories": []
+        }
+
+def load_model_credit_config() -> Dict[str, Any]:
+    """
+    モデルクレジット設定ファイルを読み込む関数
+
+    Returns:
+        Dict[str, Any]: モデルクレジット設定情報を含む辞書
+    """
+    try:
+        with open(MODEL_CREDIT_CONFIG_FILE_PATH, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"モデルクレジット設定ファイルの読み込みに失敗しました: {e}")
+        # デフォルト設定を返す
+        return {
+            "models_with_credit": []
         }
 
 def get_styles(config: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
@@ -267,4 +286,22 @@ def get_subcategory_by_id(subcategory_id: str, config: Optional[Dict[str, Any]] 
     for subcategory in config.get("subcategories", []):
         if subcategory.get("id") == subcategory_id and subcategory.get("visible", True):
             return subcategory
+    return None
+
+def get_model_credit_info(model_name: str) -> Optional[Dict[str, str]]:
+    """
+    指定されたモデル名に対応するクレジット情報を取得する関数
+
+    Args:
+        model_name (str): モデル名
+
+    Returns:
+        Optional[Dict[str, str]]: クレジット情報を含む辞書。モデルが見つからない場合はNone
+    """
+    config = load_model_credit_config()
+
+    for model_info in config.get("models_with_credit", []):
+        if model_info.get("model_name") == model_name:
+            return model_info
+
     return None
