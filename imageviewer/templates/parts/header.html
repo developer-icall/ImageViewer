@@ -1,0 +1,116 @@
+{# キャッチコピー #}
+{% set site_copy = "無料でAI生成画像をダウンロード「" ~ g.site_name ~ "」" %}
+
+{# ページタイトル + キャッチコピー をサイト名とする #}
+{% if page_name %}
+    {% set page_title = page_name ~ " | " ~ site_copy %}
+{% else %}
+    {# 親テンプレートでページタイトルのアサインがないならコピーのみとする #}
+    {% set page_title = site_copy %}
+{% endif %}
+
+{# ページ説明 #}
+{# 親テンプレートでアサインがないならデフォルト文言を充てる #}
+{% if not unique_description %}
+    {% set site_description = "登録不要でAI生成画像をすぐに使える！商用利用も可能！" %}
+{% else %}
+    {% set site_description = unique_description %}
+{% endif %}
+
+{# キーワード ※カンマ区切りの文字列で指定 #}
+{# 全ページ共通のキーワード ※カンマで終わらせる #}
+{% set default_keyword = g.site_name ~ ",AI,画像生成,フリー素材,フリ素,画像素材,画像,写真素材,写真,商用可,無料,ダウンロード," %}
+{% if not unique_keyword %}
+    {# 親テンプレートでアサインがないなら全ジャンル・オプションを記載 #}
+    {% set site_keyword = default_keyword ~ "人物,男性,女性,背景透過,セルフィー" %}
+{% else %}
+    {# アサインがあるなら共通キーワードの次に記載 #}
+    {% set site_keyword = default_keyword ~ unique_keyword %}
+{% endif %}
+
+<html lang="ja" data-bs-theme="auto">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="Hugo 0.112.5">
+        <meta name="author" content="{{ site_copy }}">
+        <meta name="publisher" content="{{ g.site_name }}">
+        <meta name="description" content="{{ site_description }}">
+        <meta name="keywords" content="{{ site_keyword }}">
+        <meta name="robots" content="max-image-preview:large">
+        <meta property="og:title" content="{{ page_title }}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://{{ g.domain_name }}">
+        <meta property="og:image" content="https://{{ g.domain_name }}/static/ui_images/ogp.jpg">
+        <meta property="og:description" content="{{ site_description }}">
+        <meta property="og:site_name" content="{{ g.site_name }}">
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "{{ g.site_name }}",
+                "alternateName": "AI生成画像素材ダウンロードサイト",
+                "url": "https://{{ g.domain_name }}",
+                "description": "{{ site_description }}",
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "{{ g.site_name }}",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://{{ g.domain_name }}/static/ui_images/logo.svg"
+                    }
+                },
+                "image": "https://{{ g.domain_name }}/images/20231212-19-1961075593/00009-1961075593.png"
+            }
+        </script>
+        <title>{{ page_title }}</title>
+        <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/album/">
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <link href="/static/css/webfonts_css/all.min.css" rel="stylesheet">
+        <link href="/static/css/customize.css" rel="stylesheet">
+        <link rel="icon" href="/static/ui_images/favicon.ico">
+        <script src="/static/js/util.js"></script>
+        <!-- Google tag (gtag.js) -->
+        {% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-P56QKXK1G8"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-P56QKXK1G8');
+            </script>
+        {% endif %}
+    </head>
+    <body>
+        <header>
+            <div class="navbar navbar-dark">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <h1 id="site-title" itemprop="name">
+                            <a href="/" class="header-logo">
+                                <img src="/static/ui_images/logo_white.svg" alt="{{ g.site_name }}">
+                            </a>
+                            <span class="header-catch-copy">
+                                AI生成画像を無料で公開　商用利用もOK！
+                            </span>
+                        </h1>
+                    </div>
+                    <button class="header-sp-menu-button navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="header-pc-menu">
+                        {% include 'parts/header_menu.html' %}
+                    </div>
+                </div>
+            </div>
+            <div class="header-sp-menu collapse" id="navbarHeader">
+                <div class="container">
+                    {% include 'parts/header_menu.html' %}
+                </div>
+            </div>
+        </header>
+
+        <main>

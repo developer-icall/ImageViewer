@@ -1,0 +1,9 @@
+{
+    "models_with_credit": [
+        {
+            "model_name": "landscapeRealistic_v20WarmColor",
+            "credit_text": "このAI生成画像は、landscapeRealistic_v20WarmColorモデルを使用して作成されました。",
+            "credit_text_en": "This AI-generated image was created using the landscapeRealistic_v20WarmColor model."
+        }
+    ]
+}

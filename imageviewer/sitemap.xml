@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<url>
+  <loc>https://ai-gazou.com/</loc>
+  <priority>1.0</priority>
+</url>
+
+<!-- リアルな画像スタイル -->
+<!-- 女性カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/female/normal/</loc>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/female/transparent/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/female/selfie/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 男性カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/male/normal/</loc>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/male/transparent/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/male/selfie/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 動物カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/animal/dog/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/animal/cat/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 乗り物カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/vehicle/car/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/vehicle/motorcycle/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 背景カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/background/nature/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/background/city/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/background/house/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/background/sky/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/realistic/background/sea/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- イラスト画像スタイル -->
+<!-- 女性カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/female/normal/</loc>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/female/transparent/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/female/selfie/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 男性カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/male/normal/</loc>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/male/transparent/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/male/selfie/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 動物カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/animal/dog/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/animal/cat/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 乗り物カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/vehicle/car/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/vehicle/motorcycle/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- 背景カテゴリ -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/background/nature/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/background/city/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/background/house/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/background/sky/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/background/sea/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- RPGアイコンカテゴリ(イラストスタイルのみ) -->
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/rpg_icon/monster/</loc>
+  <priority>0.7</priority>
+</url>
+<url>
+  <loc>https://ai-gazou.com/image_pattern/illustration/rpg_icon/weapon/</loc>
+  <priority>0.7</priority>
+</url>
+
+<!-- その他のページ -->
+<url>
+  <loc>https://ai-gazou.com/user_policy</loc>
+  <priority>0.8</priority>
+</url>
+
+</urlset>
