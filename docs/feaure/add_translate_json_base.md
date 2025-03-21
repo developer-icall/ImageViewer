@@ -32,6 +32,20 @@
   - `Rider Gear`
   - `Rider Pose`
   - `Viewing Angle`
+  - `House Atmosphere`
+  - `Building Materials`
+  - `Architectural Features`
+  - `Environment`
+  - `Camera Settings`
+  - `lighting`
+  - `age`
+  - `Equipment`
+  - `Habitat`
+  - `Size`
+  - `Difficulty`
+  - `Scene`
+  - `Vehicle Details`
+
 
 # 関連ファイル, フォルダ
 

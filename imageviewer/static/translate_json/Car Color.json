@@ -1,12 +1,12 @@
 {
-  "red car": "赤色の車",
-  "blue car": "青色の車",
-  "black car": "黒色の車",
-  "white car": "白色の車",
-  "silver car": "シルバーの車",
-  "yellow car": "黄色の車",
-  "green car": "緑色の車",
-  "orange car": "オレンジ色の車",
-  "purple car": "紫色の車",
-  "metallic car": "メタリックな車"
+  "red car": "赤",
+  "blue car": "青",
+  "black car": "黒",
+  "white car": "白",
+  "silver car": "シルバー",
+  "yellow car": "黄",
+  "green car": "緑",
+  "orange car": "オレンジ",
+  "purple car": "紫",
+  "metallic car": "メタリック"
 }

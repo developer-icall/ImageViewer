@@ -1,25 +1,6 @@
 {
-  "orange fur": "オレンジの毛皮",
-  "white fur": "白い毛皮",
-  "black fur": "黒い毛皮",
-  "gray fur": "灰色の毛皮",
-  "brown fur": "茶色の毛皮",
-  "cream fur": "クリーム色の毛皮",
-  "blue-gray fur": "青灰色の毛皮",
-  "silver fur": "銀色の毛皮",
-  "golden fur": "金色の毛皮",
-  "chocolate fur": "チョコレート色の毛皮",
-  "cinnamon fur": "シナモン色の毛皮",
-  "fawn fur": "薄茶色の毛皮",
-  "lilac fur": "ライラック色の毛皮",
-  "red fur": "赤い毛皮",
-  "tortoiseshell fur": "サビ色の毛皮",
   "calico pattern": "三毛猫模様",
   "tabby pattern": "縞模様",
   "spotted pattern": "斑点模様",
-  "striped pattern": "縞模様",
-  "ticked pattern": "ティック模様",
-  "colorpoint pattern": "カラーポイント模様",
-  "bicolor pattern": "バイカラー模様",
-  "tricolor pattern": "トライカラー模様"
+  "striped pattern": "縞模様"
 }
