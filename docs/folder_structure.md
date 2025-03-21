@@ -153,11 +153,9 @@ sync_images/                           # AI生成画像フォルダ
 
 各画像ファイル名の形式は以下の通りです：
 - `NNNNN-SEEDVALUE.png/jpg`
-  - NNNNN: 連番（00000から始まる）
+  - NNNNN: 連番（00000 または 00001 から始まる）
   - SEEDVALUE: 生成に使用されたシード値
 
 ## 特別なファイル
 
 - `NNNNN-SEEDVALUE.json`: 対応する画像の生成に使用されたプロンプト情報が含まれるJSONファイル
-- 一部のフォルダには、`YYYYMMDD-HH-SEEDVALUE-thumbnail-collage.png` というサムネイル一覧画像が含まれる場合があります
-- カテゴリによってはZIPファイル（例：`car.zip`、`motorcycle.zip`、`selfie.zip`）が含まれることがあります
