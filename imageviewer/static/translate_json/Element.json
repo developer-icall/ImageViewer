@@ -7,20 +7,10 @@
   "water": "水",
   "light": "光",
   "dark": "闇",
-  "nature": "自然",
   "poison": "毒",
   "arcane": "魔法",
   "holy": "聖",
   "unholy": "邪",
   "chaos": "混沌",
-  "void": "虚無",
-  "time": "時間",
-  "space": "空間",
-  "gravity": "重力",
-  "psychic": "精神",
-  "blood": "血",
-  "spirit": "霊",
-  "death": "死",
-  "life": "生命",
-  "cosmic": "宇宙"
+  "spirit": "霊"
 }
