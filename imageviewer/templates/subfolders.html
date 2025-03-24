@@ -1,44 +1,13 @@
 <!doctype html>
 
-{# 画像のジャンル #}
-{% set category_name = "人物" %}
-{% if image_pattern_subcategory == 'background' %}
-    {% set category_name = "背景" %}
-{% elif image_pattern_subcategory == 'rpg_icon' %}
-    {% set category_name = "RPGアイコン" %}
-{% endif %}
-
-{# オプション #}
-{% set options = [] %}
-{% if image_pattern_subcategory != 'background' and image_pattern_subcategory != 'rpg_icon' %}
-    {# 性別 #}
-    {% if image_pattern_subcategory == 'male' %}
-        {% set options = options + ["男性"] %}
-    {% else %}
-        {% set options = options + ["女性"] %}
-    {% endif %}
-
-    {# 背景透過 #}
-    {% if image_pattern_type == 'transparent' %}
-        {% set options = options + ["背景透過"] %}
-    {% endif %}
-
-    {# セルフィー #}
-    {% if image_pattern_type == 'selfie' %}
-        {% set options = options + ["セルフィー"] %}
-    {% endif %}
-{% endif %}
-
-{% set page_name = options|join('/') ~ "の高クオリティAI生成" ~ category_name ~ "画像" %}
+{% set page_name = options|join('/') ~ "の高クオリティAI生成画像" %}
 {% set prompts_string = prompts|join(g.prompt_separator) %}
 {% set prompts_string_unique = prompts_string.split(g.prompt_separator)|unique|join(",") %}
-{% set unique_keyword = category_name ~ "," ~ options|join(",") ~ "," ~ prompts_string_unique %}
+{% set unique_keyword = options|join(",") ~ "," ~ prompts_string_unique %}
 {% include 'common/header.html' %}
 
-<!-- 元のページに戻るリンク -->
-{% set back_url = '/image_pattern/' ~ image_pattern_category ~ '/' ~ image_pattern_subcategory ~ '/' ~ image_pattern_type ~ '/' %}
-
 {# 戻るリンク #}
+{% set back_url = '/image_pattern/' ~ image_pattern_category ~ '/' ~ image_pattern_subcategory ~ '/' ~ image_pattern_type ~ '/' %}
 <a class="history-back-button" href="{{ back_url }}{% if page %}?page={{ page }}{% endif %}">Back</a>
 
 <section class="container">
