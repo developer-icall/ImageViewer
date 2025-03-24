@@ -33,7 +33,7 @@
 {% set prompts_string = prompts|join(g.prompt_separator) %}
 {% set prompts_string_unique = prompts_string.split(g.prompt_separator)|unique|join(",") %}
 {% set unique_keyword = category_name ~ "," ~ options|join(",") ~ "," ~ prompts_string_unique %}
-{% include 'parts/header.html' %}
+{% include 'common/header.html' %}
 
 <!-- 元のページに戻るリンク -->
 {% set back_url = '/image_pattern/' ~ image_pattern_category ~ '/' ~ image_pattern_subcategory ~ '/' ~ image_pattern_type ~ '/' %}
@@ -46,7 +46,7 @@
         {% set prompt = prompts[0] %}
         {% set image_name = image_files[0] %}
         {% set image_path = '/images/' ~ subfolder_name ~ '/' ~ image_name %}
-        {% include 'parts/subfolder_image_download_form.html' %}
+        {% include 'common/subfolder_image_download_form.html' %}
     </div>
 </section>
 
@@ -63,7 +63,7 @@
                         {% set prompt = prompts[loop.index0] %}
                         {% set image_name = image_file %}
                         {% set image_path = '/images/' ~ subfolder_name ~ '/' ~ image_name %}
-                        {% include 'parts/subfolder_image_download_form.html' %}
+                        {% include 'common/subfolder_image_download_form.html' %}
                     </div>
                 </div>
             {% endif %}
@@ -72,4 +72,4 @@
     {% endif %}
 </section>
 
-{% include 'parts/footer.html' %}
+{% include 'common/footer.html' %}
