@@ -308,6 +308,13 @@ def image_pattern_route(style, category, subcategory=None):
         subcategory=subcategory
     )
 
+    # オプション取得
+    options = [config.get("name") for config in [
+        get_style_by_id(style, config),
+        get_category_by_id(category, config),
+        get_subcategory_by_id(subcategory, config)
+    ]]
+
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
     pagination_info = get_pagination_info(total_count, INDEX_PER_PAGE)
@@ -322,6 +329,7 @@ def image_pattern_route(style, category, subcategory=None):
         'image_pattern_category': style,
         'image_pattern_subcategory': category,
         'image_pattern_type': subcategory,
+        'options': options,
         # 設定ファイルから取得したデータを追加
         'styles': get_styles(config),
         'categories': get_categories(style, config),
