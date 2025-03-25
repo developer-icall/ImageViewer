@@ -108,6 +108,11 @@
                     {% include 'common/header_menu.html' %}
                 </div>
             </div>
+
+            {# 画像の絞り込み用UI #}
+            {% if use_option %}
+                {% include 'common/image_option.html' %}
+            {% endif %}
         </header>
 
         <main>

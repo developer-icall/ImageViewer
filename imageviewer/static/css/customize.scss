@@ -347,36 +347,83 @@ footer{
 
 // 一覧切り替え用のUI
 .list-switcher{
-    margin-bottom: 40px;
+    padding: 8px 0;
     color: #FFFFFF;
     background: #333333;
     //PC
     @media only screen and (min-width: $PC_WIDTH) {
-        margin-bottom: 60px;
-        padding-top: 12px !important;
-        padding-bottom: 12px !important;
+        padding: 12px 0;
+        >.container{
+            display: flex;
+            align-items: center;
+        }
     }
 
+    //見出し
+    .headline{
+        color: #8d8d8d;
+        font-size: 0.8rem;
+        font-weight: 200;
+        text-align: center;
+        letter-spacing: 6px;
+        white-space: nowrap;
+        //PC
+        @media only screen and (min-width: $PC_WIDTH) {
+            margin-right: 32px;
+        }
+
+        //開閉ボタン
+        #toggle_image_option{
+            display: inline-block;
+            appearance: none;
+            border: none;
+            color: inherit;
+            background: none;
+            letter-spacing: inherit;
+
+            //PCでは開閉不能
+            pointer-events: none;
+            i{
+                display: none;
+            }
+            //SPでのみ開閉可能
+            @media only screen and (max-width: $SP_WIDTH) {
+                pointer-events: auto;
+                transition: color 0.2s;
+                &:hover{
+                    color: #c5c5c5;
+                }
+                i{
+                    display: inline-block;
+                    color: inherit;
+                    opacity: 0.7;
+                }
+            }
+        }
+    }
+
+    //オプションリスト
+    @media only screen and (max-width: $SP_WIDTH) {
+        //SPなら開閉式にする
+        .list{
+            max-height: 0;
+            pointer-events: none;
+            overflow: hidden;
+            transition: max-height 0.25s;
+        }
+        &.open .list{
+            max-height: 600px;//開閉アニメーションのために仮で設定(今後項目が増えたら見直す必要あり)
+            pointer-events: auto;
+            overflow: visible;//開閉時一瞬スクロールバーが見えるのが気になるので一旦visibleに(今後スクロールするシチュエーションが生まれたら見直す必要あり)
+        }
+    }
     .list{
-        margin: -20px 0;
         //PC
         @media only screen and (min-width: $PC_WIDTH) {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            margin: -12px 0;
-        }
-
-        .headline{
-            color: #8d8d8d;
-            font-size: 0.8rem;
-            font-weight: 200;
-            text-align: center;
-            letter-spacing: 6px;
-            //PC
-            @media only screen and (min-width: $PC_WIDTH) {
-                margin-right: 32px;
-            }
+            margin: -12px 0 0;
         }
 
         dl{
@@ -387,7 +434,7 @@ footer{
 	        font-size: 0.8rem;
             //PC
             @media only screen and (min-width: $PC_WIDTH) {
-                margin: 12px 32px 12px 0;
+                margin: 12px 32px 0 0;
             }
 
             dt,
@@ -400,7 +447,7 @@ footer{
                 font-weight: inherit;
                 //SP
                 @media only screen and (max-width: $SP_WIDTH) {
-                    flex: 0.25;
+                    flex: 0.2;
                     margin-right: 0;
                 }
             }
@@ -409,7 +456,7 @@ footer{
                 align-items: center;
                 //SP
                 @media only screen and (max-width: $SP_WIDTH) {
-                    flex: 0.75;
+                    flex: 0.8;
                 }
 
                 >a{

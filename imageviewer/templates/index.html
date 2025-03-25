@@ -1,78 +1,15 @@
 <!doctype html>
 
 {% set unique_keyword = options|join(",") %}
+{% set use_option = true %}
 {% include 'common/header.html' %}
 
-<section class="list-switcher">
-    <div class="container">
-        <div class="list" aria-label="AI生成画像素材のジャンル選択">
-            <div class="headline">
-                OPTION
-            </div>
+<section class="container pt-0">
+    <p class="small text-secondary mt-2">
+        {{ "設定中: " ~ options|join('/') }}
+    </p>
 
-            <!-- 画像テイスト（大項目）の表示 -->
-            {% if styles %}
-            <dl>
-                <dt>
-                    画像テイスト
-                </dt>
-                <dd>
-                    {% for style in styles %}
-                    <a href="/image_pattern/{{ style.id }}/{% if image_pattern_subcategory %}{{ image_pattern_subcategory }}/{% else %}{{ categories[0].id if categories else '' }}/{% endif %}{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}{{ subcategories[0].id if subcategories else '' }}/{% endif %}" class="{% if image_pattern_category == style.id %}selected{% endif %}">
-                        {{ style.name }}
-                    </a>
-                    {% endfor %}
-                </dd>
-            </dl>
-            {% endif %}
-
-            <!-- カテゴリ（中項目）の表示 -->
-            {% if categories %}
-            <dl>
-                <dt>
-                    カテゴリ
-                </dt>
-                <dd>
-                    {% for category in categories %}
-                    <a href="/image_pattern/{{ image_pattern_category }}/{{ category.id }}/{% if subcategories %}{{ subcategories[0].id }}/{% endif %}" class="{% if image_pattern_subcategory == category.id %}selected{% endif %}">
-                        {{ category.name }}
-                    </a>
-                    {% endfor %}
-                </dd>
-            </dl>
-            {% endif %}
-
-            <!-- サブカテゴリ（小項目）の表示 -->
-            {% if subcategories %}
-            <dl>
-                <dt>
-                    {% if image_pattern_subcategory == 'animal' %}
-                    動物タイプ
-                    {% elif image_pattern_subcategory == 'background' %}
-                    背景タイプ
-                    {% elif image_pattern_subcategory == 'rpg_icon' %}
-                    RPGアイコンタイプ
-                    {% elif image_pattern_subcategory == 'vehicle' %}
-                    乗り物タイプ
-                    {% else %}
-                    画像タイプ
-                    {% endif %}
-                </dt>
-                <dd>
-                    {% for subcategory in subcategories %}
-                    <a href="/image_pattern/{{ image_pattern_category }}/{{ image_pattern_subcategory }}/{{ subcategory.id }}/" class="{% if image_pattern_type == subcategory.id %}selected{% endif %}">
-                        {{ subcategory.name }}
-                    </a>
-                    {% endfor %}
-                </dd>
-            </dl>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
-<section class="container">
-    <p class="text-center mb-4">
+    <p class="text-center my-4">
         {% if subfolder_images %}
         AIで生成された画像素材を無料でダウンロードできます。<br>
         ダウンロードしたい画像を選択してください。
