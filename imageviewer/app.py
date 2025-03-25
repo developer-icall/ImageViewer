@@ -313,7 +313,7 @@ def image_pattern_route(style, category, subcategory=None):
         get_style_by_id(style, config),
         get_category_by_id(category, config),
         get_subcategory_by_id(subcategory, config)
-    ]]
+    ] if config.get("id") != "normal"]  # normalを除外
 
     page = request.args.get('page', default=1, type=int)
     subfolder_images, total_count = get_subfolders(IMAGE_FOLDER, page, image_type)
@@ -387,7 +387,7 @@ def subfolders(style, category, subcategory, subfolder_name):
         get_style_by_id(style, config),
         get_category_by_id(category, config),
         get_subcategory_by_id(subcategory, config)
-    ]]
+    ] if config.get("id") != "normal"]  # normalを除外
 
     # ページネーションパラメータを取得（デフォルトは1ページ目）
     page = request.args.get('page', 1, type=int)
