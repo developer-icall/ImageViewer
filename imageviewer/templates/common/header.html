@@ -18,11 +18,11 @@
 {% endif %}
 
 {# キーワード ※カンマ区切りの文字列で指定 #}
-{# 全ページ共通のキーワード ※カンマで終わらせる #}
-{% set default_keyword = g.site_name ~ ",AI,画像生成,フリー素材,フリ素,画像素材,画像,写真素材,写真,商用可,無料,ダウンロード," %}
+{# 全ページ共通のキーワード #}
+{% set default_keyword = g.site_name ~ ",AI,画像生成,フリー素材,フリ素,画像素材,画像,写真素材,写真,商用可,無料,ダウンロード" %}
 {% if unique_keyword %}
     {# アサインがあるなら共通キーワードの次に記載 #}
-    {% set site_keyword = default_keyword ~ unique_keyword %}
+    {% set site_keyword = default_keyword ~ "," ~ unique_keyword %}
 {% endif %}
 
 <html lang="ja" data-bs-theme="auto">
