@@ -1,0 +1,68 @@
+{# 画像の絞り込み用UI #}
+<div class="list-switcher">
+    <div class="container" aria-label="AI生成画像素材のジャンル選択">
+        <div class="headline">
+            <button id="toggle_image_option" type="button">
+                OPTION
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="list">
+            <!-- 画像テイスト（大項目）の表示 -->
+            {% if styles %}
+            <dl>
+                <dt>
+                    テイスト
+                </dt>
+                <dd>
+                    {% for style in styles %}
+                    <a href="/image_pattern/{{ style.id }}/{% if image_pattern_subcategory %}{{ image_pattern_subcategory }}/{% else %}{{ categories[0].id if categories else '' }}/{% endif %}{% if image_pattern_type %}{{ image_pattern_type }}/{% else %}{{ subcategories[0].id if subcategories else '' }}/{% endif %}" class="{% if image_pattern_category == style.id %}selected{% endif %}">
+                        {{ style.name }}
+                    </a>
+                    {% endfor %}
+                </dd>
+            </dl>
+            {% endif %}
+
+            <!-- カテゴリ（中項目）の表示 -->
+            {% if categories %}
+            <dl>
+                <dt>
+                    カテゴリ
+                </dt>
+                <dd>
+                    {% for category in categories %}
+                    <a href="/image_pattern/{{ image_pattern_category }}/{{ category.id }}/{% if subcategories %}{{ subcategories[0].id }}/{% endif %}" class="{% if image_pattern_subcategory == category.id %}selected{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </dd>
+            </dl>
+            {% endif %}
+
+            <!-- サブカテゴリ（小項目）の表示 -->
+            {% if subcategories %}
+            <dl>
+                <dt>
+                    タイプ
+                </dt>
+                <dd>
+                    {% for subcategory in subcategories %}
+                    <a href="/image_pattern/{{ image_pattern_category }}/{{ image_pattern_subcategory }}/{{ subcategory.id }}/" class="{% if image_pattern_type == subcategory.id %}selected{% endif %}">
+                        {{ subcategory.name }}
+                    </a>
+                    {% endfor %}
+                </dd>
+            </dl>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# 開閉ボタン #}
+<script>
+    document.getElementById('toggle_image_option').addEventListener('click', function() {
+        document.querySelector('.list-switcher').classList.toggle('open');
+    });
+</script>

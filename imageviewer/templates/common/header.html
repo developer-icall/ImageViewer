@@ -18,14 +18,11 @@
 {% endif %}
 
 {# キーワード ※カンマ区切りの文字列で指定 #}
-{# 全ページ共通のキーワード ※カンマで終わらせる #}
-{% set default_keyword = g.site_name ~ ",AI,画像生成,フリー素材,フリ素,画像素材,画像,写真素材,写真,商用可,無料,ダウンロード," %}
-{% if not unique_keyword %}
-    {# 親テンプレートでアサインがないなら全ジャンル・オプションを記載 #}
-    {% set site_keyword = default_keyword ~ "人物,男性,女性,背景透過,セルフィー" %}
-{% else %}
+{# 全ページ共通のキーワード #}
+{% set default_keyword = g.site_name ~ ",AI,画像生成,フリー素材,フリ素,画像素材,画像,写真素材,写真,商用可,無料,ダウンロード" %}
+{% if unique_keyword %}
     {# アサインがあるなら共通キーワードの次に記載 #}
-    {% set site_keyword = default_keyword ~ unique_keyword %}
+    {% set site_keyword = default_keyword ~ "," ~ unique_keyword %}
 {% endif %}
 
 <html lang="ja" data-bs-theme="auto">
@@ -102,15 +99,20 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="header-pc-menu">
-                        {% include 'parts/header_menu.html' %}
+                        {% include 'common/header_menu.html' %}
                     </div>
                 </div>
             </div>
             <div class="header-sp-menu collapse" id="navbarHeader">
                 <div class="container">
-                    {% include 'parts/header_menu.html' %}
+                    {% include 'common/header_menu.html' %}
                 </div>
             </div>
+
+            {# 画像の絞り込み用UI #}
+            {% if use_option %}
+                {% include 'common/image_option.html' %}
+            {% endif %}
         </header>
 
         <main>

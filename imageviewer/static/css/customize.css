@@ -112,7 +112,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  color: #FFFFFF;
+  color: #ffffff;
   background-color: #212529;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   z-index: 1000;
@@ -181,7 +181,7 @@ header .header-pc-menu > ul > li {
 footer {
   padding: 32px 0;
   font-size: 0.8rem;
-  color: #FFFFFF;
+  color: #ffffff;
   background-color: #212529;
 }
 footer > ul {
@@ -217,7 +217,7 @@ footer .footer-copyright .footer-copyright-logo > img {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  color: #FFFFFF;
+  color: #ffffff;
   background-color: #333333;
   z-index: 1001;
 }
@@ -243,7 +243,7 @@ footer .footer-copyright .footer-copyright-logo > img {
   box-sizing: border-box;
   padding: 4px 12px 4px calc((100vw - 1320px) * 0.5);
   text-align: right;
-  color: #FFFFFF;
+  color: #ffffff;
   background-color: #333333;
   z-index: 1001;
   font-size: 0.7rem;
@@ -270,10 +270,10 @@ footer .footer-copyright .footer-copyright-logo > img {
 .pagination .page-item.active .page-link {
   border-color: #212529;
   background-color: #212529;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 .pagination .page-item.active .page-link:hover {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 .pagination .page-item .page-link {
   display: flex;
@@ -319,38 +319,79 @@ footer .footer-copyright .footer-copyright-logo > img {
 }
 
 .list-switcher {
-  margin-bottom: 40px;
-  color: #FFFFFF;
+  padding: 8px 0;
+  color: #ffffff;
   background: #333333;
 }
 @media only screen and (min-width: 1201px) {
   .list-switcher {
-    margin-bottom: 60px;
-    padding-top: 12px !important;
-    padding-bottom: 12px !important;
+    padding: 12px 0;
+  }
+  .list-switcher > .container {
+    display: flex;
+    align-items: center;
   }
 }
-.list-switcher .list {
-  margin: -20px 0;
+.list-switcher .headline {
+  color: #8d8d8d;
+  font-size: 0.8rem;
+  font-weight: 200;
+  text-align: center;
+  letter-spacing: 6px;
+  white-space: nowrap;
+}
+@media only screen and (min-width: 1201px) {
+  .list-switcher .headline {
+    margin-right: 32px;
+  }
+}
+.list-switcher .headline #toggle_image_option {
+  display: inline-block;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: none;
+  color: inherit;
+  background: none;
+  letter-spacing: inherit;
+  pointer-events: none;
+}
+.list-switcher .headline #toggle_image_option i {
+  display: none;
+}
+@media only screen and (max-width: 1200px) {
+  .list-switcher .headline #toggle_image_option {
+    pointer-events: auto;
+    transition: color 0.2s;
+  }
+  .list-switcher .headline #toggle_image_option:hover {
+    color: #c5c5c5;
+  }
+  .list-switcher .headline #toggle_image_option i {
+    display: inline-block;
+    color: inherit;
+    opacity: 0.7;
+  }
+}
+@media only screen and (max-width: 1200px) {
+  .list-switcher .list {
+    max-height: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: max-height 0.25s;
+  }
+  .list-switcher.open .list {
+    max-height: 600px;
+    pointer-events: auto;
+    overflow: visible;
+  }
 }
 @media only screen and (min-width: 1201px) {
   .list-switcher .list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    margin: -12px 0;
-  }
-}
-.list-switcher .list .headline {
-  color: #8d8d8d;
-  font-size: 0.8rem;
-  font-weight: 200;
-  text-align: center;
-  letter-spacing: 6px;
-}
-@media only screen and (min-width: 1201px) {
-  .list-switcher .list .headline {
-    margin-right: 32px;
+    margin: -12px 0 0;
   }
 }
 .list-switcher .list dl {
@@ -362,7 +403,7 @@ footer .footer-copyright .footer-copyright-logo > img {
 }
 @media only screen and (min-width: 1201px) {
   .list-switcher .list dl {
-    margin: 12px 32px 12px 0;
+    margin: 12px 32px 0 0;
   }
 }
 .list-switcher .list dl dt,
@@ -376,7 +417,7 @@ footer .footer-copyright .footer-copyright-logo > img {
 }
 @media only screen and (max-width: 1200px) {
   .list-switcher .list dl dt {
-    flex: 0.25;
+    flex: 0.2;
     margin-right: 0;
   }
 }
@@ -386,7 +427,7 @@ footer .footer-copyright .footer-copyright-logo > img {
 }
 @media only screen and (max-width: 1200px) {
   .list-switcher .list dl dd {
-    flex: 0.75;
+    flex: 0.8;
   }
 }
 .list-switcher .list dl dd > a {

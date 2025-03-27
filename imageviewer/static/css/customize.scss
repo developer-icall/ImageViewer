@@ -3,16 +3,16 @@
 //-------------------------------------------------------
 $COLOR_DARK: #212529;
 $COLOR_FONT: #101010;
-$SP_WIDTH: 1200px;//bootstrapのxlサイズの値
-$PC_WIDTH: $SP_WIDTH + 1px;//上記超えたらPCデザインにする
-$MAX_WIDTH: 1320px;//画面の最大幅 bootstrap準拠
+$SP_WIDTH: 1200px; //bootstrapのxlサイズの値
+$PC_WIDTH: $SP_WIDTH + 1px; //上記超えたらPCデザインにする
+$MAX_WIDTH: 1320px; //画面の最大幅 bootstrap準拠
 
 //-------------------------------------------------------
 // mixin
 //-------------------------------------------------------
 //アイコン使用時に併記
 @mixin icon_font($code) {
-    content: $code;
+	content: $code;
 	font-family: 'Font Awesome 6 Free';
 	font-weight: 700;
 }
@@ -24,422 +24,469 @@ html {
 	font-size: 16px;
 }
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    font-family: 'Noto Sans JP', 'sans-serif';
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	font-family: 'Noto Sans JP', 'sans-serif';
 	font-weight: 400;
 	font-size: 0.8rem;
 	word-break: break-all;
-    color: $COLOR_FONT;
-    background: #fafafa;
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        font-size: 1rem;
-    }
+	color: $COLOR_FONT;
+	background: #fafafa;
+	//PC
+	@media only screen and (min-width: $PC_WIDTH) {
+		font-size: 1rem;
+	}
 
-    main{
-        flex: 1;
-        min-height: max-content;
-    }
+	main {
+		flex: 1;
+		min-height: max-content;
+	}
 }
 
-ul{
-    margin: 0;
-    padding: 0;
-    list-style: none;
+ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
 
-    //箇条書きリスト
-    &.bullet-list{
-        padding-left: 1.4rem;
-        list-style: disc;
-    }
+	//箇条書きリスト
+	&.bullet-list {
+		padding-left: 1.4rem;
+		list-style: disc;
+	}
 }
 
-p{
-    margin: 0;
+p {
+	margin: 0;
 }
 
-a{
-    color: inherit;
-    text-decoration: none;
-    transition: all 0.2s;
-    &:hover{
-        opacity: 0.6;
-    }
-    //外部リンクの場合、クラスを付与するとアイコンがつく
-    &.external-link{
-        &:after{
-            @include icon_font('\f08e');
-            margin-left: 4px;
-            font-size: 0.75em;
-            opacity: 0.5;
-            vertical-align: middle;
-        }
-    }
+a {
+	color: inherit;
+	text-decoration: none;
+	transition: all 0.2s;
+	&:hover {
+		opacity: 0.6;
+	}
+	//外部リンクの場合、クラスを付与するとアイコンがつく
+	&.external-link {
+		&:after {
+			@include icon_font('\f08e');
+			margin-left: 4px;
+			font-size: 0.75em;
+			opacity: 0.5;
+			vertical-align: middle;
+		}
+	}
 }
 
-h2{
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-    font-weight: 400;
-    text-align: center;
-    color: #595959;
-    letter-spacing: 2px;
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        margin-bottom: 40px;
-    }
+h2 {
+	margin-bottom: 20px;
+	font-size: 1.4rem;
+	font-weight: 400;
+	text-align: center;
+	color: #595959;
+	letter-spacing: 2px;
+	//PC
+	@media only screen and (min-width: $PC_WIDTH) {
+		margin-bottom: 40px;
+	}
 }
-h3{
-    margin-bottom: .5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    color: $COLOR_FONT;
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        font-size: 1.2rem;
-    }
-}
-
-section{
-    padding-bottom: 40px;
-    &:first-of-type{
-        padding-top: 40px;
-    }
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        padding-bottom: 60px;
-        &:first-of-type{
-            padding-top: 60px;
-        }
-    }
+h3 {
+	margin-bottom: 0.5rem;
+	font-size: 1rem;
+	font-weight: 600;
+	color: $COLOR_FONT;
+	//PC
+	@media only screen and (min-width: $PC_WIDTH) {
+		font-size: 1.2rem;
+	}
 }
 
-.btn{
-    transition: all 0.2s;
+section {
+	padding-bottom: 40px;
+	&:first-of-type {
+		padding-top: 40px;
+	}
+	//PC
+	@media only screen and (min-width: $PC_WIDTH) {
+		padding-bottom: 60px;
+		&:first-of-type {
+			padding-top: 60px;
+		}
+	}
+}
+
+.btn {
+	transition: all 0.2s;
 	font-size: 0.8rem;
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        font-size: 1rem;
-    }
+	//PC
+	@media only screen and (min-width: $PC_WIDTH) {
+		font-size: 1rem;
+	}
 }
 
-header{
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    color: #FFFFFF;
-    background-color: $COLOR_DARK;
-    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
-    z-index: 1000;
+header {
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	color: #ffffff;
+	background-color: $COLOR_DARK;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+	z-index: 1000;
 
-    .navbar-brand{
-        padding: 0;
-        h1{
-            margin: 0;
-            line-height: inherit;
-            color: inherit;
-            letter-spacing: 0;
-        }
-        .header-logo{
-            display: block;
-            margin: 2px 0;
-            img{
-                display: block;
-                width: 140px;
-            }
-        }
-        .header-catch-copy{
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 600;
-            color: #999999;
-        }
-    }
+	.navbar-brand {
+		padding: 0;
+		h1 {
+			margin: 0;
+			line-height: inherit;
+			color: inherit;
+			letter-spacing: 0;
+		}
+		.header-logo {
+			display: block;
+			margin: 2px 0;
+			img {
+				display: block;
+				width: 140px;
+			}
+		}
+		.header-catch-copy {
+			display: block;
+			font-size: 0.6rem;
+			font-weight: 600;
+			color: #999999;
+		}
+	}
 
-    .header-sp-menu,
-    .header-sp-menu-button{
-        color: inherit !important;
-        //PC
-        @media only screen and (min-width: $PC_WIDTH) {
-            display: none !important;
-        }
-    }
-    .header-sp-menu{
-        ul{
-            padding: 0 0 8px;
-            >li{
-                padding: 20px 0;
-                text-align: center;
-                letter-spacing: 2px;
+	.header-sp-menu,
+	.header-sp-menu-button {
+		color: inherit !important;
+		//PC
+		@media only screen and (min-width: $PC_WIDTH) {
+			display: none !important;
+		}
+	}
+	.header-sp-menu {
+		ul {
+			padding: 0 0 8px;
+			> li {
+				padding: 20px 0;
+				text-align: center;
+				letter-spacing: 2px;
 
-                &:not(:last-child){
-                    border-bottom: 1px solid #333333;
-                }
+				&:not(:last-child) {
+					border-bottom: 1px solid #333333;
+				}
 
-                >a{
-                    display: block;
-                }
-            }
-        }
-    }
+				> a {
+					display: block;
+				}
+			}
+		}
+	}
 
-    .header-pc-menu{
-        //SP
-        @media only screen and (max-width: $SP_WIDTH) {
-            display: none !important;
-        }
-        >ul{
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            >li{
-                margin-left: 40px;
-            }
-        }
-    }
+	.header-pc-menu {
+		//SP
+		@media only screen and (max-width: $SP_WIDTH) {
+			display: none !important;
+		}
+		> ul {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			> li {
+				margin-left: 40px;
+			}
+		}
+	}
 }
 
-footer{
-    padding: 32px 0;
-    font-size: 0.8rem;
-    color: #FFFFFF;
-    background-color: $COLOR_DARK;
+footer {
+	padding: 32px 0;
+	font-size: 0.8rem;
+	color: #ffffff;
+	background-color: $COLOR_DARK;
 
-    >ul{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        >li{
-            margin: 0 40px;
-        }
-    }
+	> ul {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		> li {
+			margin: 0 40px;
+		}
+	}
 
-    .footer-copyright{
-        margin-top: 60px;
-        font-size: 0.6rem;
-        text-align: center;
-        opacity: 0.2;
+	.footer-copyright {
+		margin-top: 60px;
+		font-size: 0.6rem;
+		text-align: center;
+		opacity: 0.2;
 
-        .footer-copyright-logo{
-            display: block;
-            width: 100px;
-            margin: 0 auto 8px;
+		.footer-copyright-logo {
+			display: block;
+			width: 100px;
+			margin: 0 auto 8px;
 
-            >img{
-                width: 100%;
-            }
-        }
-    }
+			> img {
+				width: 100%;
+			}
+		}
+	}
 }
 
 //最上部スクロールボタン
-.to-top-button{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    color: #FFFFFF;
-    background-color: #333333;
-    z-index: 1001;
+.to-top-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	color: #ffffff;
+	background-color: #333333;
+	z-index: 1001;
 
-    &:after{
-        @include icon_font('\f102');
-    }
+	&:after {
+		@include icon_font('\f102');
+	}
 
-    &:hover{
-        opacity: 1;
-        background-color: #5d5d5d;
-    }
+	&:hover {
+		opacity: 1;
+		background-color: #5d5d5d;
+	}
 }
 
 //前のページへ戻るボタン
-.history-back-button{
-    position: fixed;
-    top: 64px;
-    left: 0;
-    display: block;
-    width: max-content;
-    max-width: 100%;
-    border-radius: 0 8px 8px 0;
-    box-sizing: border-box;
-    padding: 4px 12px 4px calc((100vw - #{$MAX_WIDTH}) * 0.5);
-    text-align: right;
-    color: #FFFFFF;
-    background-color: #333333;
-    z-index: 1001;
-    font-size: 0.7rem;
-    letter-spacing: 4px;
+.history-back-button {
+	position: fixed;
+	top: 64px;
+	left: 0;
+	display: block;
+	width: max-content;
+	max-width: 100%;
+	border-radius: 0 8px 8px 0;
+	box-sizing: border-box;
+	padding: 4px 12px 4px calc((100vw - #{$MAX_WIDTH}) * 0.5);
+	text-align: right;
+	color: #ffffff;
+	background-color: #333333;
+	z-index: 1001;
+	font-size: 0.7rem;
+	letter-spacing: 4px;
 
-    &:before{
-        @include icon_font('\f0d9');
-        margin: 0 4px 0 12px;
-    }
+	&:before {
+		@include icon_font('\f0d9');
+		margin: 0 4px 0 12px;
+	}
 
-    &:hover{
-        opacity: 1;
-        background-color: #5d5d5d;
-    }
+	&:hover {
+		opacity: 1;
+		background-color: #5d5d5d;
+	}
 }
 
 // ページネーション
 .pagination {
-    margin: 40px auto;
-    justify-content: center;
-    &:last-child{
-        margin-bottom: 0;
-    }
+	margin: 40px auto;
+	justify-content: center;
+	&:last-child {
+		margin-bottom: 0;
+	}
 
-    .page-item{
-        &.active{
-            .page-link{
-                border-color: $COLOR_DARK;
-                background-color: $COLOR_DARK;
-                color: #FFFFFF;
-                &:hover{
-                    color: #FFFFFF;
-                }
-            }
-        }
-        .page-link{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-width: 36px;
-            height: 36px;
-            padding: 4px;
-            color: $COLOR_DARK;
-            font-size: 0.8rem;
-            &:hover{
-                color: #333333;
-                &:after{
-                    opacity: 0.75;
-                }
-            }
-            &:after{
-                margin-top: 2px;//若干上にずれて見えるので
-                font-size: 0.6rem;
-                color: #9d9d9d;
-                transition: all 0.2s;
-            }
-            &.first:after{
-                @include icon_font('\f100');
-            }
-            &.prev:after{
-                @include icon_font('\f104');
-            }
-            &.next:after{
-                @include icon_font('\f105');
-            }
-            &.last:after{
-                @include icon_font('\f101');
-            }
-        }
-    }
+	.page-item {
+		&.active {
+			.page-link {
+				border-color: $COLOR_DARK;
+				background-color: $COLOR_DARK;
+				color: #ffffff;
+				&:hover {
+					color: #ffffff;
+				}
+			}
+		}
+		.page-link {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-width: 36px;
+			height: 36px;
+			padding: 4px;
+			color: $COLOR_DARK;
+			font-size: 0.8rem;
+			&:hover {
+				color: #333333;
+				&:after {
+					opacity: 0.75;
+				}
+			}
+			&:after {
+				margin-top: 2px; //若干上にずれて見えるので
+				font-size: 0.6rem;
+				color: #9d9d9d;
+				transition: all 0.2s;
+			}
+			&.first:after {
+				@include icon_font('\f100');
+			}
+			&.prev:after {
+				@include icon_font('\f104');
+			}
+			&.next:after {
+				@include icon_font('\f105');
+			}
+			&.last:after {
+				@include icon_font('\f101');
+			}
+		}
+	}
 }
 
 // 一覧切り替え用のUI
-.list-switcher{
-    margin-bottom: 40px;
-    color: #FFFFFF;
-    background: #333333;
-    //PC
-    @media only screen and (min-width: $PC_WIDTH) {
-        margin-bottom: 60px;
-        padding-top: 12px !important;
-        padding-bottom: 12px !important;
-    }
+.list-switcher {
+	padding: 8px 0;
+	color: #ffffff;
+	background: #333333;
+	//PC
+	@media only screen and (min-width: $PC_WIDTH) {
+		padding: 12px 0;
+		> .container {
+			display: flex;
+			align-items: center;
+		}
+	}
 
-    .list{
-        margin: -20px 0;
-        //PC
-        @media only screen and (min-width: $PC_WIDTH) {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            margin: -12px 0;
-        }
+	//見出し
+	.headline {
+		color: #8d8d8d;
+		font-size: 0.8rem;
+		font-weight: 200;
+		text-align: center;
+		letter-spacing: 6px;
+		white-space: nowrap;
+		//PC
+		@media only screen and (min-width: $PC_WIDTH) {
+			margin-right: 32px;
+		}
 
-        .headline{
-            color: #8d8d8d;
-            font-size: 0.8rem;
-            font-weight: 200;
-            text-align: center;
-            letter-spacing: 6px;
-            //PC
-            @media only screen and (min-width: $PC_WIDTH) {
-                margin-right: 32px;
-            }
-        }
+		//開閉ボタン
+		#toggle_image_option {
+			display: inline-block;
+			appearance: none;
+			border: none;
+			color: inherit;
+			background: none;
+			letter-spacing: inherit;
 
-        dl{
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-            padding: 0;
-	        font-size: 0.8rem;
-            //PC
-            @media only screen and (min-width: $PC_WIDTH) {
-                margin: 12px 32px 12px 0;
-            }
+			//PCでは開閉不能
+			pointer-events: none;
+			i {
+				display: none;
+			}
+			//SPでのみ開閉可能
+			@media only screen and (max-width: $SP_WIDTH) {
+				pointer-events: auto;
+				transition: color 0.2s;
+				&:hover {
+					color: #c5c5c5;
+				}
+				i {
+					display: inline-block;
+					color: inherit;
+					opacity: 0.7;
+				}
+			}
+		}
+	}
 
-            dt,
-            dd{
-                margin: 0;
-                padding: 0;
-            }
-            dt{
-                margin-right: 16px;
-                font-weight: inherit;
-                //SP
-                @media only screen and (max-width: $SP_WIDTH) {
-                    flex: 0.25;
-                    margin-right: 0;
-                }
-            }
-            dd{
-                display: flex;
-                align-items: center;
-                //SP
-                @media only screen and (max-width: $SP_WIDTH) {
-                    flex: 0.75;
-                }
+	//オプションリスト
+	@media only screen and (max-width: $SP_WIDTH) {
+		//SPなら開閉式にする
+		.list {
+			max-height: 0;
+			pointer-events: none;
+			overflow: hidden;
+			transition: max-height 0.25s;
+		}
+		&.open .list {
+			max-height: 600px; //開閉アニメーションのために仮で設定(今後項目が増えたら見直す必要あり)
+			pointer-events: auto;
+			overflow: visible; //開閉時一瞬スクロールバーが見えるのが気になるので一旦visibleに(今後スクロールするシチュエーションが生まれたら見直す必要あり)
+		}
+	}
+	.list {
+		//PC
+		@media only screen and (min-width: $PC_WIDTH) {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			margin: -12px 0 0;
+		}
 
-                >a{
-                    display: block;
-                    padding: 4px 16px;
-                    font-weight: 600;
-                    color: #333333;
-                    background: #fafafa;
-                    //SP
-                    @media only screen and (max-width: $SP_WIDTH) {
-                        flex: 1;
-                        padding: 4px 2px;
-                        text-align: center;
-                    }
+		dl {
+			display: flex;
+			align-items: center;
+			margin: 20px 0;
+			padding: 0;
+			font-size: 0.8rem;
+			//PC
+			@media only screen and (min-width: $PC_WIDTH) {
+				margin: 12px 32px 0 0;
+			}
 
-                    &:first-child{
-                        border-radius: 4px 0 0 4px;
-                    }
-                    &:last-child{
-                        border-radius: 0 4px 4px 0;
-                    }
+			dt,
+			dd {
+				margin: 0;
+				padding: 0;
+			}
+			dt {
+				margin-right: 16px;
+				font-weight: inherit;
+				//SP
+				@media only screen and (max-width: $SP_WIDTH) {
+					flex: 0.2;
+					margin-right: 0;
+				}
+			}
+			dd {
+				display: flex;
+				align-items: center;
+				//SP
+				@media only screen and (max-width: $SP_WIDTH) {
+					flex: 0.8;
+				}
 
-                    &.selected{
-                        color: #ffffff;
-                        background: #4eb3ff;
-                        cursor: none;
-                        pointer-events: none;
-                    }
-                }
-            }
-        }
-    }
+				> a {
+					display: block;
+					padding: 4px 16px;
+					font-weight: 600;
+					color: #333333;
+					background: #fafafa;
+					//SP
+					@media only screen and (max-width: $SP_WIDTH) {
+						flex: 1;
+						padding: 4px 2px;
+						text-align: center;
+					}
+
+					&:first-child {
+						border-radius: 4px 0 0 4px;
+					}
+					&:last-child {
+						border-radius: 0 4px 4px 0;
+					}
+
+					&.selected {
+						color: #ffffff;
+						background: #4eb3ff;
+						cursor: none;
+						pointer-events: none;
+					}
+				}
+			}
+		}
+	}
 }
