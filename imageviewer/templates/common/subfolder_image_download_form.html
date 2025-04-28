@@ -1,9 +1,7 @@
 {% set sample_image_file_without_suffix = image_name.replace("-thumbnail", "") %}
 <a href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}"
 target="_blank"
-{% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
-    onclick="gtag('event','zoom_image',{'image_option':'{{ options|join('/') }}'});"
-{% endif %}
+class="zoom_image"
 >
     <img src="/images/{{ subfolder_name }}{{ thumbnail_folder }}/{{ image_name }}" alt="{{ options|join('/') ~ "の高クオリティAI生成画像" }}" width="100%">
 </a>
@@ -20,10 +18,7 @@ target="_blank"
     {% endif %}
     <a download
     href="/images/{{ subfolder_name }}/{% if is_sample %}sample/{% endif %}{{ sample_image_file_without_suffix }}"
-    class="btn btn-dark d-block"
-    {% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
-        onclick="gtag('event','download_image',{'image_option':'{{ options|join('/') }}'});"
-    {% endif %}
+    class="download_image btn btn-dark d-block"
     >
         ダウンロード
     </a>

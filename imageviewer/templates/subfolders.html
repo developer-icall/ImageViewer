@@ -41,4 +41,25 @@
     {% endif %}
 </section>
 
+{% if request.host == g.domain_name %}{# 本番環境でのみGoogle Analyticsにてイベント集計 #}
+    <script>
+        // GA用アクセス集計イベント
+        function gtagEvent(event_name) {
+            gtag('event', event_name, {'image_option': '{{ options|join('/') }}'});
+        }
+        // 集計イベントを発火させる関数
+        function setImageEventListner(event_name) {
+            document.querySelectorAll('.' + event_name).forEach(element => {
+                element.addEventListener('click', function() {
+                    gtagEvent(event_name);
+                });
+            });
+        }
+
+        // 集計したいイベント別に関数実行
+        setImageEventListner('zoom_image'); // 画像を拡大
+        setImageEventListner('download_image'); // 画像をダウンロード
+    </script>
+{% endif %}
+
 {% include 'common/footer.html' %}
