@@ -47,10 +47,32 @@
         function gtagEvent(event_name) {
             gtag('event', event_name, {'image_option': '{{ options|join('/') }}'});
         }
+        // モバイルかつsafari使用中か判定
+        function checkUseMobileSafari() {
+            const userAgent = navigator.userAgent;
+            if (
+                userAgent.indexOf('safari') !== -1 &&
+                userAgent.indexOf('chrome') === -1 &&
+                userAgent.indexOf('edge') === -1
+            ) {
+                const isSmartPhone = userAgent.match(/iPhone|Android.+Mobile/);
+                const isTablet = userAgent.match(/iPad|Android/) && !userAgent.match(/Mobile/);
+                if (isSmartPhone || isTablet) {
+                    return true;
+                }
+            }
+            return false;
+        }
         // 集計イベントを発火させる関数
         function setImageEventListner(event_name) {
+            let event_category = 'click';
+            // モバイルかつsafari使用時はtouchイベントに変更
+            const useMobileSafari = checkUseMobileSafari();
+            if (useMobileSafari){
+                event_category = 'touchend';
+            }
             document.querySelectorAll('.' + event_name).forEach(element => {
-                element.addEventListener('click', function() {
+                element.addEventListener(event_category, function() {
                     gtagEvent(event_name);
                 });
             });
