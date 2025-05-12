@@ -539,6 +539,11 @@ def get_sitemap():
 def index_bootstrap():
     return render_template('bootstrap.html')
 
+@app.errorhandler(404)
+def page_not_found(e):
+    # 404エラーが発生した場合、トップページにリダイレクト
+    return redirect('/')
+
 # 表示順テスト用のルート
 @app.route('/test_display_order/')
 @app.route('/test_display_order/<style_id>/')
