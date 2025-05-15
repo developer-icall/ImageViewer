@@ -48,14 +48,16 @@
             gtag('event', event_name, {'image_option': '{{ options|join('/') }}'});
         }
         // 集計イベントを発火させる関数
-        function setImageEventListner(event_name) {
-            $(document).on('click', '.' + event_name, function() {
+        function setImageEventListener(event_name) {
+            document.body.addEventListener('click', function(event) {
+                if (event.target.closest('.' + event_name)) {
                     gtagEvent(event_name);
+                }
             });
         }
         // 集計したいイベント別に関数実行
-        setImageEventListner('zoom_image'); // 画像を拡大
-        setImageEventListner('download_image'); // 画像をダウンロード
+        setImageEventListener('zoom_image'); // 画像を拡大
+        setImageEventListener('download_image'); // 画像をダウンロード
     </script>
 {% endif %}
 
