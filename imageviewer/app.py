@@ -572,7 +572,7 @@ def index_bootstrap():
 @app.errorhandler(404)
 def page_not_found(e):
     # 404エラーが発生した場合、トップページにリダイレクト
-    return redirect('/{g.url_parameter}')
+    return redirect(f'/{g.url_parameter}')
 
 # 表示順テスト用のルート
 @app.route('/test_display_order/')
