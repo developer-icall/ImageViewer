@@ -289,6 +289,8 @@ def redirect_to_image_list(config, style=None, category=None):
             if not all_subcategories_hidden:
                 # 非表示でない場合は、最初の値を使用
                 subcategory_data = first_subcategory["id"]
+    else:
+        abort(404)
 
     # テンプレートに渡すデータを設定
     template_data = {
