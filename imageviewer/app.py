@@ -263,25 +263,49 @@ def translate_text(text, translation_dict):
 
     return concatenated_string
 
+# 表示可能な画像一覧への誘導用HTMLを表示
+def redirect_to_image_list(config, style=None, category=None):
+    style_data = style
+    if style is None:
+        # 指定がないなら、取得可能な最初の値を使用
+        first_style = get_first_visible_style(config)
+        if first_style:
+            style_data = first_style["id"]
+
+    category_data = category
+    if category is None:
+        # 指定がないなら、取得可能な最初の値を使用
+        first_category = get_first_visible_category(style_data, config)
+        if first_category:
+            category_data = first_category["id"]
+
+    subcategory_data = None
+    if style_data and category_data:
+        # 最初の値を取得
+        first_subcategory = get_first_visible_subcategory(style_data, category_data, config)
+        if first_subcategory:
+            # 選択された大項目および中項目に対する小項目がすべて非表示かどうかを確認
+            all_subcategories_hidden = are_all_subcategories_hidden(style_data, category_data, config)
+            if not all_subcategories_hidden:
+                # 非表示でない場合は、最初の値を使用
+                subcategory_data = first_subcategory["id"]
+
+    # テンプレートに渡すデータを設定
+    template_data = {
+        # 設定ファイルから取得したデータを追加
+        'style': style_data,
+        'category': category_data,
+        'subcategory': subcategory_data
+    }
+    # 表示可能な画像一覧への誘導用HTMLを表示
+    return render_template('not_found.html', **template_data)
+
 @app.route('/')
 def index():
     # 設定ファイルから表示順が最初のスタイル、カテゴリ、サブカテゴリを取得
     config = g.config
-    first_style = get_first_visible_style(config)
-    if not first_style:
-        return "No visible styles found", 404
-
-    first_category = get_first_visible_category(first_style["id"], config)
-    if not first_category:
-        return "No visible categories found for style", 404
-
-    first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
-    if not first_subcategory:
-        # サブカテゴリがない場合はカテゴリページにリダイレクト
-        return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{g.url_parameter}')
-
     # 最初の表示可能なスタイル、カテゴリ、サブカテゴリにリダイレクト
-    return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{first_subcategory["id"]}/{g.url_parameter}')
+    return redirect_to_image_list(config)
 
 # 新しい汎用的なルート設定
 @app.route('/image_pattern/<style>/<category>/')
@@ -293,42 +317,32 @@ def image_pattern_route(style, category, subcategory=None):
     # スタイルが存在するか確認
     if not get_style_by_id(style, config):
         # 存在しない場合は最初の表示可能なスタイルにリダイレクト
-        first_style = get_first_visible_style(config)
-        if not first_style:
-            return "No visible styles found", 404
-        return redirect(f'/image_pattern/{first_style["id"]}/{g.url_parameter}')
+        return redirect_to_image_list(config)
 
     # カテゴリが存在するか確認
     if not get_category_by_id(category, config) or category not in [c["id"] for c in get_categories(style, config)]:
         # 存在しない場合は指定されたスタイルの最初の表示可能なカテゴリにリダイレクト
-        first_category = get_first_visible_category(style, config)
-        if not first_category:
-            return "No visible categories found for style", 404
-        return redirect(f'/image_pattern/{style}/{first_category["id"]}/{g.url_parameter}')
+        return redirect_to_image_list(config, style)
 
     # サブカテゴリが指定されていない場合
     if subcategory is None:
         # 指定されたスタイルとカテゴリの最初の表示可能なサブカテゴリにリダイレクト
         first_subcategory = get_first_visible_subcategory(style, category, config)
         if first_subcategory:
-            return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/{g.url_parameter}')
+            return redirect_to_image_list(config, style, category)
         # サブカテゴリがない場合はそのまま表示
     else:
         # サブカテゴリが存在するか確認
         subcategories = get_subcategories(style, category, config)
         if not subcategories or subcategory not in [s["id"] for s in subcategories]:
             # 存在しない場合は指定されたスタイルとカテゴリの最初の表示可能なサブカテゴリにリダイレクト
-            first_subcategory = get_first_visible_subcategory(style, category, config)
-            if first_subcategory:
-                return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/{g.url_parameter}')
+            return redirect_to_image_list(config, style, category)
         else:
             # サブカテゴリが存在する場合でも、excluded_combinationsで非表示に設定されているか確認
             subcategory_obj = next((s for s in config.get("subcategories", []) if s.get("id") == subcategory), None)
             if subcategory_obj and not is_subcategory_visible_for_style_category(subcategory_obj, style, category):
                 # 非表示の場合は最初の表示可能なサブカテゴリにリダイレクト
-                first_subcategory = get_first_visible_subcategory(style, category, config)
-                if first_subcategory:
-                    return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/{g.url_parameter}')
+                return redirect_to_image_list(config, style, category)
 
     # 画像タイプの設定
     image_type = ImageType(
@@ -374,21 +388,8 @@ def image_pattern_route(style, category, subcategory=None):
 def image_pattern_root():
     # 設定ファイルから表示順が最初のスタイル、カテゴリ、サブカテゴリを取得
     config = g.config
-    first_style = get_first_visible_style(config)
-    if not first_style:
-        return "No visible styles found", 404
-
-    first_category = get_first_visible_category(first_style["id"], config)
-    if not first_category:
-        return "No visible categories found for style", 404
-
-    first_subcategory = get_first_visible_subcategory(first_style["id"], first_category["id"], config)
-    if not first_subcategory:
-        # サブカテゴリがない場合はカテゴリページにリダイレクト
-        return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{g.url_parameter}')
-
     # 最初の表示可能なスタイル、カテゴリ、サブカテゴリにリダイレクト
-    return redirect(f'/image_pattern/{first_style["id"]}/{first_category["id"]}/{first_subcategory["id"]}/{g.url_parameter}')
+    return redirect_to_image_list(config)
 
 # 新しい画像パターンのサブフォルダ表示用ルーティング
 @app.route('/image_pattern/<style>/<category>/<subcategory>/subfolders/<subfolder_name>/', methods=['GET'])
@@ -400,9 +401,7 @@ def subfolders(style, category, subcategory, subfolder_name):
     subcategory_obj = next((s for s in config.get("subcategories", []) if s.get("id") == subcategory), None)
     if subcategory_obj and not is_subcategory_visible_for_style_category(subcategory_obj, style, category):
         # 非表示の場合は最初の表示可能なサブカテゴリにリダイレクト
-        first_subcategory = get_first_visible_subcategory(style, category, config)
-        if first_subcategory:
-            return redirect(f'/image_pattern/{style}/{category}/{first_subcategory["id"]}/{g.url_parameter}')
+        return redirect_to_image_list(config, style, category)
 
     # 画像タイプの設定
     image_type = ImageType(
@@ -571,8 +570,10 @@ def index_bootstrap():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    # 404エラーが発生した場合、トップページにリダイレクト
-    return redirect(f'/{g.url_parameter}')
+    # 設定ファイルを取得
+    config = g.config
+    # 表示可能な画像一覧への誘導用HTMLを表示
+    return redirect_to_image_list(config)
 
 # 表示順テスト用のルート
 @app.route('/test_display_order/')

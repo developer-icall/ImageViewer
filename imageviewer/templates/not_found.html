@@ -1,0 +1,28 @@
+<!doctype html>
+{% include 'common/header.html' %}
+
+{{ style }}
+{{ category }}
+{{ subcategory }}
+{{ g.url_parameter }}
+
+<script>
+    // 取得した値を変数に格納
+    const style = '{{ style }}';
+    const category = '{{ category }}';
+    const subcategory = '{{ subcategory }}';
+    const url_parameter = '{{ g.url_parameter }}';
+
+    // 値が全て取得できているか確認
+    if (style && category && subcategory) {
+        // 取得できている場合、300ms後に画像一覧ページにリダイレクト (リファラ情報保持のため)
+        setTimeout(() => {
+            window.location.href = `/image_pattern/${style}/${category}/${subcategory}/${url_parameter}`;
+        }, 300);
+    } else {
+        // 取得できていない場合、404エラーを表示（画像が1つもない場合しかあり得ない）
+        document.body.innerHTML = `404 Not Found`;
+    }
+</script> 
+
+{% include 'common/footer.html' %}
