@@ -266,14 +266,14 @@ def translate_text(text, translation_dict):
 # 表示可能な画像一覧への誘導用HTMLを表示
 def redirect_to_image_list(config, style=None, category=None):
     style_data = style
-    if style is None:
+    if style_data is None:
         # 指定がないなら、取得可能な最初の値を使用
         first_style = get_first_visible_style(config)
         if first_style:
             style_data = first_style["id"]
 
     category_data = category
-    if category is None:
+    if style_data and category_data is None:
         # 指定がないなら、取得可能な最初の値を使用
         first_category = get_first_visible_category(style_data, config)
         if first_category:
