@@ -1,23 +1,11 @@
 <!doctype html>
 {% include 'common/header.html' %}
 
-{{ style }}
-{{ category }}
-{{ subcategory }}
-{{ g.url_parameter }}
-
 <script>
-    // 取得した値を変数に格納
-    const style = '{{ style }}';
-    const category = '{{ category }}';
-    const subcategory = '{{ subcategory }}';
-    const url_parameter = '{{ g.url_parameter }}';
-
     // 300ms後に表示可能な画像一覧ページにリダイレクト (リファラ情報保持のため)
     setTimeout(() => {
-        window.location.href = `/image_pattern/${style}/${category}/${subcategory}${url_parameter}`;
+        window.location.href = `/image_pattern/{{ style }}/{{ category }}/{{ subcategory }}{{ g.url_parameter }}`;
     }, 300);
-
 </script>
 
 {% include 'common/footer.html' %}
