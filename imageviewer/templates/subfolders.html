@@ -8,7 +8,7 @@
 
 {# 戻るリンク #}
 {% set back_url = '/image_pattern/' ~ image_pattern_category ~ '/' ~ image_pattern_subcategory ~ '/' ~ image_pattern_type ~ '/' %}
-<a class="history-back-button" href="{{ back_url }}{% if page %}?page={{ page }}{% endif %}">Back</a>
+<a class="history-back-button" href="{{ back_url }}{{ g.url_parameter }}{% if page %}{{ g.page_parameter ~  page }}{% endif %}">Back</a>
 
 <section class="container">
     <div class="card w-75 h-100 mx-auto overflow-hidden shadow-sm" style="max-width: 316px;">
